@@ -1,0 +1,224 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: String Table Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: String Table
+  m_TableCollectionNameGuidString: b1a62cc8c5efac142a477da873664829
+  m_Entries:
+  - m_Id: 1135652270080
+    m_Key: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38832131436544
+    m_Key: What is your name?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 40718150561792
+    m_Key: How old are you?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 194322807898112
+    m_Key: Back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 197069380763648
+    m_Key: Capy Intro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 236306062884864
+    m_Key: 'Name:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 237565373300736
+    m_Key: Enter name...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246466902736896
+    m_Key: Pick a voice!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246529632747520
+    m_Key: 'Age:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246611115491328
+    m_Key: 'Voices:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248168045330432
+    m_Key: Enter age...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251756033327104
+    m_Key: Done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 273241837912064
+    m_Key: transition text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7319831986991104
+    m_Key: Pick an appearance!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7324571089137664
+    m_Key: OnboardingScreen/Canvas/Appearance Input Area/Light Option/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7324586348015616
+    m_Key: OnboardingScreen/Canvas/Appearance Input Area/Dark Option/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7324638743261184
+    m_Key: OnboardingScreen/Canvas/Appearance Input Area/System Option/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7327894202642432
+    m_Key: 'Appearance:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8174361184202752
+    m_Key: Journey/Canvas/Level Label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10172327109488640
+    m_Key: Profile/Canvas/ScrollRect/Proflie Group/Edit Button/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10174236331503616
+    m_Key: Profile/Canvas/ScrollRect/Statistics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10327578265415680
+    m_Key: Profile/Canvas/ScrollRect/Proflie Group/Stats Box/Theme Box/Themes Label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10327610456698880
+    m_Key: Profile/Canvas/ScrollRect/Proflie Group/Stats Box/Exercise Box/Exercise
+      Label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10328114922418176
+    m_Key: Profile/Canvas/ScrollRect/Proflie Group/Stats Box/Meditation Box/Meditation
+      Label
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10330036135948288
+    m_Key: New Entry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10331258075115520
+    m_Key: Profile/Canvas/ScrollRect/Proflie Group/Stats Box/Streak Box/Best Streak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10331606743412736
+    m_Key: Profile/Canvas/ScrollRect/Proflie Group/View All Button/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10393211782983680
+    m_Key: streak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10397738179391488
+    m_Key: bestStreak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10402702431776768
+    m_Key: Profile/Canvas/Scroll View/Viewport/Content/Name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10418680695779328
+    m_Key: Settings/Canvas/Settings Text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10419768618545152
+    m_Key: Settings/Canvas/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10542186808897536
+    m_Key: Settings/Canvas/Appearance Row/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10542231285297152
+    m_Key: Settings/Canvas/Notifications Row/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10542691685658624
+    m_Key: Settings/Canvas/Age Row/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10543744288190464
+    m_Key: Settings/Canvas/Sound Text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10544071360016384
+    m_Key: Settings/Canvas/Volume Row/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10724882906509312
+    m_Key: Settings/Canvas/Volume Row/Min Text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10725927216902144
+    m_Key: Settings/Canvas/Volume Row/Max Text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10726338728456192
+    m_Key: Settings/Canvas/Music Row/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11517150462636032
+    m_Key: Daily
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11517234810089472
+    m_Key: Capy's Den
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11517418159894528
+    m_Key: Profile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12573506892972032
+    m_Key: Daily/Canvas/Scroll View/Viewport/Content/Mood Checkin Button/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12576921924648960
+    m_Key: Daily/Canvas/Scroll View/Viewport/Content/ButtonRow/Breathwork Button/Text
+      (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12576974227619840
+    m_Key: Daily/Canvas/Scroll View/Viewport/Content/ButtonRow/Gratitude Button/Text
+      (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12579059484573696
+    m_Key: Daily/Canvas/Scroll View/Viewport/Content/Mood Log Row/Text (TMP)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34429575897706496
+    m_Key: Mood Check-In Question
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 1698644560765255952
+  references:
+    version: 2
+    RefIds:
+    - rid: 1698644560765255952
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1752201339923

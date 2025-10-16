@@ -1,0 +1,233 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: String Table_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: b1a62cc8c5efac142a477da873664829, type: 2}
+  m_Metadata:
+    m_Items:
+    - rid: 1698644573579378949
+  m_TableData:
+  - m_Id: 1135652270080
+    m_Localized: Continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 40718150561792
+    m_Localized: "How old are you?\t"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38832131436544
+    m_Localized: What is your name?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 194322807898112
+    m_Localized: Back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 197069380763648
+    m_Localized: Hi, my name is Capy! I'm excited to take you on this mindfulness
+      journey with me. Let's get to know you!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 236306062884864
+    m_Localized: 'Name:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 237565373300736
+    m_Localized: Enter name...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246466902736896
+    m_Localized: Pick a voice!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246529632747520
+    m_Localized: 'Age:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 246611115491328
+    m_Localized: 'Voices:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 248168045330432
+    m_Localized: Enter age...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 251756033327104
+    m_Localized: Done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 273241837912064
+    m_Localized: "Nice to meet you, {username}! Come with me, and I\u2019ll give
+      you some pointers!"
+    m_Metadata:
+      m_Items:
+      - rid: 1698644573579378949
+  - m_Id: 7319831986991104
+    m_Localized: Pick an appearance!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7324571089137664
+    m_Localized: Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7324586348015616
+    m_Localized: Dark
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7324638743261184
+    m_Localized: System
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7327894202642432
+    m_Localized: 'Appearance:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 8174361184202752
+    m_Localized: World
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10172327109488640
+    m_Localized: Edit Profile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10174236331503616
+    m_Localized: Statistics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10327578265415680
+    m_Localized: Themes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10327610456698880
+    m_Localized: Exercises
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10328114922418176
+    m_Localized: Min Meditation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10330036135948288
+    m_Localized: Achievements
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10397738179391488
+    m_Localized: 'Best: {streak}'
+    m_Metadata:
+      m_Items:
+      - rid: 1698644573579378949
+  - m_Id: 10331258075115520
+    m_Localized: 'Best: 123'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10331606743412736
+    m_Localized: View All
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10393211782983680
+    m_Localized: '{streak} Day Streak'
+    m_Metadata:
+      m_Items:
+      - rid: 1698644573579378949
+  - m_Id: 10402702431776768
+    m_Localized: Name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10418680695779328
+    m_Localized: Settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10419768618545152
+    m_Localized: General
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10542186808897536
+    m_Localized: Appearance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10542231285297152
+    m_Localized: Notifications
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10542691685658624
+    m_Localized: Age
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10543744288190464
+    m_Localized: Sound
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10544071360016384
+    m_Localized: Volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10724882906509312
+    m_Localized: Min
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10725927216902144
+    m_Localized: Max
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10726338728456192
+    m_Localized: Music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11517150462636032
+    m_Localized: Daily
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11517234810089472
+    m_Localized: Capy's Den
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11517418159894528
+    m_Localized: Profile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12573506892972032
+    m_Localized: Mood Check-In
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12576921924648960
+    m_Localized: Breathwork
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12576974227619840
+    m_Localized: Gratitude
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12579059484573696
+    m_Localized: 'Mood Log
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34429575897706496
+    m_Localized: How are you feeling Today, {username}?
+    m_Metadata:
+      m_Items:
+      - rid: 1698644573579378949
+  references:
+    version: 2
+    RefIds:
+    - rid: 1698644573579378949
+      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
+      data:
+        m_Entries: 
+        m_SharedEntries:
+        - id: 273241837912064
+        - id: 10393211782983680
+        - id: 10397738179391488
+        - id: 34429575897706496
