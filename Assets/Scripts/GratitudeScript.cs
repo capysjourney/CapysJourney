@@ -159,11 +159,22 @@ public class GratitudeScript : MonoBehaviour
         _darkener.SetActive(true);
         _popup.SetActive(true);
         _inputPaper.SetActive(false);
-        int carrotsEarned = GameManager.LoggedGratitudeToday() ? 0 : 10;
-        GameManager.LogGratitude(_inputField.text, DateTime.Now);
+        bool alreadyLoggedToday = GameManager.LoggedGratitudeToday();
+        int carrotsEarned = alreadyLoggedToday ? 0 : 10;
+        string gratitudeText = _inputField.text;
+        GameManager.LogGratitude(gratitudeText, DateTime.Now);
         _carrotCount.text = carrotsEarned.ToString();
         _numLeavesInUse = Math.Min(_numLeavesInUse + 1, _leaves.Length);
         _inputField.text = "";
+
+        // Track gratitude completion with PostHog
+        PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
+        {
+            { "activity_type", "gratitude" },
+            { "gratitude_length", gratitudeText.Length },
+            { "carrots_earned", carrotsEarned },
+            { "is_first_today", !alreadyLoggedToday }
+        });
     }
 
     // Update is called once per frame

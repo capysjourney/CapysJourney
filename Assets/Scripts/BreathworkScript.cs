@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -71,11 +72,21 @@ public class BreathworkScript : MonoBehaviour
         if (_progressBar.value >= Duration)
         {
             _finished = true;
-            int carrotsEarned = GameManager.DidBreathworkToday() ? 0 : 10;
+            bool alreadyCompletedToday = GameManager.DidBreathworkToday();
+            int carrotsEarned = alreadyCompletedToday ? 0 : 10;
             _carrotCount.text = carrotsEarned.ToString();
             GameManager.IncreaseCarrots(carrotsEarned);
             GameManager.DoBreathwork();
             _endObjects.SetActive(true);
+
+            // Track breathwork completion with PostHog
+            PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
+            {
+                { "activity_type", "breathwork" },
+                { "duration_seconds", Duration },
+                { "carrots_earned", carrotsEarned },
+                { "is_first_today", !alreadyCompletedToday }
+            });
         }
         else
         {

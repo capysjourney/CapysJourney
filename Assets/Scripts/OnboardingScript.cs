@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization;
@@ -225,7 +226,28 @@ public class SelectLanguagesScript : MonoBehaviour
         if (!worked)
         {
             Debug.LogError("Could not save file!");
+            return;
         }
+
+        // Track user registration with PostHog
+        string username = PlayerPrefs.GetString("username", "");
+        int age = PlayerPrefs.GetInt("age", 0);
+        
+        // Ensure PostHogManager is initialized
+        PostHogManager.Instance.Initialize();
+        string distinctId = PostHogManager.Instance.DistinctId;
+        
+        PostHogManager.Instance.Identify(distinctId, new Dictionary<string, object>
+        {
+            { "username", username },
+            { "age", age }
+        });
+
+        PostHogManager.Instance.Capture("user_registered", new Dictionary<string, object>
+        {
+            { "username", username },
+            { "age", age }
+        });
     }
 
     private void HideAllStages()
