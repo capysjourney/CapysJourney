@@ -64,12 +64,6 @@ public static class GameManager
     {
         CurrLevel = level;
         CurrWorld = level.World;
-    }
-
-    public static void ChangeLevel(Level level)
-    {
-        CurrWorld = level.World;
-        CurrLevel = level;
         WithStats(stats => stats.ChangeLevel(level), true);
     }
 
@@ -142,7 +136,7 @@ public static class GameManager
     public static float GetTotalMinutesMeditated()
     {
         float result = 0;
-        WithStats(stats => result = stats.SecondsMeditated / 60, false);
+        WithStats(stats => result = MathF.Floor(stats.SecondsMeditated / 60f), false);
         return result;
     }
 
@@ -158,10 +152,10 @@ public static class GameManager
         }
     }
 
-    public static string GetAudioName(int ageRangeIdx)
+    public static string GetAudioName(AgeGroup ageGroup)
     {
         // todo - age specific audio
-        return CurrLevel.AudioFile;
+        return CurrLevel.AudioFile[ageGroup];
     }
 
     public static LinkedList<MoodEntry> GetMoodEntries()

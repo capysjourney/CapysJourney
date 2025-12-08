@@ -127,7 +127,6 @@ abstract public class MapScript : MonoBehaviour
         script.ConfigureStartButton(() =>
         {
             GameManager.SetCurrLevel(btnLevel);
-            GameManager.ChangeLevel(btnLevel);
             SceneManager.LoadSceneAsync("Lesson");
         });
         _levelPopupAbove.SetActive(levelPopup == _levelPopupAbove);

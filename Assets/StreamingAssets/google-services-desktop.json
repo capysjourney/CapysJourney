@@ -1,0 +1,31 @@
+{
+  "project_info": {
+    "project_number": "284558679555",
+    "project_id": "capy-s-journey-bc2f8",
+    "storage_bucket": "capy-s-journey-bc2f8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:284558679555:ios:25617d66f8790e760eb836",
+        "android_client_info": {
+          "package_name": "com.CapysJourney.CapysJourney"
+        }
+      },
+      "api_key": [
+        {
+          "current_key": "AIzaSyB27fzC3mX6qbqBIlb6O3LzVY6HJ7W0Nr4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 0
+        },
+        "appinvite_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

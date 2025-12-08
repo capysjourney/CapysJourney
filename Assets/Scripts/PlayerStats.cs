@@ -99,7 +99,7 @@ public class PlayerStats
     public Accessory CurrFacewear = null;
     public Accessory CurrPet = null;
 
-    public int NumCarrots = 1000;
+    public int NumCarrots = 10;
     //public int NumCarrots = 0;
     public int BestStreak = 0;
     public int CurrStreak = 0;
