@@ -21,13 +21,26 @@ public enum LevelEnum
     W1MM3
 }
 
+public enum AgeGroup
+{
+    Child,
+    YoungTeen,
+    OldTeen,
+    Adult
+}
 public class Level
 {
     public static readonly Level World1Level1 = new(
        shortName: "Level 1-1",
        name: "Meet Capy & Planting Seeds",
        description: "Introducing the practice of mindfulness",
-       audioFile: "W1L1A0",
+       audioFile: new()
+       {
+           { AgeGroup.Child, "W1L1A0" },
+           { AgeGroup.YoungTeen, "W1L1A0" },
+           { AgeGroup.OldTeen, "W1L1A3" },
+           { AgeGroup.Adult, "W1L1A3" }
+       },
        bannerFile: "W1L1A0L",
        mapPosition: new Vector2(129, 200.525f),
        capyPosition: new Vector2(-84, -440),
@@ -37,7 +50,13 @@ public class Level
         shortName: "Level 1-2",
         name: "The Fading Bell",
         description: "Investigating awareness with a fading bell",
-        audioFile: "W1L2A0",
+       audioFile: new()
+       {
+           { AgeGroup.Child, "W1L2A0" },
+           { AgeGroup.YoungTeen, "W1L2A0" },
+           { AgeGroup.OldTeen, "W1L2A3" },
+           { AgeGroup.Adult, "W1L2A3" }
+       },
         bannerFile: "W1L2L",
         mapPosition: new Vector2(129, 200.525f),
         capyPosition: new Vector2(-84, -248),
@@ -47,7 +66,13 @@ public class Level
         shortName: "Level 1-3",
         name: "Capy Meets the Breathing Cloud",
         description: "Learning to focus on the breath",
-        audioFile: "W1L3A0",
+       audioFile: new()
+       {
+           { AgeGroup.Child, "W1L3A0" },
+           { AgeGroup.YoungTeen, "W1L3A0" },
+           { AgeGroup.OldTeen, "W1L3A3" },
+           { AgeGroup.Adult, "W1L3A3" }
+       },
         bannerFile: "W1L3L",
         mapPosition: new Vector2(9, 66),
         capyPosition: new Vector2(33, -165),
@@ -57,7 +82,13 @@ public class Level
         shortName: "Level 1-4",
         name: "Mailbox of Friendly Wishes",
         description: "Extending compassion to ourself and others",
-        audioFile: "W1L4A0",
+       audioFile: new()
+       {
+           { AgeGroup.Child, "W1L4A0" },
+           { AgeGroup.YoungTeen, "W1L4A0" },
+           { AgeGroup.OldTeen, "W1L4A3" },
+           { AgeGroup.Adult, "W1L4A3" }
+       },
         bannerFile: "W1L4L",
         mapPosition: new Vector2(-210, 66),
         capyPosition: new Vector2(259, -165),
@@ -67,8 +98,14 @@ public class Level
         shortName: "Level 1-5",
         name: "Capy’s Cloud Thoughts",
         description: "Discussing the nature of our thoughts",
-        audioFile: "W1L5A0",
-        bannerFile: "W1L51_3",
+       audioFile: new()
+       {
+           { AgeGroup.Child, "W1L5A0" },
+           { AgeGroup.YoungTeen, "W1L5A0" },
+           { AgeGroup.OldTeen, "W1L5A3" },
+           { AgeGroup.Adult, "W1L5A3" }
+       },
+        bannerFile: "W1L5L1_3",
         mapPosition: new Vector2(-286, -59),
         capyPosition: new Vector2(355.4f, -47),
         enumName: LevelEnum.W1L5);
@@ -77,7 +114,13 @@ public class Level
         shortName: "Level 1-6",
         name: "Rainy Day Shelter",
         description: "Observing the sensations across our body",
-        audioFile: "W1L6A0",
+       audioFile: new()
+       {
+           { AgeGroup.Child, "W1L6A0" },
+           { AgeGroup.YoungTeen, "W1L6A0" },
+           { AgeGroup.OldTeen, "W1L6A3" },
+           { AgeGroup.Adult, "W1L6A3" }
+       },
         bannerFile: "W1L6LD",
         mapPosition: new Vector2(-286, -200.525f),
         capyPosition: new Vector2(355.4f, 139),
@@ -87,7 +130,13 @@ public class Level
         shortName: "Level 1-7",
         name: "Mirror Pool Check-In",
         description: "Learning to check-in with our emotions",
-        audioFile: "W1L7A0",
+         audioFile: new()
+         {
+            { AgeGroup.Child, "W1L7A0" },
+            { AgeGroup.YoungTeen, "W1L7A0" },
+            { AgeGroup.OldTeen, "W1L7A3" },
+            { AgeGroup.Adult, "W1L7A3" }
+         },
         bannerFile: "W1L7L",
         mapPosition: new Vector2(-191, -200.525f),
         capyPosition: new Vector2(249, 219),
@@ -97,7 +146,13 @@ public class Level
         shortName: "Level 1-8",
         name: "The Star Within",
         description: "Uncovering our inner wellbeing",
-        audioFile: "W1L8A0",
+        audioFile: new()
+        {
+            { AgeGroup.Child, "W1L8A0" },
+            { AgeGroup.YoungTeen, "W1L8A0" },
+            { AgeGroup.OldTeen, "W1L8A3" },
+            { AgeGroup.Adult, "W1L8A3" }
+        },
         bannerFile: "W1L8L",
         mapPosition: new Vector2(16, -200.525f),
         capyPosition: new Vector2(44, 219),
@@ -107,7 +162,13 @@ public class Level
         shortName: "Level 1-9",
         name: "Capy at the Crossroads",
         description: "Creating space between stimulus and response",
-        audioFile: "W1L9A0",
+        audioFile: new()
+        {
+            { AgeGroup.Child, "W1L9A0" },
+            { AgeGroup.YoungTeen, "W1L9A0" },
+            { AgeGroup.OldTeen, "W1L9A3" },
+            { AgeGroup.Adult, "W1L9A3" }
+        },
         bannerFile: "W1L9L",
         mapPosition: new Vector2(141, -200.525f),
         capyPosition: new Vector2(-84, 346),
@@ -117,7 +178,13 @@ public class Level
         shortName: "Level 1-10",
         name: "Campfire Reflections",
         description: "Reflecting on the journey so far",
-        audioFile: "W1L10A0",
+        audioFile: new()
+        {
+            { AgeGroup.Child, "W1L10A0" },
+            { AgeGroup.YoungTeen, "W1L10A0" },
+            { AgeGroup.OldTeen, "W1L10A3" },
+            { AgeGroup.Adult, "W1L10A3" }
+        },
         bannerFile: "W1L10L",
         mapPosition: new Vector2(141, -200.525f),
         capyPosition: new Vector2(-84, 537),
@@ -127,7 +194,13 @@ public class Level
         shortName: "Side Level 1-1",
         name: "Capy on the Calm River",
         description: "Sounds as objects of awareness",
-        audioFile: "W1SL1A0",
+        audioFile: new()
+        {
+            { AgeGroup.Child, "W1SL1A0" },
+            { AgeGroup.YoungTeen, "W1SL1A0" },
+            { AgeGroup.OldTeen, "W1SL1A3" },
+            { AgeGroup.Adult, "W1SL1A3" }
+        },
         bannerFile: "W1SL1L",
         mapPosition: new Vector2(-74, -27),
         capyPosition: new Vector2(145.9f, -7),
@@ -137,7 +210,13 @@ public class Level
         shortName: "Side Level 1-2",
         name: "Capy’s River Reflection",
         description: "The theory behind mindfulness",
-        audioFile: "W1SL2A0",
+        audioFile: new()
+        {
+            { AgeGroup.Child, "W1SL2A0" },
+            { AgeGroup.YoungTeen, "W1SL2A0" },
+            { AgeGroup.OldTeen, "W1SL2A3" },
+            { AgeGroup.Adult, "W1SL2A3" }
+        },
         bannerFile: "W1SL2L",
         mapPosition: new Vector2(-19, -29),
         capyPosition: new Vector2(-31.7f, 48.6f),
@@ -147,7 +226,13 @@ public class Level
         shortName: "Side Level 1-3",
         name: "Capy’s Tea Chat",
         description: "Clarifying the practice of mindfulness",
-        audioFile: "W1SL3A0",
+        audioFile: new()
+        {
+            { AgeGroup.Child, "W1L8A0" },
+            { AgeGroup.YoungTeen, "W1SL3A0" },
+            { AgeGroup.OldTeen, "W1SL3A3" },
+            { AgeGroup.Adult, "W1SL3A3" }
+        },
         bannerFile: "W1SL3L",
         mapPosition: new Vector2(-485, -6),
         capyPosition: new Vector2(566, 48.9f),
@@ -157,7 +242,13 @@ public class Level
         shortName: "Mini Meditation 1-1",
         name: "Feeling Overwhelmed",
         description: "Using acceptance and letting go as tools during stressful times",
-        audioFile: "W1MM1A0",
+        audioFile: new()
+        {
+            { AgeGroup.Child, "W1MM1" },
+            { AgeGroup.YoungTeen, "W1MM1" },
+            { AgeGroup.OldTeen, "W1MM1" },
+            { AgeGroup.Adult, "W1MM1" }
+        },
         bannerFile: "W1MM1L",
         mapPosition: new Vector2(381, -200.525f),
         capyPosition: new Vector2(-307, 437),
@@ -167,7 +258,13 @@ public class Level
         shortName: "Mini Meditation 1-2",
         name: "Capy’s Inspiration",
         description: "Reminding you that small steps and gentle care make a big difference",
-        audioFile: "W1MM2A0",
+        audioFile: new()
+        {
+            { AgeGroup.Child, "W1MM2" },
+            { AgeGroup.YoungTeen, "W1MM2" },
+            { AgeGroup.OldTeen, "W1MM2" },
+            { AgeGroup.Adult, "W1MM2" }
+        },
         bannerFile: "W1MM2L",
         mapPosition: new Vector2(381, -200.525f),
         capyPosition: new Vector2(-453, 499),
@@ -177,7 +274,13 @@ public class Level
         shortName: "Mini Meditation 1-3",
         name: "A Moment of Rest",
         description: "Softening the mind and body for a moment of calm",
-        audioFile: "W1MM3A0",
+        audioFile: new()
+        {
+            { AgeGroup.Child, "W1MM3" },
+            { AgeGroup.YoungTeen, "W1MM3" },
+            { AgeGroup.OldTeen, "W1MM3" },
+            { AgeGroup.Adult, "W1MM3" }
+        },
         bannerFile: "W1MM3L",
         mapPosition: new Vector2(381, -200.525f),
         capyPosition: new Vector2(-450, 348),
@@ -206,7 +309,7 @@ public class Level
     public string ShortName { get; }
     public string Name { get; }
     public string Description { get; }
-    public string AudioFile { get; }
+    public Dictionary<AgeGroup, string> AudioFile { get; }
     public string BannerFile { get; }
     public Vector2 MapPosition { get; }
     public Vector2 CapyPosition { get; }
@@ -241,8 +344,8 @@ public class Level
         {Level.World1MiniLevel2, new Level[]{ } },
         {Level.World1MiniLevel3, new Level[]{ } },
     };
-    
-    public Level(string shortName, string name, string description, string audioFile, string bannerFile, Vector2 mapPosition, Vector2 capyPosition, LevelEnum enumName)
+
+    public Level(string shortName, string name, string description, Dictionary<AgeGroup, string> audioFile, string bannerFile, Vector2 mapPosition, Vector2 capyPosition, LevelEnum enumName)
     {
         ShortName = shortName;
         Name = name;
@@ -291,7 +394,7 @@ public class World
     public readonly static Dictionary<WorldEnum, World> WorldLookup = new()
     {
         { WorldEnum.FirstSteps, FirstSteps }
-    };  
+    };
     public static HashSet<World> AllWorlds = new() { FirstSteps };
     private World(string name, HashSet<Level> levels, WorldEnum enumName)
     {

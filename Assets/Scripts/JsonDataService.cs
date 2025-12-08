@@ -13,7 +13,7 @@ public class JsonDataService : IDataService
 
     public bool SaveData<T>(string RelativePath, T Data, bool Encrypted=true)
     {
-        string path = Application.persistentDataPath + RelativePath;
+        string path = Path.Combine(Application.persistentDataPath, RelativePath);
 
         try
         {
@@ -62,14 +62,14 @@ public class JsonDataService : IDataService
         //Debug.Log($"Initialization Vector: {Convert.ToBase64String(aesProvider.IV)}");
         //Debug.Log($"Key: {Convert.ToBase64String(aesProvider.Key)}");
         string s = JsonConvert.SerializeObject(Data);
-        Debug.Log($"writing: {s}");
+        //Debug.Log($"writing: {s}");
         cryptoStream.Write(Encoding.ASCII.GetBytes(s));
     }
 
 
     public T LoadData<T>(string RelativePath, bool Encrypted=true)
     {
-        string path = Application.persistentDataPath + RelativePath;
+        string path = Path.Combine(Application.persistentDataPath, RelativePath);
 
         if (!File.Exists(path))
         {
