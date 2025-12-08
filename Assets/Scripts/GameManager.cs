@@ -29,12 +29,29 @@ public static class GameManager
 
     public static void CompleteLevel(float lessonDuration)
     {
+        Level completedLevel = CurrLevel;
+        int numExercisesCompleted = 0;
+        int numWorldsCompleted = 0;
+        
         WithStats(stats =>
         {
             stats.CompleteLevel(CurrLevel);
             stats.IncreaseSecondsMeditated(lessonDuration);
             MakeNextLevelsAvailable(stats);
+            numExercisesCompleted = stats.NumExercisesCompleted;
+            numWorldsCompleted = stats.NumWorldsCompleted;
         }, true);
+
+        // Track level completion with PostHog
+        PostHogManager.Instance.Capture("level_completed", new Dictionary<string, object>
+        {
+            { "level_name", completedLevel.ShortName },
+            { "level_enum", completedLevel.EnumName.ToString() },
+            { "world_name", completedLevel.World.Name },
+            { "lesson_duration_seconds", lessonDuration },
+            { "total_exercises_completed", numExercisesCompleted },
+            { "total_worlds_completed", numWorldsCompleted }
+        });
     }
 
     public static World GetCurrWorld()
@@ -234,7 +251,22 @@ public static class GameManager
 
     public static void Login()
     {
-        WithStats(stats => stats.Login(), true);
+        bool isFirstLogin = false;
+        WithStats(stats =>
+        {
+            DateTime lastLogin = stats.LastLogin;
+            stats.Login();
+            // Check if this is the first login (LastLogin was DateTime.MinValue)
+            isFirstLogin = lastLogin == DateTime.MinValue;
+        }, true);
+
+        // Track login with PostHog
+        PostHogManager.Instance.Capture("user_logged_in", new Dictionary<string, object>
+        {
+            { "is_first_login", isFirstLogin },
+            { "current_streak", GetCurrStreak() },
+            { "best_streak", GetBestStreak() }
+        });
     }
 
     /// <summary>
@@ -351,6 +383,21 @@ public static class GameManager
             stats.AddAccessory(accessory);
             bought = true;
         }, true);
+
+        // Track basket purchase with PostHog
+        if (bought)
+        {
+            PostHogManager.Instance.Capture("basket_purchased", new Dictionary<string, object>
+            {
+                { "basket_tier", basketTier.ToString() },
+                { "basket_cost", tierCosts[basketTier] },
+                { "accessory_tier", _lastAccessoryObtained.Tier.ToString() },
+                { "accessory_name", _lastAccessoryObtained.Name },
+                { "accessory_type", _lastAccessoryObtained.Type.ToString() },
+                { "remaining_carrots", GetNumCarrots() }
+            });
+        }
+
         return bought;
     }
 

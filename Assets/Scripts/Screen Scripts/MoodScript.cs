@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -204,9 +205,19 @@ public class MoodScript : MonoBehaviour
         _darkener.SetActive(true);
         _darkened = true;
         _popup.SetActive(true);
-        int carrotsEarned = GameManager.LoggedMoodToday() ? 0 : 10;
+        bool alreadyLoggedToday = GameManager.LoggedMoodToday();
+        int carrotsEarned = alreadyLoggedToday ? 0 : 10;
         GameManager.LogMood(mood, dateTime);
         _rewardText.text = carrotsEarned.ToString();
         GameManager.IncreaseCarrots(carrotsEarned);
+
+        // Track mood check-in completion with PostHog
+        PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
+        {
+            { "activity_type", "mood_check_in" },
+            { "mood", mood.ToString() },
+            { "carrots_earned", carrotsEarned },
+            { "is_first_today", !alreadyLoggedToday }
+        });
     }
 }
