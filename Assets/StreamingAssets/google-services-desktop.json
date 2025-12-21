@@ -7,22 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:284558679555:ios:25617d66f8790e760eb836",
+        "mobilesdk_app_id": "1:284558679555:android:109e1b14c88899f60eb836",
         "android_client_info": {
           "package_name": "com.CapysJourney.CapysJourney"
         }
       },
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB27fzC3mX6qbqBIlb6O3LzVY6HJ7W0Nr4"
+          "current_key": "AIzaSyCoIHKfh_jlfee4z1jOH4q_bloY43ndFQE"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 0
-        },
         "appinvite_service": {
-          "status": 1
+          "other_platform_oauth_client": []
         }
       }
     }
