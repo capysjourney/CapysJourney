@@ -12,7 +12,12 @@
           "package_name": "com.CapysJourney.CapysJourney"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "284558679555-t9u5469s7h4l2df6racvgjfeu966hcih.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCoIHKfh_jlfee4z1jOH4q_bloY43ndFQE"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "284558679555-t9u5469s7h4l2df6racvgjfeu966hcih.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "284558679555-h21brobodtt086nci9vd79f19vjbleg0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.CapysJourney.CapysJourney"
+              }
+            }
+          ]
         }
       }
     }
