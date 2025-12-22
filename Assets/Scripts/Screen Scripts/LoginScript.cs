@@ -76,6 +76,7 @@ public class LoginScript : MonoBehaviour
     private void OnContinueAsGuest()
     {
         // todo - guest login logic
+        _toOnboarding = true;
     }
 
     // Update is called once per frame
