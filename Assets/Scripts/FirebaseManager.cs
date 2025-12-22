@@ -46,12 +46,12 @@ public class FirebaseManager : MonoBehaviour
     {
         get
         {
-            if (applicationIsQuitting)
-            {
-                Debug.LogWarning("[Firebase Manager] Instance already destroyed on application quit." +
-                    " Won't create again - returning null.");
-                return null;
-            }
+            //if (applicationIsQuitting)
+            //{
+            //    Debug.LogWarning("[Firebase Manager] Instance already destroyed on application quit." +
+            //        " Won't create again - returning null.");
+            //    return null;
+            //}
 
             lock (_lock)
             {
@@ -73,14 +73,11 @@ public class FirebaseManager : MonoBehaviour
 
                     if (_instance == null)
                     {
-                        GameObject singleton = new GameObject();
+                        GameObject singleton = new();
                         _instance = singleton.AddComponent<FirebaseManager>();
                         singleton.name = "Firebase Manager [Singleton]";
 
                         DontDestroyOnLoad(singleton);
-
-                        Debug.Log("[Firebase Manager] Instance '" + singleton +
-                            "' was generated in the scene with DontDestroyOnLoad.");
                     }
                     else
                     {
@@ -111,7 +108,7 @@ public class FirebaseManager : MonoBehaviour
     }
 
 
-    private static bool applicationIsQuitting = false;
+    //private static bool applicationIsQuitting = false;
     /// <summary>
     /// When Unity quits, it destroys objects in a random order.
     /// In principle, a Singleton is only destroyed when application quits.
@@ -120,11 +117,12 @@ public class FirebaseManager : MonoBehaviour
     ///   even after stopping playing the Application. Really bad!
     /// So, this was made to be sure we're not creating that buggy ghost object.
     /// </summary>
-    public void OnDestroy()
-    {
-        if (Application.isPlaying)
-            applicationIsQuitting = true;
-    }
+    //public void OnDestroy()
+    //{
+    //    Debug.Log("[Firebase Manager] OnDestroy called.");
+    //    if (Application.isPlaying)
+    //        applicationIsQuitting = true;
+    //}
     #endregion
 
 }

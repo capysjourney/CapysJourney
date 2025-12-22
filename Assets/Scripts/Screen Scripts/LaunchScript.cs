@@ -105,12 +105,12 @@ public class LaunchScript : MonoBehaviour
         yield return new WaitForSeconds(LoadingLength);
         if (!PlayerPrefs.HasKey("username"))
         {
-            SceneManager.LoadSceneAsync("Onboarding");
+            SceneManager.LoadSceneAsync("Login");
         }
         else
         {
-            // todo uncomment
             SceneManager.LoadSceneAsync("Journey");
+            //SceneManager.LoadSceneAsync("Login");
         }
     }
 }

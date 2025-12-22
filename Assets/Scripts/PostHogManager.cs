@@ -79,7 +79,6 @@ public class PostHogManager : MonoBehaviour
         }
 
         _isInitialized = true;
-        Debug.Log($"PostHog: Initialized with distinct_id: {_distinctId}");
 
         // Process any queued events
         StartCoroutine(ProcessEventQueue());
