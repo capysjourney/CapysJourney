@@ -81,6 +81,7 @@ public class LessonScript : MonoBehaviour
     {
         string bannerName = GameManager.GetCurrLevel().BannerFile;
         Sprite sprite = Resources.Load<Sprite>(bannerName);
+
         if (sprite == null)
         {
             Debug.LogError("Banner image not found: " + bannerName);
