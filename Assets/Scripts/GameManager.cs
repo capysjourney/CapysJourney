@@ -5,12 +5,23 @@ using UnityEngine;
 
 public static class GameManager
 {
-    // world and level of current lesson or the lesson Capy is standing on.
+    /// <summary>
+    /// The current world that Capy is standing in.
+    /// </summary>
     private static World CurrWorld = null;
+
+    /// <summary>
+    /// The current level that Capy is standing on.
+    /// </summary>
     private static Level CurrLevel = null;
 
     private static readonly IDataService DataService = new JsonDataService();
     private static Tier? _lastBasketTier = null;
+
+    /// <summary>
+    /// The last accessory obtained from a basket purchase. 
+    /// Null if no basket has been purchased in the current session.
+    /// </summary>
     private static Accessory _lastAccessoryObtained = null;
 
     public const int NumWorlds = 1;
@@ -444,6 +455,10 @@ public static class GameManager
         WithStats(stats => stats.StopUsingAccessory(type), true);
     }
 
+    /// <summary>
+    /// Gets the currently used accessory of the given type. 
+    /// Returns null if no accessory of that type is currently being used.
+    /// </summary>
     public static Accessory GetCurrentAccessoryOfType(AccessoryType type)
     {
         Accessory result = null;

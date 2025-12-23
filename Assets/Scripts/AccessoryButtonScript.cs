@@ -9,7 +9,7 @@ public class AccessoryButtonScript : MonoBehaviour
     public Accessory accessory;
     public void SetOnClickListener(UnityEngine.Events.UnityAction action) => button.onClick.AddListener(action);
 
-    public void Check(bool check)
+    public void SetCheckmark(bool check)
     {
         checkmark.SetActive(check);
     }

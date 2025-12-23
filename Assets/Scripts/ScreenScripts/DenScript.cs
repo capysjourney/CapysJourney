@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -121,49 +122,50 @@ public class DenScript : MonoBehaviour
     [SerializeField] private GridLayoutGroup _accessoryGrid;
     [SerializeField] private GameObject _accessoryItemPrefab;
     [SerializeField] private GameObject _capy;
+
+    /// <summary>
+    /// Parent object for all capy accessories; has an image component of capy.
+    /// </summary>
     [SerializeField] private GameObject _capyGroup;
 
-    private Dictionary<Accessory, Sprite> _accessorySpriteMap;
+    private Dictionary<Accessory, Sprite> _spriteByAccessory;
+
+    /// <summary>
+    /// Currently selected accessory tab; null if no tab is selected
+    /// </summary>
     private AccessoryType? _selectedAccessoryTab = null;
-    private Dictionary<Button, AccessoryType> _accessoryTypeOfTabButton;
-    private Dictionary<AccessoryType, Button> _buttonOfType;
-    private Dictionary<AccessoryType, Sprite> _selectedTabMap;
-    private Dictionary<AccessoryType, Sprite> _unselectedTabMap;
-    private Dictionary<Accessory, Sprite> _selectedAccessoryMap;
-    private Dictionary<Accessory, Sprite> _unselectedAccessoryMap;
-    private Dictionary<Accessory, AccessoryTransform> _transformOfAccessory;
+
+    private Dictionary<Button, AccessoryType> _accessoryTypeByTabButton;
+    private Dictionary<AccessoryType, Button> _tabButtonByAccessoryType;
+
+    private Dictionary<AccessoryType, Sprite> _selectedTabSpriteByType;
+    private Dictionary<AccessoryType, Sprite> _unselectedTabSpriteByType;
+    private Dictionary<Accessory, Sprite> _selectedSpriteByAccessory;
+    private Dictionary<Accessory, Sprite> _unselectedSpriteByAccessory;
+    private Dictionary<Accessory, AccessoryTransform> _transformByAccessory;
 
     private class AccessoryTransform
     {
-        public float LeftAnchor;
-        public float RightAnchor;
-        public float TopAnchor;
-        public float BottomAnchor;
-        public float Left;
-        public float Right;
-        public float Top;
-        public float Bottom;
-        public AccessoryTransform(float leftAnchor = 0, float rightAnchor = 1, float topAnchor = 1, float bottomAnchor = 0, float left = 0, float right = 0, float top = 0, float bottom = 0)
+        public float PosX;
+        public float PosY;
+        public float Width;
+        public float Height;
+        public AccessoryTransform(float posX = 0.0f, float posY = 0.0f, float width = 0.0f, float height = 0.0f)
         {
-            LeftAnchor = leftAnchor;
-            RightAnchor = rightAnchor;
-            TopAnchor = topAnchor;
-            BottomAnchor = bottomAnchor;
-            Left = left;
-            Right = right;
-            Top = top;
-            Bottom = bottom;
+            PosX = posX;
+            PosY = posY;
+            Width = width;
+            Height = height;
         }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         _commonBasket.SetOnClickListener(() => BuyBasket(Tier.Common));
         _rareBasket.SetOnClickListener(() => BuyBasket(Tier.Rare));
         _epicBasket.SetOnClickListener(() => BuyBasket(Tier.Epic));
         _legendaryBasket.SetOnClickListener(() => BuyBasket(Tier.Legendary));
-        _accessorySpriteMap = new()
+        _spriteByAccessory = new()
         {
             { Accessory.OrangeHat, _orangeHatSprite },
             { Accessory.PartyHat, _partyHatSprite },
@@ -186,7 +188,7 @@ public class DenScript : MonoBehaviour
             { Accessory.FloatingKoiFish, _floatingKoiFishSprite },
             //{ Accessory.GoldenBabyCapy, _goldenBabyCapySprite }
         };
-        _accessoryTypeOfTabButton = new()
+        _accessoryTypeByTabButton = new()
         {
             { _hatTab, AccessoryType.Hat },
             { _neckwearTab, AccessoryType.Neckwear },
@@ -194,15 +196,8 @@ public class DenScript : MonoBehaviour
             { _faceTab, AccessoryType.Facewear },
             { _petTab, AccessoryType.Pet }
         };
-        _buttonOfType = new()
-        {
-            { AccessoryType.Hat, _hatTab },
-            { AccessoryType.Neckwear, _neckwearTab },
-            { AccessoryType.Clothing, _clothingTab },
-            { AccessoryType.Facewear, _faceTab },
-            { AccessoryType.Pet, _petTab }
-        };
-        _selectedTabMap = new()
+        _tabButtonByAccessoryType = _accessoryTypeByTabButton.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+        _selectedTabSpriteByType = new()
         {
             { AccessoryType.Hat, _hatTabSelected },
             { AccessoryType.Neckwear, _neckwearTabSelected },
@@ -210,7 +205,7 @@ public class DenScript : MonoBehaviour
             { AccessoryType.Facewear, _faceTabSelected },
             { AccessoryType.Pet, _petTabSelected }
         };
-        _unselectedTabMap = new()
+        _unselectedTabSpriteByType = new()
         {
             { AccessoryType.Hat, _hatTabUnselected },
             { AccessoryType.Neckwear, _neckwearTabUnselected },
@@ -218,7 +213,7 @@ public class DenScript : MonoBehaviour
             { AccessoryType.Facewear, _faceTabUnselected },
             { AccessoryType.Pet, _petTabUnselected }
         };
-        _selectedAccessoryMap = new()
+        _selectedSpriteByAccessory = new()
         {
             { Accessory.OrangeHat, _orangeHatSelected },
             { Accessory.PartyHat, _partyHatSelected },
@@ -241,7 +236,7 @@ public class DenScript : MonoBehaviour
             { Accessory.FloatingKoiFish, _floatingKoiFishSelected },
             //{ Accessory.GoldenBabyCapy, _goldenBabyCapySelected  
         };
-        _unselectedAccessoryMap = new()
+        _unselectedSpriteByAccessory = new()
         {
             { Accessory.OrangeHat, _orangeHatUnselected },
             { Accessory.PartyHat, _partyHatUnselected },
@@ -264,30 +259,30 @@ public class DenScript : MonoBehaviour
             { Accessory.FloatingKoiFish, _floatingKoiFishUnselected }
             //{ Accessory.GoldenBabyCapy, _goldenBabyCapyUnselected}
         };
-        _transformOfAccessory = new()
+        _transformByAccessory = new()
         {
-            { Accessory.OrangeHat, new AccessoryTransform(leftAnchor:0.4456357f, rightAnchor:0.658876f, bottomAnchor: 0.9135278f, top:-28.3f) },
-            { Accessory.PartyHat, new AccessoryTransform(leftAnchor:0.468876f, rightAnchor:0.6783799f, bottomAnchor:0.8678057f, top:-41.5f) },
-            { Accessory.AstronautHelmet, new AccessoryTransform(leftAnchor: 0.1317519f, bottomAnchor:0.386f, right:-3.5f, top:-24.6f) },
+            { Accessory.OrangeHat, new AccessoryTransform(posX: 15,posY:123,width:53.61f,height:47.04f) },
+            { Accessory.PartyHat, new AccessoryTransform(posX: 14.3f,posY: 128.4f,width:50f, height:70f) },
+            { Accessory.AstronautHelmet, new AccessoryTransform(posX: 17,posY: 64,width: 204.1f,height:177.03f) },
             //{ Accessory.UnicornHorn, new AccessoryTransform() },
-            { Accessory.Scarf, new AccessoryTransform(leftAnchor:0.2325039f,rightAnchor:0.8256202f, bottomAnchor:0.3794722f, topAnchor:0.7180001f) },
-            { Accessory.PearlNecklace, new AccessoryTransform(leftAnchor:0.2325039f,rightAnchor:0.8256202f, bottomAnchor:0.3794722f, topAnchor:0.7180001f) },
-            { Accessory.FeatherBoa, new AccessoryTransform(leftAnchor:0.2015039f,rightAnchor:0.9031241f,bottomAnchor:0.2326111f,topAnchor:0.6805278f) },
+            { Accessory.Scarf, new AccessoryTransform(posX: 6.1f,posY: 9.1f, width: 132.09f, height:89.4f) },
+            { Accessory.PearlNecklace, new AccessoryTransform(posX: 6.1f,posY: 12.9f, width: 132.09f, height:89.4f) },
+            { Accessory.FeatherBoa, new AccessoryTransform(posX: 6.6f, posY: -13.6f, width: 143.9f, height: 105.4f) },
             //{ Accessory.GoldChain, new AccessoryTransform() },
-            { Accessory.Tshirt, new AccessoryTransform(leftAnchor:0.07749613f,rightAnchor:0.8255969f,bottomAnchor:0.1978889f,topAnchor:0.6526946f) },
-            { Accessory.Floatie, new AccessoryTransform(leftAnchor:0.003875969f, rightAnchor:0.8953722f, bottomAnchor:0.184f, topAnchor:0.5035278f)},
-            { Accessory.SpaceSuit, new AccessoryTransform(leftAnchor:0.08137209f,rightAnchor:0.8604962f,bottomAnchor:0.066f, topAnchor:0.6456946f) },
+            { Accessory.Tshirt, new AccessoryTransform(posX: -7.5f, posY: -11.6f, width: 179.02f, height: 108.6f) },
+            { Accessory.Floatie, new AccessoryTransform(posX: -8.3f, posY: -32.5f, width: 189.3f, height: 108.6f) },
+            { Accessory.SpaceSuit, new AccessoryTransform(posX: -5.6f,posY: -36.3f,width: 189.4f, height:140.5f) },
             //{ Accessory.RoyalRobes, new AccessoryTransform() },
-            { Accessory.Mustache, new AccessoryTransform(leftAnchor:0.624f,bottomAnchor:0.566f, topAnchor:0.7360001f,right:-7f) },
-            { Accessory.HeartGlasses, new AccessoryTransform(leftAnchor:0.2712481f,rightAnchor:0.9806201f,bottomAnchor:0.6805278f,topAnchor:0.9720001f) },
-            { Accessory.SuperheroMask, new AccessoryTransform(leftAnchor:0.313876f, rightAnchor:0.9457442f, bottomAnchor:0.6734722f,topAnchor:0.913f) },
+            { Accessory.Mustache, new AccessoryTransform(posX: 72.2f, posY: 38.5f, width: 87.9f, height: 46f) },
+            { Accessory.HeartGlasses, new AccessoryTransform(posX: 29.3f, posY: 80.3f, width: 174,height: 66.8f) },
+            { Accessory.SuperheroMask, new AccessoryTransform(posX: 29.3f, posY: 74, width: 138.7f, height: 60f) },
             //{ Accessory.GoldMasqueradeMask, new AccessoryTransform() },
-            { Accessory.Rock, new AccessoryTransform(rightAnchor:0.3333799f,bottomAnchor:0.02083333f,topAnchor:0.25f,left:-23) },
-            { Accessory.RubberDuck, new AccessoryTransform(leftAnchor:0.693752f,bottomAnchor:0.06247223f,topAnchor:0.3785278f,right:-10)},
-            { Accessory.FloatingKoiFish, new AccessoryTransform(leftAnchor:0.6472481f, bottomAnchor:0.198f, topAnchor:0.5384722f,right:-21) }
+            { Accessory.Rock, new AccessoryTransform(posX: -81.5f, posY: -92.5f, width: 99.56f, height: 56.48f) },
+            { Accessory.RubberDuck, new AccessoryTransform(posX: 80f, posY: -71.5f, width: 80.91f, height: 79f) },
+            { Accessory.FloatingKoiFish, new AccessoryTransform(posX: 75.8f, posY: -32.9f, width: 105.77f, height:79f) }
             //{ Accessory.GoldenBabyCapy, new AccessoryTransform() }
         };
-        foreach (var pair in _accessoryTypeOfTabButton)
+        foreach (var pair in _accessoryTypeByTabButton)
         {
             Button tabButton = pair.Key;
             AccessoryType type = pair.Value;
@@ -322,13 +317,13 @@ public class DenScript : MonoBehaviour
         ResetAccessoryTabs();
         List<Accessory> accessories = GameManager.GetOwnedAccessoriesOfType(type);
         ConfigureAndShowPopup(type, accessories);
-        ConfigureGrid(type, accessories);
+        ConfigurePopupGrid(type, accessories);
     }
 
     private void ConfigureAndShowPopup(AccessoryType type, List<Accessory> accessories)
     {
         _selectedAccessoryTab = type;
-        _buttonOfType[type].image.sprite = _selectedTabMap[type];
+        _tabButtonByAccessoryType[type].image.sprite = _selectedTabSpriteByType[type];
         _accessoryPopupHeader.text = type switch
         {
             AccessoryType.Hat => "Hats",
@@ -340,7 +335,10 @@ public class DenScript : MonoBehaviour
         };
         _numAccessoriesOwnedText.text = $"{accessories.Count}/{GameManager.NumTotalAccessoriesOfType(type)} Owned";
         float highestY = -28.5f;
+
+        // difference in height between tab buttons
         float diff = 65f;
+
         float newTriangleY = type switch
         {
             AccessoryType.Hat => highestY,
@@ -366,7 +364,7 @@ public class DenScript : MonoBehaviour
         _accessoryPopup.SetActive(true);
     }
 
-    private void ConfigureGrid(AccessoryType type, List<Accessory> accessories)
+    private void ConfigurePopupGrid(AccessoryType type, List<Accessory> accessories)
     {
         foreach (Transform child in _accessoryGrid.transform)
         {
@@ -376,32 +374,34 @@ public class DenScript : MonoBehaviour
         foreach (Accessory accessory in accessories)
         {
             GameObject accessoryItem = Instantiate(_accessoryItemPrefab, _accessoryGrid.transform);
-            AccessoryButtonScript accBtn = accessoryItem.GetComponent<AccessoryButtonScript>();
+            AccessoryButtonScript accessoryBtn = accessoryItem.GetComponent<AccessoryButtonScript>();
 
             // if no accessory of this type is used, or if this accessory is the one in use, show selected sprite. Otherwise, show unselected sprite
-            Sprite sprite = accInUse == null || accInUse == accessory ? _selectedAccessoryMap[accessory] : _unselectedAccessoryMap[accessory];
-            accBtn.Check(accInUse == accessory);
-            accBtn.Image = accessoryItem.GetComponent<Image>();
-            accBtn.Image.sprite = sprite;
-            accBtn.accessory = accessory;
-            accBtn.SetOnClickListener(() =>
+            Sprite sprite = accInUse == null || accInUse == accessory
+                ? _selectedSpriteByAccessory[accessory]
+                : _unselectedSpriteByAccessory[accessory];
+            accessoryBtn.SetCheckmark(accInUse == accessory);
+            accessoryBtn.Image = accessoryItem.GetComponent<Image>();
+            accessoryBtn.Image.sprite = sprite;
+            accessoryBtn.accessory = accessory;
+            accessoryBtn.SetOnClickListener(() =>
             {
                 // if the accessory is already in use, reset to no accessory
                 bool reset = GameManager.GetCurrentAccessoryOfType(type) != null
-                    && accBtn.Image.sprite == _selectedAccessoryMap[accessory];
+                    && accessoryBtn.Image.sprite == _selectedSpriteByAccessory[accessory];
                 if (reset) GameManager.StopUsingAccessory(type);
                 else GameManager.UseAccessory(accessory);
-                foreach (Transform child in _accessoryGrid.transform)
+                foreach (Transform childButtonTransform in _accessoryGrid.transform)
                 {
-                    AccessoryButtonScript childButtonScript = child.GetComponent<AccessoryButtonScript>();
+                    AccessoryButtonScript childButtonScript = childButtonTransform.GetComponent<AccessoryButtonScript>();
                     Accessory childAccessory = childButtonScript.accessory;
                     if (childAccessory != null)
                     {
                         Sprite childSprite = !reset && childAccessory != accessory
-                                ? _unselectedAccessoryMap[childAccessory]
-                                : _selectedAccessoryMap[childAccessory];
+                                ? _unselectedSpriteByAccessory[childAccessory]
+                                : _selectedSpriteByAccessory[childAccessory];
                         childButtonScript.Image.sprite = childSprite;
-                        childButtonScript.Check(!reset && childAccessory == accessory);
+                        childButtonScript.SetCheckmark(!reset && childAccessory == accessory);
                     }
                 }
                 DressCapy();
@@ -418,21 +418,23 @@ public class DenScript : MonoBehaviour
 
     private void ResetAccessoryTabs()
     {
-        foreach (Button tabButton in _accessoryTypeOfTabButton.Keys)
+        foreach (Button tabButton in _accessoryTypeByTabButton.Keys)
         {
-            tabButton.image.sprite = _unselectedTabMap[_accessoryTypeOfTabButton[tabButton]];
+            tabButton.image.sprite = _unselectedTabSpriteByType[_accessoryTypeByTabButton[tabButton]];
         }
     }
 
     private void DressCapy()
     {
-        // get all accessories currently being used
         Accessory hat = GameManager.GetCurrentAccessoryOfType(AccessoryType.Hat);
         Accessory neckwear = GameManager.GetCurrentAccessoryOfType(AccessoryType.Neckwear);
         Accessory clothing = GameManager.GetCurrentAccessoryOfType(AccessoryType.Clothing);
         Accessory facewear = GameManager.GetCurrentAccessoryOfType(AccessoryType.Facewear);
         Accessory pet = GameManager.GetCurrentAccessoryOfType(AccessoryType.Pet);
-        Accessory[] accessories = { clothing, facewear, pet, neckwear, hat }; // order matters
+
+        // order matters here for layering
+        Accessory[] accessories = { clothing, facewear, pet, neckwear, hat };
+
         foreach (Transform child in _capyGroup.transform)
         {
             if (child != _capy.transform)
@@ -440,24 +442,21 @@ public class DenScript : MonoBehaviour
                 Destroy(child.gameObject);
             }
         }
-        Sprite[] sprites = new Sprite[5];
-        for (int i = 0; i < accessories.Length; i++)
+        foreach (Accessory accessory in accessories)
         {
-            Accessory acc = accessories[i];
-            if (acc == null) continue;
-            Sprite sprite = _accessorySpriteMap[acc];
-            sprites[i] = sprite;
-            GameObject gameObject = new();
-            gameObject.transform.SetParent(_capyGroup.transform);
-            AccessoryTransform transform = _transformOfAccessory[acc];
-            Image img = gameObject.AddComponent<Image>();
+            if (accessory == null) continue;
+            Sprite sprite = _spriteByAccessory[accessory];
+            GameObject accessoryGO = new();
+            accessoryGO.transform.SetParent(_capyGroup.transform);
+            AccessoryTransform transform = _transformByAccessory[accessory];
+            Image img = accessoryGO.AddComponent<Image>();
             img.preserveAspect = true;
             img.sprite = sprite;
-            RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
-            rectTransform.anchorMin = new Vector2(transform.LeftAnchor, transform.BottomAnchor);
-            rectTransform.anchorMax = new Vector2(transform.RightAnchor, transform.TopAnchor);
-            rectTransform.offsetMin = new Vector2(transform.Left, transform.Bottom);
-            rectTransform.offsetMax = new Vector2(transform.Right, transform.Top);
+            RectTransform rectTransform = accessoryGO.GetComponent<RectTransform>();
+            rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            rectTransform.anchoredPosition = new Vector2(transform.PosX, transform.PosY);
+            rectTransform.sizeDelta = new Vector2(transform.Width, transform.Height);
             rectTransform.localScale = new Vector3(1, 1, 1);
         }
     }
