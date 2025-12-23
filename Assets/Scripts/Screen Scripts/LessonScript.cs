@@ -70,14 +70,8 @@ public class LessonScript : MonoBehaviour
         {
             eventID = EventTriggerType.PointerUp
         };
-        EventTrigger.Entry pointerDown = new()
-        {
-            eventID = EventTriggerType.PointerDown
-        };
         pointerUp.callback.AddListener((eventData) => OnUserReleasedSlider());
-        pointerDown.callback.AddListener((eventData) => OnUserPressedSlider());
         _sliderTrigger.triggers.Add(pointerUp);
-        _sliderTrigger.triggers.Add(pointerDown);
         Brighten();
         _levelCompletePopup.SetActive(false);
         UpdateForwardButtonState();
@@ -180,7 +174,6 @@ public class LessonScript : MonoBehaviour
 
     private void OnSliderValueChanged(float value)
     {
-        Debug.Log("[OnSliderValueChanged] called with " + value);
         if (value > _maxTimeReached)
         {
             _slider.SetValueWithoutNotify(_maxTimeReached);
