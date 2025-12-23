@@ -113,6 +113,7 @@ public class PlayerStats
 
     private const int MaxMoodEntries = 30;
     private const int MaxGratitudeEntries = 10;
+    private const bool DebugMode = true; // todo - set to false for production
     public PlayerStats()
     {
         foreach (World world in World.AllWorlds)
@@ -123,13 +124,16 @@ public class PlayerStats
             }
         }
         LevelStatuses[Level.World1Level1.EnumName] = LevelStatus.Available;
-        //foreach (Accessory accessory in Accessory.AllAccesories)
-        //{
-        //    if(accessory.Tier != Tier.Legendary)
-        //    {
-        //        AccessoriesOwned.Add(accessory);
-        //    }
-        //}
+        if (DebugMode)
+        {
+            foreach (Accessory accessory in Accessory.AllAccesories)
+            {
+                if (accessory.Tier != Tier.Legendary)
+                {
+                    AccessoriesOwned.Add(accessory);
+                }
+            }
+        }
     }
 
     /// <summary>
