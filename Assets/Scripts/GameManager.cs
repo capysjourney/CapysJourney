@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Rendering.Universal.Internal;
 
 public static class GameManager
 {
@@ -32,7 +29,7 @@ public static class GameManager
         Level completedLevel = CurrLevel;
         int numExercisesCompleted = 0;
         int numWorldsCompleted = 0;
-        
+
         WithStats(stats =>
         {
             stats.CompleteLevel(CurrLevel);
@@ -70,6 +67,13 @@ public static class GameManager
             UpdateWorldAndLevel();
         }
         return CurrLevel;
+    }
+
+    public static bool HasCompletedLevel(Level level)
+    {
+        bool result = false;
+        WithStats(stats => result = stats.GetLevelStatus(level) == LevelStatus.Completed, false);
+        return result;
     }
 
     public static void SetCurrWorld(World world)

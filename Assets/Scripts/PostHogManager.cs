@@ -174,8 +174,8 @@ public class PostHogManager : MonoBehaviour
         string json = SerializeToJson(payload);
         byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
 
-        Debug.Log($"PostHog: Sending event '{eventName}' to {host}/e/");
-        Debug.Log($"PostHog: JSON payload: {json}");
+        //Debug.Log($"PostHog: Sending event '{eventName}' to {host}/e/");
+        //Debug.Log($"PostHog: JSON payload: {json}");
 
         using (UnityWebRequest request = new UnityWebRequest($"{host}/e/", "POST"))
         {
@@ -187,7 +187,7 @@ public class PostHogManager : MonoBehaviour
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log($"PostHog: Successfully sent event '{eventName}'. Response: {request.downloadHandler.text}");
+                //Debug.Log($"PostHog: Successfully sent event '{eventName}'. Response: {request.downloadHandler.text}");
             }
             else
             {

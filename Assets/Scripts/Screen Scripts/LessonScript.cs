@@ -1,6 +1,5 @@
 using System;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -31,7 +30,8 @@ public class LessonScript : MonoBehaviour
     [SerializeField] private GameObject _levelCompletePopup;
     private Image _pauseButtonImage;
     private Image _bookmarkButtonImage;
-    private float _timeElapsed = 0;
+    private Image _forwardButtonImage;
+    private float _maxTimeReached = 0;
 
     /// <summary>
     /// Duration of the audio clip in seconds.
@@ -39,12 +39,18 @@ public class LessonScript : MonoBehaviour
     private float _duration;
 
     private bool _playAudio = false;
+    private bool _hasCompleted = false;
+    private bool _userIsDraggingSlider = false;
 
     void Start()
     {
         _pauseButtonImage = _pauseButton.GetComponent<Image>();
         _bookmarkButtonImage = _bookmarkButton.GetComponent<Image>();
-        _title.text = GameManager.GetCurrLevel().Name;
+        _forwardButtonImage = _forwardButton.GetComponent<Image>();
+        Level currLevel = GameManager.GetCurrLevel();
+        _title.text = currLevel.Name;
+        _hasCompleted = GameManager.HasCompletedLevel(currLevel);
+
         LoadImage();
         LoadAudio();
         _slider.maxValue = _duration;
@@ -58,19 +64,18 @@ public class LessonScript : MonoBehaviour
         _backArrow.onClick.AddListener(ReturnToJourney);
         _homeButton.onClick.AddListener(ReturnToJourney);
         _bookmarkButton.onClick.AddListener(OnBookmarkButtonClicked);
-        EventTrigger.Entry entry = new()
+        _slider.onValueChanged.AddListener(OnSliderValueChanged);
+        // only update audio, etc. once the user unselects the slider
+        EventTrigger.Entry pointerUp = new()
         {
             eventID = EventTriggerType.PointerUp
         };
-        entry.callback.AddListener((eventData) =>
-        {
-            UpdateAudio();
-        });
-        _sliderTrigger.triggers.Add(entry);
+        pointerUp.callback.AddListener((eventData) => OnUserReleasedSlider());
+        _sliderTrigger.triggers.Add(pointerUp);
         Brighten();
         _levelCompletePopup.SetActive(false);
+        UpdateForwardButtonState();
     }
-
     private void ReturnToJourney() => SceneManager.LoadSceneAsync("Journey");
 
     private void Darken() => _darkener.SetActive(true);
@@ -100,6 +105,7 @@ public class LessonScript : MonoBehaviour
         }
         _audioSource.clip = audioClip;
         _duration = audioClip.length;
+        _maxTimeReached = _hasCompleted ? _duration : 0;
         _playAudio = true;
         UnpauseAudio();
     }
@@ -109,13 +115,15 @@ public class LessonScript : MonoBehaviour
         if (age <= 10)
         {
             return AgeGroup.Child;
-        } else if (age <= 14)
+        }
+        else if (age <= 14)
         {
             return AgeGroup.YoungTeen;
-        } else if (age <= 19)
+        }
+        else if (age <= 19)
         {
             return AgeGroup.OldTeen;
-        } 
+        }
         else
         {
             return AgeGroup.Adult;
@@ -124,22 +132,29 @@ public class LessonScript : MonoBehaviour
 
     private void OnBackward()
     {
-        _timeElapsed = Mathf.Max(0, _timeElapsed - 15);
-        _slider.value = _timeElapsed;
-        _timeElapsedText.text = FormatSeconds(_timeElapsed);
-        UpdateAudio();
+        _audioSource.time = Mathf.Max(0, _audioSource.time - 15);
+        _slider.SetValueWithoutNotify(_audioSource.time);
+        _timeElapsedText.text = FormatSeconds(_audioSource.time);
+        UpdateForwardButtonState();
     }
 
     private void OnForward()
     {
-        _timeElapsed = Mathf.Min(_duration, _timeElapsed + 15);
-        _slider.value = _timeElapsed;
-        _timeElapsedText.text = FormatSeconds(_timeElapsed);
-        UpdateAudio();
-        if (_timeElapsed == _duration)
+        float targetTime = Mathf.Min(_duration, _audioSource.time + 15);
+
+        // Only allow forward if user has already reached that point or lesson is completed
+        if (targetTime <= _maxTimeReached)
         {
-            OnDone();
+            _audioSource.time = targetTime;
+            _slider.SetValueWithoutNotify(_audioSource.time);
+            _timeElapsedText.text = FormatSeconds(_audioSource.time);
+            if (_audioSource.time == _duration)
+            {
+                OnDone();
+            }
         }
+
+        UpdateForwardButtonState();
     }
 
     private void OnPause()
@@ -157,16 +172,64 @@ public class LessonScript : MonoBehaviour
         }
     }
 
-    private void UpdateAudio()
+    private void OnSliderValueChanged(float value)
     {
-        if (_slider.value >= _duration)
+        if (value > _maxTimeReached)
         {
-            PauseAudio();
+            _slider.SetValueWithoutNotify(_maxTimeReached);
+        }
+        // We consider the user to be dragging if they are in range
+        _userIsDraggingSlider = value <= _maxTimeReached;
+    }
+
+    private void OnUserReleasedSlider()
+    {
+        if (!_userIsDraggingSlider) return;
+        float sliderValue = _slider.value;
+        if (sliderValue > _maxTimeReached)
+        {
+            // illegal sliding, revert to max allowed
+            _slider.SetValueWithoutNotify(_maxTimeReached);
         }
         else
         {
-            _audioSource.time = _slider.value;
+            _slider.SetValueWithoutNotify(sliderValue);
+            if (!Mathf.Approximately(_audioSource.time, sliderValue))
+            {
+                _audioSource.time = sliderValue;
+            }
+            _timeElapsedText.text = FormatSeconds(_audioSource.time);
         }
+        _userIsDraggingSlider = false;
+    }
+    private void UpdateForwardButtonState()
+    {
+        float targetTime = Mathf.Min(_duration, _audioSource.time + 15);
+        bool canFastForward = targetTime <= _maxTimeReached;
+
+        _forwardButton.interactable = canFastForward;
+
+        // Darken the button when disabled
+        Color buttonColor = _forwardButtonImage.color;
+        buttonColor.a = canFastForward ? 1f : 0.5f;
+        _forwardButtonImage.color = buttonColor;
+    }
+    void Update()
+    {
+        if (!_playAudio) return;
+        if (_audioSource.time >= _duration)
+        {
+            _timeElapsedText.text = FormatSeconds(_duration);
+            OnDone();
+            return;
+        }
+        if (!_userIsDraggingSlider)
+        {
+            _slider.SetValueWithoutNotify(_audioSource.time);
+        }
+        _timeElapsedText.text = FormatSeconds(_audioSource.time);
+        _maxTimeReached = Math.Max(_maxTimeReached, _audioSource.time);
+        UpdateForwardButtonState();
     }
 
     private void PauseAudio()
@@ -183,38 +246,13 @@ public class LessonScript : MonoBehaviour
         _pauseButtonImage.sprite = _unpaused;
     }
 
-    void Update()
-    {
-        if (_playAudio)
-        {
-            UpdateTimeElapsed();
-        }
-        _timeElapsedText.text = FormatSeconds(_timeElapsed);
-    }
-
-    private void UpdateTimeElapsed()
-    {
-        float newTimeElapsed = _slider.value;
-        if (newTimeElapsed < _duration)
-        {
-            _timeElapsed = Math.Min(_duration, newTimeElapsed + Time.deltaTime);
-            _slider.value = _timeElapsed;
-            _timeElapsedText.text = FormatSeconds(_timeElapsed);
-        }
-        else
-        {
-            _timeElapsed = newTimeElapsed;
-            _timeElapsedText.text = FormatSeconds(_timeElapsed);
-            OnDone();
-        }
-    }
-
     private void OnDone()
     {
         PauseAudio();
         Darken();
         _levelNumText.text = GameManager.GetCurrLevel().ShortName;
         GameManager.CompleteLevel(_duration);
+        _hasCompleted = true;
         if (GameManager.IsLevelBookmarked())
         {
             _bookmarkButtonImage.sprite = _filledBookmark;
@@ -224,18 +262,20 @@ public class LessonScript : MonoBehaviour
             _bookmarkButtonImage.sprite = _unfilledBookmark;
         }
         _levelCompletePopup.SetActive(true);
+        UpdateForwardButtonState();
     }
 
     private void Redo()
     {
         _levelCompletePopup.SetActive(false);
-        _timeElapsed = 0;
+        _maxTimeReached = 0;
         _playAudio = false;
         _audioSource.Stop();
         _audioSource.time = 0;
-        _slider.value = 0f;
+        _slider.SetValueWithoutNotify(0);
         Brighten();
         UnpauseAudio();
+        UpdateForwardButtonState();
     }
 
     private void OnBookmarkButtonClicked()
