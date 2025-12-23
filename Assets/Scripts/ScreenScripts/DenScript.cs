@@ -121,7 +121,6 @@ public class DenScript : MonoBehaviour
     [SerializeField] private TMP_Text _numAccessoriesOwnedText;
     [SerializeField] private GridLayoutGroup _accessoryGrid;
     [SerializeField] private GameObject _accessoryItemPrefab;
-    [SerializeField] private GameObject _capy;
 
     /// <summary>
     /// Parent object for all capy accessories; has an image component of capy.
@@ -437,10 +436,7 @@ public class DenScript : MonoBehaviour
 
         foreach (Transform child in _capyGroup.transform)
         {
-            if (child != _capy.transform)
-            {
-                Destroy(child.gameObject);
-            }
+            Destroy(child.gameObject);
         }
         foreach (Accessory accessory in accessories)
         {
