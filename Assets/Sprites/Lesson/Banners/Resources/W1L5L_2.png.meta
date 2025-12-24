@@ -1,22 +1,10 @@
 fileFormatVersion: 2
-guid: 73972abf7e7a45142a56d97a9f56fa04
+guid: a8cbeb50caec53646bf3bd99422b9775
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8651133649338529824
-    second: 1-6to1-7Dotted_0
-  - first:
-      213: -3098152681421796003
-    second: 1-6to1-7Dotted_1
-  - first:
-      213: -1396121309066635239
-    second: 1-6to1-7Dotted_2
-  - first:
-      213: -7879945775476695812
-    second: 1-6to1-7Dotted_3
-  - first:
-      213: -8603889633046346471
-    second: 1-6to1-7Dotted_4
+      213: 3094393691873694625
+    second: W1L5L_2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -122,19 +110,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -151,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 1-6to1-7Dotted_0
+      name: W1L5L_2_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 67
-        height: 65
+        width: 1024
+        height: 1024
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0e78fb618cff0f780800000000000000
-      internalID: -8651133649338529824
+      spriteID: 1a3575ffaae71fa20800000000000000
+      internalID: 3094393691873694625
       vertices: []
       indices: 
       edges: []
@@ -176,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 9ee3d310955398344809387ce2d22535
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -186,11 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      1-6to1-7Dotted_0: -8651133649338529824
-      1-6to1-7Dotted_1: -3098152681421796003
-      1-6to1-7Dotted_2: -1396121309066635239
-      1-6to1-7Dotted_3: -7879945775476695812
-      1-6to1-7Dotted_4: -8603889633046346471
+      W1L5L_2_0: 3094393691873694625
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

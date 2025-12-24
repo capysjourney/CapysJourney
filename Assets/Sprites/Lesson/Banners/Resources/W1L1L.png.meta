@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d1de4ca7042f7bc43b882a3ccc51efda
+guid: d53e0499d31cffb4d81e58f28d8e4fdc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2305283313927242275
-    second: bottomTab_0
+      213: -5622116459235349707
+    second: W1L1L_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -110,19 +110,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -139,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bottomTab_0
+      name: W1L1L_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 444
-        height: 143
+        width: 1024
+        height: 1024
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 376, y: 80, z: 36, w: 49}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ddd3bb63a0df100e0800000000000000
-      internalID: -2305283313927242275
+      spriteID: 53b66691eda3af1b0800000000000000
+      internalID: -5622116459235349707
       vertices: []
       indices: 
       edges: []
@@ -164,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: b1fc58ce7d49d6441a1ef52c2989bac5
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -174,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      bottomTab_0: -2305283313927242275
+      W1L1L_0: -5622116459235349707
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -160,6 +160,8 @@ public class MoodScript : MonoBehaviour
         Vector3 pointerScreenPos = _pointer.transform.position;
         Vector3 dir = touchPosition - pointerScreenPos;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+        if (angle < -180f) angle += 360f;
+        angle = Mathf.Clamp(angle, -85f, 85f);
         RotatePointerTo(angle);
         UpdateDisplayedMood(PointedMood());
     }
@@ -200,7 +202,7 @@ public class MoodScript : MonoBehaviour
         return _angleToMood[_snapAngles[closestIdx]];
     }
 
-    private void LogMood(Mood mood, System.DateTime dateTime)
+    private void LogMood(Mood mood, DateTime dateTime)
     {
         _darkener.SetActive(true);
         _darkened = true;

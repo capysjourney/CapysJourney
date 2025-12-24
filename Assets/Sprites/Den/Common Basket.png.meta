@@ -1,22 +1,10 @@
 fileFormatVersion: 2
-guid: 0bd2eaa3f518db54ba8444329a7df760
+guid: ed5de58ea4d08c9468b8dbd8a0dee229
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4063981070767643430
-    second: 1-4to1-5Dotted_0
-  - first:
-      213: -6048478215987779484
-    second: 1-4to1-5Dotted_1
-  - first:
-      213: 6625597156517194303
-    second: 1-4to1-5Dotted_2
-  - first:
-      213: 1721594604735015874
-    second: 1-4to1-5Dotted_3
-  - first:
-      213: -712938680784990465
-    second: 1-4to1-5Dotted_4
+      213: -2840125937731322767
+    second: Common Basket_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -122,19 +110,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -151,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 1-4to1-5Dotted_0
+      name: Common Basket_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 66
-        height: 99
+        width: 546
+        height: 557
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 62b54018049266830800000000000000
-      internalID: 4063981070767643430
+      spriteID: 17cb62cd188d598d0800000000000000
+      internalID: -2840125937731322767
       vertices: []
       indices: 
       edges: []
@@ -176,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 479c9b5a9c539634aa9fb0f9bbc7f5ed
+    spriteID: 2a595c3848dc7144b8f2e6dcde8f6215
     internalID: 0
     vertices: []
     indices: 
@@ -186,11 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      1-4to1-5Dotted_0: 4063981070767643430
-      1-4to1-5Dotted_1: -6048478215987779484
-      1-4to1-5Dotted_2: 6625597156517194303
-      1-4to1-5Dotted_3: 1721594604735015874
-      1-4to1-5Dotted_4: -712938680784990465
+      Common Basket_0: -2840125937731322767
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

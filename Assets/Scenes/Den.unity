@@ -509,15 +509,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8719282955475919968, guid: 4baf8524dbf28dd4b949f795597f60de, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 216.8
+      value: 141.5
       objectReference: {fileID: 0}
     - target: {fileID: 8719282955475919968, guid: 4baf8524dbf28dd4b949f795597f60de, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 230
+      value: 147.1
       objectReference: {fileID: 0}
     - target: {fileID: 8719282955475919968, guid: 4baf8524dbf28dd4b949f795597f60de, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 61.4
+      value: 24.2
       objectReference: {fileID: 0}
     - target: {fileID: 9143439322504965577, guid: 4baf8524dbf28dd4b949f795597f60de, type: 3}
       propertyPath: m_Pivot.x
@@ -1220,7 +1220,6 @@ MonoBehaviour:
   _numAccessoriesOwnedText: {fileID: 301492869}
   _accessoryGrid: {fileID: 191152295}
   _accessoryItemPrefab: {fileID: 6664697062971135770, guid: 0197e04aaa3a1514ba7bd7c89d6e8ae4, type: 3}
-  _capy: {fileID: 591505481}
   _capyGroup: {fileID: 591505481}
 --- !u!1 &521855576
 GameObject:
@@ -1537,15 +1536,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8719282955475919968, guid: 4baf8524dbf28dd4b949f795597f60de, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 170.2
+      value: 127.1
       objectReference: {fileID: 0}
     - target: {fileID: 8719282955475919968, guid: 4baf8524dbf28dd4b949f795597f60de, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 138
+      value: 117.3
       objectReference: {fileID: 0}
     - target: {fileID: 8719282955475919968, guid: 4baf8524dbf28dd4b949f795597f60de, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 38
+      value: 17.9
       objectReference: {fileID: 0}
     - target: {fileID: 9143439322504965577, guid: 4baf8524dbf28dd4b949f795597f60de, type: 3}
       propertyPath: m_Pivot.x

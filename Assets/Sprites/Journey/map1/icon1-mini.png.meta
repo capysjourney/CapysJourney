@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: 227d6d1a03eb8b341ac159c05c326380
+guid: 8a58befac57095549a2072fa103362a3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -76688346670185832
-    second: 1-1to1-2Dotted_0
-  - first:
-      213: -8376073201807479451
-    second: 1-1to1-2Dotted_1
-  - first:
-      213: -4988574287642331544
-    second: 1-1to1-2Dotted_2
-  - first:
-      213: -8782683034381071842
-    second: 1-1to1-2Dotted_3
+      213: 715472991027101957
+    second: icon1-mini_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -119,19 +110,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -148,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 1-1to1-2Dotted_0
+      name: icon1-mini_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 20
-        height: 120
+        width: 189
+        height: 136
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 892cf42ea5c8feef0800000000000000
-      internalID: -76688346670185832
+      spriteID: 5018e8405eedde900800000000000000
+      internalID: 715472991027101957
       vertices: []
       indices: 
       edges: []
@@ -173,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: f50c169744e6a4d4fb3a634f6a170e73
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -183,10 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      1-1to1-2Dotted_0: -76688346670185832
-      1-1to1-2Dotted_1: -8376073201807479451
-      1-1to1-2Dotted_2: -4988574287642331544
-      1-1to1-2Dotted_3: -8782683034381071842
+      icon1-mini_0: 715472991027101957
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

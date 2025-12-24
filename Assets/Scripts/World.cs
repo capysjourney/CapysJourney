@@ -41,7 +41,7 @@ public class Level
            { AgeGroup.OldTeen, "W1L1A3" },
            { AgeGroup.Adult, "W1L1A3" }
        },
-       bannerFile: "W1L1A0L",
+       bannerFile: "W1L1L",
        mapPosition: new Vector2(129, 200.525f),
        capyPosition: new Vector2(-84, -440),
        enumName: LevelEnum.W1L1);
@@ -105,7 +105,7 @@ public class Level
            { AgeGroup.OldTeen, "W1L5A3" },
            { AgeGroup.Adult, "W1L5A3" }
        },
-        bannerFile: "W1L5L1_3",
+        bannerFile: "W1L5L_1",
         mapPosition: new Vector2(-286, -59),
         capyPosition: new Vector2(355.4f, -47),
         enumName: LevelEnum.W1L5);

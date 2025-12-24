@@ -41,6 +41,7 @@ public class LessonScript : MonoBehaviour
     private bool _playAudio = false;
     private bool _hasCompleted = false;
     private bool _userIsDraggingSlider = false;
+    private bool _debugMode = false; // todo - set to false for production
 
     void Start()
     {
@@ -144,12 +145,15 @@ public class LessonScript : MonoBehaviour
         float targetTime = Mathf.Min(_duration, _audioSource.time + 15);
 
         // Only allow forward if user has already reached that point or lesson is completed
-        if (targetTime <= _maxTimeReached)
+        if (_debugMode || targetTime <= _maxTimeReached)
         {
-            _audioSource.time = targetTime;
-            _slider.SetValueWithoutNotify(_audioSource.time);
-            _timeElapsedText.text = FormatSeconds(_audioSource.time);
-            if (_audioSource.time == _duration)
+            _slider.SetValueWithoutNotify(targetTime);
+            _timeElapsedText.text = FormatSeconds(targetTime);
+            if (!Mathf.Approximately(targetTime, _duration))
+            {
+                _audioSource.time = targetTime;
+            }
+            else
             {
                 OnDone();
             }
@@ -197,7 +201,17 @@ public class LessonScript : MonoBehaviour
             _slider.SetValueWithoutNotify(sliderValue);
             if (!Mathf.Approximately(_audioSource.time, sliderValue))
             {
-                _audioSource.time = sliderValue;
+                if (Mathf.Approximately(sliderValue, _duration))
+                {
+                    _timeElapsedText.text = FormatSeconds(_audioSource.time);
+                    _userIsDraggingSlider = false;
+                    OnDone();
+                    return;
+                }
+                else
+                {
+                    _audioSource.time = sliderValue;
+                }
             }
             _timeElapsedText.text = FormatSeconds(_audioSource.time);
         }
@@ -205,6 +219,7 @@ public class LessonScript : MonoBehaviour
     }
     private void UpdateForwardButtonState()
     {
+        if (_debugMode) return;
         float targetTime = Mathf.Min(_duration, _audioSource.time + 15);
         bool canFastForward = targetTime <= _maxTimeReached;
 

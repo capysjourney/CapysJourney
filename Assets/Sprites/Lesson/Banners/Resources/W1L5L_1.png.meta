@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1501280389465fd469459483e5f93dfd
+guid: 3f58e183d38d5f54ca668890fd46f3e5
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6579086020635408734
-    second: Intro Level 1 Light (7-10, 11-14)_0
+      213: 1633805355469638275
+    second: W1L5L_1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -110,19 +110,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -139,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: W1L1A0L
+      name: W1L5L_1_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 1
-        width: 1468
-        height: 1467
+        x: 0
+        y: 0
+        width: 1024
+        height: 1024
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e5936b6d0eb9d4b50800000000000000
-      internalID: 6579086020635408734
+      spriteID: 38a06e480517ca610800000000000000
+      internalID: 1633805355469638275
       vertices: []
       indices: 
       edges: []
@@ -164,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 56ec8f026f41a7144886e010413f9323
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -174,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      W1L1A0L: 6579086020635408734
+      W1L5L_1_0: 1633805355469638275
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
