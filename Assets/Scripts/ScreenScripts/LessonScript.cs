@@ -1,3 +1,5 @@
+using Firebase.Extensions;
+using Firebase.Storage;
 using System;
 using TMPro;
 using UnityEngine;
@@ -41,7 +43,7 @@ public class LessonScript : MonoBehaviour
     private bool _playAudio = false;
     private bool _hasCompleted = false;
     private bool _userIsDraggingSlider = false;
-    private bool _debugMode = false; // todo - set to false for production
+    private readonly bool DebugMode = false; // todo - set to false for production
 
     void Start()
     {
@@ -87,13 +89,57 @@ public class LessonScript : MonoBehaviour
     {
         string bannerName = GameManager.GetCurrLevel().BannerFile;
         Sprite sprite = Resources.Load<Sprite>(bannerName);
-
         if (sprite == null)
         {
             Debug.LogError("Banner image not found: " + bannerName);
         }
         _banner.sprite = sprite;
     }
+
+    // private void LoadImage()
+    //{
+    //    string bannerName = GameManager.GetCurrLevel().BannerFile;
+    //    FirebaseStorage storage = FirebaseStorage.DefaultInstance;
+    //    StorageReference gsReference;
+    //    try
+    //    {
+    //        gsReference = storage.GetReferenceFromUrl("gs://capy-s-journey-bc2f8.firebasestorage.app/Banners/IntroWorld/" + bannerName + ".png");
+    //    }
+    //    catch (Exception e)
+    //    {
+    //        Debug.LogError("Error getting storage reference: " + e.Message);
+    //        return;
+    //    }
+    //    gsReference.GetDownloadUrlAsync().ContinueWithOnMainThread(task =>
+    //    {
+    //        if (!task.IsFaulted && !task.IsCanceled)
+    //        {
+    //            string url = task.Result.ToString();
+    //            StartCoroutine(DownloadImage(url));
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Failed to get download URL for banner image: " + bannerName);
+    //        }
+    //    });
+    //}
+
+    //private System.Collections.IEnumerator DownloadImage(string url)
+    //{
+    //    UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequestTexture.GetTexture(url);
+    //    yield return request.SendWebRequest();
+
+    //    if (request.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
+    //    {
+    //        Texture2D texture = UnityEngine.Networking.DownloadHandlerTexture.GetContent(request);
+    //        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+    //        _banner.sprite = sprite;
+    //    }
+    //    else
+    //    {
+    //        Debug.LogError("Failed to download banner image: " + request.error);
+    //    }
+    //}
 
     private void LoadAudio()
     {
@@ -145,7 +191,7 @@ public class LessonScript : MonoBehaviour
         float targetTime = Mathf.Min(_duration, _audioSource.time + 15);
 
         // Only allow forward if user has already reached that point or lesson is completed
-        if (_debugMode || targetTime <= _maxTimeReached)
+        if (DebugMode || targetTime <= _maxTimeReached)
         {
             _slider.SetValueWithoutNotify(targetTime);
             _timeElapsedText.text = FormatSeconds(targetTime);
@@ -219,7 +265,7 @@ public class LessonScript : MonoBehaviour
     }
     private void UpdateForwardButtonState()
     {
-        if (_debugMode) return;
+        if (DebugMode) return;
         float targetTime = Mathf.Min(_duration, _audioSource.time + 15);
         bool canFastForward = targetTime <= _maxTimeReached;
 
