@@ -24,7 +24,13 @@ public class BreathworkScript : MonoBehaviour
     [SerializeField] private TMP_Text _carrotCount;
     [SerializeField] private Button _returnBtn;
     [SerializeField] private Image _centerCircle;
-    private const int Duration = 300; // 5 minutes
+
+    /// <summary>
+    /// Number of seconds for the breathwork session.
+    /// Should be a multiple of 12 so that the breathing cycles align properly.
+    /// </summary>
+    private const int Duration = 60;
+
     private bool _finished = false;
     private bool _meditating = false;
     private Image[] circles;
