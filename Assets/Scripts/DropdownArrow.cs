@@ -7,6 +7,7 @@ public class DropdownArrow : MonoBehaviour
     private bool _enabled = false;
     private Button _button;
     private const float AnimationDuration = .25f;
+
     void Start()
     {
         _button = GetComponent<Button>();
