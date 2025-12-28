@@ -54,6 +54,10 @@ public class SelectLanguagesScript : MonoBehaviour
         _uiElements = new GameObject[] { _languageSelection, _bigCapy, _continueButton, _backButton, _questionHeader, _textInputArea, _ageInputArea, _appearanceInputArea };
         //LoadSelectLanguage(); 
         // todo - uncomment above and remove below
+        if (LocalizationSettings.SelectedLocale == null)
+        {
+            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[0];
+        }
         LoadCapyIntro();
         AddContinueBtnListener();
         AddBackBtnListener();
@@ -133,6 +137,10 @@ public class SelectLanguagesScript : MonoBehaviour
         foreach (GameObject languageBox in languageBoxes)
         {
             GetScript(languageBox).SetOnClickListener(() => SelectLanguage(languageBox.name, languageBoxes));
+        }
+        if(LocalizationSettings.SelectedLocale == null)
+        {
+            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[0];
         }
         int selectedIdx = Array.IndexOf(_locales, LocalizationSettings.SelectedLocale.ToString());
         SelectLanguage(_languages[selectedIdx], languageBoxes);
