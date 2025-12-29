@@ -29,7 +29,6 @@ Last update: 2018-05-20  (by Dikra)
 
 */
 
-using Firebase;
 using UnityEngine;
 
 public class FirebaseManager : MonoBehaviour
