@@ -39,7 +39,7 @@ public class LessonScript : MonoBehaviour
     private bool _playAudio = false;
     private bool _hasCompleted = false;
     private bool _userIsDraggingSlider = false;
-    private readonly bool DebugMode = false; // todo - set to false for production
+    private readonly bool DebugMode = true; // todo - set to false for production
 
     void Start()
     {

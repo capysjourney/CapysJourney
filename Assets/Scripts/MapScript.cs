@@ -28,6 +28,9 @@ abstract public class MapScript : MonoBehaviour
      */
     protected const float Threshold = -94;
 
+    protected Vector3 PopUpBelowPositionRelativeToCapy = new(0, -177.7f, 0);
+    protected Vector3 PopUpAbovePositionRelativeToCapy = new(0, 180, 0);
+
     protected LevelPopupScript _scriptBelow;
     protected LevelPopupScript _scriptAbove;
 
@@ -114,13 +117,13 @@ abstract public class MapScript : MonoBehaviour
         {
             levelPopup = _levelPopupBelow;
             script = _scriptBelow;
-            levelPopup.GetComponent<RectTransform>().position = _capy.position + new Vector3(0, -177.7f, 0);
+            levelPopup.GetComponent<RectTransform>().position = _capy.position + PopUpBelowPositionRelativeToCapy;
         }
         else
         {
             levelPopup = _levelPopupAbove;
             script = _scriptAbove;
-            levelPopup.GetComponent<RectTransform>().position = _capy.position + new Vector3(0, 140, 0);
+            levelPopup.GetComponent<RectTransform>().position = _capy.position + PopUpAbovePositionRelativeToCapy;
         }
         script.UpdatePopup(btnLevel.ShortName, btnLevel.Name, btnLevel.Description, 10);
         script.ConfigureStartButton(() =>
