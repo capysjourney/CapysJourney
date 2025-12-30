@@ -1,10 +1,25 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+[System.Serializable]
+public class MeditationEntry
+{
+    public int duration;
+    public int interval;
+    public string chime;
+    public string effect;
+}
+
+[System.Serializable]
+public class MeditationList
+{
+    public List<MeditationEntry> entries = new List<MeditationEntry>();
+}
+
 
 public class DojoController : MonoBehaviour
 {
@@ -19,6 +34,10 @@ public class DojoController : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Image intervalSelect;
     [SerializeField] private RectTransform durationContent;
     [SerializeField] private RectTransform intervalContent;
+    [SerializeField] private RectTransform savedMeditationsContainer;
+    [SerializeField] private RectTransform meditationTemplate;
+
+    private MeditationList meditationList;
 
     void Start()
     {
@@ -30,13 +49,111 @@ public class DojoController : MonoBehaviour
         {
             SharedData.chime = chime.options[0].text;
         }
+
+        LoadAndDisplayMeditations();
+    }
+
+    private void LoadAndDisplayMeditations()
+    {
+        string json = PlayerPrefs.GetString("SavedMeditations", "");
+
+        if (!string.IsNullOrEmpty(json))
+        {
+            meditationList = JsonUtility.FromJson<MeditationList>(json);
+            UnityEngine.Debug.Log("Loaded " + meditationList.entries.Count + " meditations");
+        }
+        else
+        {
+            meditationList = new MeditationList();
+            UnityEngine.Debug.Log("No saved meditations found, created new list");
+        }
+
+        DisplaySavedMeditations();
+    }
+
+    private void DisplaySavedMeditations()
+    {
+        foreach (Transform child in savedMeditationsContainer)
+        {
+            if (child != meditationTemplate.transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        foreach (MeditationEntry entry in meditationList.entries)
+        {
+            CreateMeditationUI(entry);
+        }
+    }
+
+    private void CreateMeditationUI(MeditationEntry entry)
+    {
+        RectTransform newEntryUI = Instantiate(meditationTemplate, savedMeditationsContainer);
+
+        Transform numMinutesTransform = newEntryUI.transform.Find("Top")?.Find("Num Minutes");
+        if (numMinutesTransform != null)
+        {
+            TMP_Text numMinutesText = numMinutesTransform.GetComponent<TMP_Text>();
+            if (numMinutesText != null)
+            {
+                numMinutesText.text = entry.duration.ToString();
+            }
+        }
+
+        string meditationInfo = "";
+
+        if (!string.IsNullOrEmpty(entry.chime) && entry.chime != "None")
+        {
+            meditationInfo = "Chimes every " + entry.interval + " minutes";
+        }
+
+        if (!string.IsNullOrEmpty(entry.effect) && entry.effect != "None")
+        {
+            if (!string.IsNullOrEmpty(meditationInfo))
+            {
+                meditationInfo += ", ";
+            }
+            meditationInfo += entry.effect;
+        }
+
+        Transform meditationTextTransform = newEntryUI.transform.Find("Meditation Info")?.Find("Meditation text");
+        if (meditationTextTransform != null)
+        {
+            TMP_Text meditationText = meditationTextTransform.GetComponent<TMP_Text>();
+            if (meditationText != null)
+            {
+                meditationText.text = meditationInfo;
+            }
+        }
+
+        Button loadButton = newEntryUI.GetComponent<Button>();
+        if (loadButton != null)
+        {
+            loadButton.onClick.RemoveAllListeners();
+            loadButton.onClick.AddListener(() => LoadMeditation(entry));
+        }
+
+        newEntryUI.SetParent(savedMeditationsContainer, false);
+        newEntryUI.gameObject.SetActive(true);
+    }
+
+    private void LoadMeditation(MeditationEntry entry)
+    {
+        SharedData.duration = entry.duration;
+        SharedData.interval = entry.interval;
+        SharedData.chime = entry.chime;
+        SharedData.effectData = entry.effect;
+
+        UnityEngine.Debug.Log("Loaded meditation: " + entry.duration + " min, " + entry.effect);
+
+        SceneManager.LoadScene("CustomMeditation");
     }
 
     private void OnStartClick()
     {
         SharedData.duration = GetScrollValue(durationContent, durationSelect);
         SharedData.interval = GetScrollValue(intervalContent, intervalSelect);
-        SharedData.effectData = "Rain";
 
         UnityEngine.Debug.Log("DojoController - Duration: " + SharedData.duration);
         UnityEngine.Debug.Log("DojoController - Interval: " + SharedData.interval);
@@ -107,5 +224,10 @@ public class DojoController : MonoBehaviour
         {
             audioSource.PlayOneShot(bell);
         }
+    }
+
+    public void RefreshMeditations()
+    {
+        LoadAndDisplayMeditations();
     }
 }
