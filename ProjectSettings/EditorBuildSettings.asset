@@ -21,7 +21,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Settings.unity
     guid: f3a850a0ad133f94b8bebe1a6d5681f7
   - enabled: 1
-    path: Assets/Scenes/Lesson.unity
+    path: Assets/Scenes/CustomMeditation.unity
     guid: d8ab0c77ad2830e4cbbe42948ff3a02b
   - enabled: 1
     path: Assets/Scenes/Daily.unity
