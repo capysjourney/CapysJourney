@@ -19,11 +19,6 @@ public class SaveMeditation : MonoBehaviour
         if (saveButton != null)
         {
             saveButton.onClick.AddListener(OnSaveButtonClick);
-            UnityEngine.Debug.Log("Save button listener attached");
-        }
-        else
-        {
-            UnityEngine.Debug.LogError("No Button component found on this GameObject!");
         }
     }
 
@@ -41,15 +36,10 @@ public class SaveMeditation : MonoBehaviour
         meditationList.entries.Add(newEntry);
         SaveMeditations();
 
-        UnityEngine.Debug.Log("Meditation saved: " + newEntry.duration + " min, " + newEntry.effect);
 
         if (dojoController != null)
         {
             dojoController.RefreshMeditations();
-        }
-        else
-        {
-            UnityEngine.Debug.LogError("DojoController reference is null!");
         }
     }
 
@@ -95,7 +85,6 @@ public class SaveMeditation : MonoBehaviour
         if (closestButton != null)
         {
             int value = int.Parse(closestButton.GetComponentInChildren<TMP_Text>().text);
-            UnityEngine.Debug.Log("Scroll value selected: " + value);
             return value;
         }
 

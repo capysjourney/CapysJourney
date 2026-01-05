@@ -27,6 +27,7 @@ public class CustomMeditationController : MonoBehaviour
     [SerializeField] private GameObject _darkener;
     [SerializeField] private Button _backArrow;
     [SerializeField] private TMP_Text _levelNumText;
+    [SerializeField] private GameObject _levelCompletePopup;
 
     [SerializeField] private AudioClip rainAudio;
     [SerializeField] private AudioClip oceanAudio;
@@ -36,7 +37,6 @@ public class CustomMeditationController : MonoBehaviour
     [SerializeField] private AudioClip bell;
     [SerializeField] private AudioClip bell1;
     [SerializeField] private AudioClip bell2;
-    [SerializeField] private AudioClip bell3;
 
     private UnityEngine.UI.Image _pauseButtonImage;
     private float _timeElapsed = 0;
@@ -47,11 +47,7 @@ public class CustomMeditationController : MonoBehaviour
 
     void Start()
     {
-        UnityEngine.Debug.Log("Start method called");
-
         _pauseButtonImage = _pauseButton.GetComponent<UnityEngine.UI.Image>();
-
-        UnityEngine.Debug.Log("AudioSource null? " + (_audioSource == null));
 
         LoadAudio();
         _slider.maxValue = _duration;
@@ -61,6 +57,7 @@ public class CustomMeditationController : MonoBehaviour
         _forwardButton.onClick.AddListener(OnForward);
         _pauseButton.onClick.AddListener(OnPause);
         _audioSource.volume = 1.0f;
+        _levelCompletePopup.SetActive(false);
         _backArrow.onClick.AddListener(ReturnToJourney);
 
         EventTrigger.Entry pointerDownEntry = new()
@@ -95,78 +92,46 @@ public class CustomMeditationController : MonoBehaviour
 
     private void LoadAudio()
     {
-        UnityEngine.Debug.Log("LoadAudio called");
-
         _audioSource.Stop();
         _duration = SharedData.duration * 60f;
         float interval = SharedData.interval * 60f;
         string chimeName = SharedData.chime;
 
-        UnityEngine.Debug.Log("Effect: " + SharedData.effectData);
-        UnityEngine.Debug.Log("Duration: " + _duration);
-        UnityEngine.Debug.Log("Interval: " + interval);
-        UnityEngine.Debug.Log("Chime: " + chimeName);
-        UnityEngine.Debug.Log("Rain clip null? " + (rainAudio == null));
-        UnityEngine.Debug.Log("Ocean clip null? " + (oceanAudio == null));
-        UnityEngine.Debug.Log("River clip null? " + (riverAudio == null));
-        UnityEngine.Debug.Log("Fire clip null? " + (fireAudio == null));
-
         if (SharedData.effectData.Contains("Rain"))
         {
             _audioSource.clip = rainAudio;
-            UnityEngine.Debug.Log("Set Rain audio");
         }
         else if (SharedData.effectData.Contains("Ocean"))
         {
             _audioSource.clip = oceanAudio;
-            UnityEngine.Debug.Log("Set Ocean audio");
         }
         else if (SharedData.effectData.Contains("River"))
         {
             _audioSource.clip = riverAudio;
-            UnityEngine.Debug.Log("Set River audio");
         }
         else if (SharedData.effectData.Contains("Fire"))
         {
             _audioSource.clip = fireAudio;
-            UnityEngine.Debug.Log("Set Fire audio");
         }
 
-        UnityEngine.Debug.Log("Audio Clip assigned? " + (_audioSource.clip != null));
-        if (_audioSource.clip != null)
-        {
-            UnityEngine.Debug.Log("Audio Clip name: " + _audioSource.clip.name);
-        }
-
-        if (chimeName.Contains("Bell 1"))
+        if (chimeName.Contains("Classic Bell"))
         {
             _chimeClip = bell;
         }
-        else if (chimeName.Contains("Bell 2"))
+        else if (chimeName.Contains("Echo Bell"))
         {
             _chimeClip = bell1;
         }
-        else if (chimeName.Contains("Bell 3"))
+        else if (chimeName.Contains("Mellow Bell"))
         {
             _chimeClip = bell2;
         }
-        else if (chimeName.Contains("Bell"))
-        {
-            _chimeClip = bell3;
-        }
 
-        UnityEngine.Debug.Log("Chime clip assigned? " + (_chimeClip != null));
 
         if (_audioSource.clip != null)
         {
             _audioSource.loop = true;
             _audioSource.Play();
-            UnityEngine.Debug.Log("Audio playing? " + _audioSource.isPlaying);
-            UnityEngine.Debug.Log("Audio volume: " + _audioSource.volume);
-        }
-        else
-        {
-            UnityEngine.Debug.LogError("AudioSource.clip is null! Cannot play audio.");
         }
 
         _slider.maxValue = _duration;
@@ -175,33 +140,24 @@ public class CustomMeditationController : MonoBehaviour
 
         if (_chimeClip != null && !string.IsNullOrEmpty(chimeName) && chimeName != "None" && interval > 0)
         {
-            UnityEngine.Debug.Log("Starting chime coroutine");
             StartCoroutine(PlayChimeAtIntervals(_duration, interval));
-        }
-        else
-        {
-            UnityEngine.Debug.Log("NOT starting chime coroutine - chimeClip null? " + (_chimeClip == null) + ", chimeName: " + chimeName + ", interval: " + interval);
         }
     }
 
     private IEnumerator PlayChimeAtIntervals(float duration, float interval)
     {
-        UnityEngine.Debug.Log("Chime coroutine started");
         float nextChimeTime = interval;
 
         while (_timeElapsed < duration)
         {
             if (_playAudio && _timeElapsed >= nextChimeTime)
             {
-                UnityEngine.Debug.Log("Playing chime at time: " + _timeElapsed);
                 _audioSource.PlayOneShot(_chimeClip);
                 nextChimeTime += interval;
             }
 
             yield return null;
         }
-
-        UnityEngine.Debug.Log("Chime coroutine ended");
     }
 
     private void OnBackward()
@@ -227,7 +183,6 @@ public class CustomMeditationController : MonoBehaviour
     private void OnPause()
     {
         _playAudio = !_playAudio;
-        UnityEngine.Debug.Log("Pause toggled. _playAudio: " + _playAudio);
         if (_playAudio)
         {
             if (_audioSource.isPlaying)
@@ -249,7 +204,6 @@ public class CustomMeditationController : MonoBehaviour
 
     private void PauseAudio()
     {
-        UnityEngine.Debug.Log("PauseAudio called");
         _playAudio = false;
         _audioSource.Pause();
         _pauseButtonImage.sprite = _paused;
@@ -257,7 +211,6 @@ public class CustomMeditationController : MonoBehaviour
 
     private void UnpauseAudio()
     {
-        UnityEngine.Debug.Log("UnpauseAudio called");
         _playAudio = true;
         if (_audioSource.clip != null)
         {
@@ -265,6 +218,7 @@ public class CustomMeditationController : MonoBehaviour
         }
         _pauseButtonImage.sprite = _unpaused;
     }
+
     private void UpdateAudio()
     {
         _timeElapsed = _slider.value;
@@ -316,14 +270,22 @@ public class CustomMeditationController : MonoBehaviour
 
     private void OnDone()
     {
-        UnityEngine.Debug.Log("OnDone called");
+        _levelCompletePopup.SetActive(true);
+
+        int carrotsEarned = Mathf.RoundToInt(10.1f * Mathf.Log(1 + 0.36f * _duration));
+
+        GameManager.WithStats(stats =>
+        {
+            stats.IncreaseCarrots(carrotsEarned);
+        }, true); 
+
         PauseAudio();
         Darken();
     }
 
     private void Redo()
     {
-        UnityEngine.Debug.Log("Redo called");
+        _levelCompletePopup.SetActive(false);
         _timeElapsed = 0;
         _playAudio = false;
         _audioSource.Stop();

@@ -53,32 +53,26 @@ public class EffectSelected : MonoBehaviour
         if (source.isPlaying)
         {
             source.Stop();
-            UnityEngine.Debug.Log("Stopped previous effect audio");
         }
 
         if (clickedButton.gameObject.name.Contains("Rain"))
         {
             source.PlayOneShot(rain);
-            UnityEngine.Debug.Log("Playing Rain preview");
         }
         else if (clickedButton.gameObject.name.Contains("Fire"))
         {
             source.PlayOneShot(fire);
-            UnityEngine.Debug.Log("Playing Fire preview");
         }
         else if (clickedButton.gameObject.name.Contains("River"))
         {
             source.PlayOneShot(river);
-            UnityEngine.Debug.Log("Playing River preview");
         }
         else if (clickedButton.gameObject.name.Contains("Ocean"))
         {
             source.PlayOneShot(ocean);
-            UnityEngine.Debug.Log("Playing Ocean preview");
         }
 
         currentlySelected = clickedButton;
         SharedData.effectData = clickedButton.gameObject.name;
-        UnityEngine.Debug.Log("Effect selected: " + SharedData.effectData);
     }
 }

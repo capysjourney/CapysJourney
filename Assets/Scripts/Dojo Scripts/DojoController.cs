@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 [System.Serializable]
 public class MeditationEntry
@@ -18,16 +21,14 @@ public class MeditationEntry
 public class MeditationList
 {
     public List<MeditationEntry> entries = new List<MeditationEntry>();
+
 }
-
-
 public class DojoController : MonoBehaviour
 {
     [SerializeField] private TMP_Dropdown chime;
     [SerializeField] private AudioClip bell;
     [SerializeField] private AudioClip bell1;
     [SerializeField] private AudioClip bell2;
-    [SerializeField] private AudioClip bell3;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private Button startButton;
     [SerializeField] private UnityEngine.UI.Image durationSelect;
@@ -36,21 +37,110 @@ public class DojoController : MonoBehaviour
     [SerializeField] private RectTransform intervalContent;
     [SerializeField] private RectTransform savedMeditationsContainer;
     [SerializeField] private RectTransform meditationTemplate;
+    [SerializeField] private MeditationList meditationList;
+    [SerializeField] private ScrollRect savedLessonsList;
+    [SerializeField] private RectTransform savedLessonsTemplate;
+    [SerializeField] private TMP_Dropdown region;
 
-    private MeditationList meditationList;
+    private World selectedWorld = null;
 
     void Start()
     {
         chime.onValueChanged.AddListener(OnDropdownValueChanged);
         chime.onValueChanged.AddListener(OnChimeSelected);
         startButton.onClick.AddListener(OnStartClick);
+        region.onValueChanged.AddListener(OnWorldFilterChanged);
 
         if (chime.options.Count > 0)
         {
             SharedData.chime = chime.options[0].text;
         }
 
+        LoadAndDisplayBookmarkedLessons();
         LoadAndDisplayMeditations();
+    }
+
+    private void OnWorldFilterChanged(int index)
+    {
+        Debug.Log($"OnWorldFilterChanged called with index: {index}, option text: {region.options[index].text}");
+        index = index - 1;
+        string selectedOption = region.options[index].text;
+
+        if (selectedOption == "All Worlds" || selectedOption == "Everything")
+        {
+            selectedWorld = null;
+        }
+        else
+        {
+            selectedWorld = World.AllWorlds.FirstOrDefault(w => w.Name == selectedOption);
+
+            if (selectedWorld == null)
+            {
+                selectedWorld = null;
+            }
+        }
+
+        LoadAndDisplayBookmarkedLessons();
+    }
+
+    private void LoadAndDisplayBookmarkedLessons()
+    {
+        foreach (Transform child in savedLessonsList.content)
+        {
+            if (child != savedLessonsTemplate.transform)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        GameManager.WithStats(stats =>
+        {
+            List<Level> filteredLevels = new List<Level>();
+
+            foreach (LevelEnum levelEnum in stats.BookmarkedLevels)
+            {
+                Level level = Level.LevelLookup[levelEnum];
+
+                if (selectedWorld == null || level.World == selectedWorld)
+                {
+                    filteredLevels.Add(level);
+                }
+            }
+
+            Debug.Log($"Displaying {filteredLevels.Count} bookmarked levels" +
+                     (selectedWorld != null ? $" from {selectedWorld.Name}" : ""));
+
+            foreach (Level level in filteredLevels)
+            {
+                CreateBookmarkedLessonUI(level);
+            }
+        }, false);
+    }
+
+    private void CreateBookmarkedLessonUI(Level level)
+    {
+        RectTransform newLessonUI = Instantiate(savedLessonsTemplate, savedLessonsList.content);
+
+        TMP_Text lessonText = newLessonUI.GetComponentInChildren<TMP_Text>();
+        if (lessonText != null)
+        {
+            lessonText.text = level.ShortName;
+        }
+
+        newLessonUI.gameObject.SetActive(true);
+    }
+
+    public static void PrintBookmarkedLevels()
+    {
+        GameManager.WithStats(stats =>
+        {
+            Debug.Log($"Found {stats.BookmarkedLevels.Count} bookmarked levels:");
+
+            foreach (LevelEnum levelEnum in stats.BookmarkedLevels)
+            {
+                Level level = Level.LevelLookup[levelEnum];
+            }
+        }, false);
     }
 
     private void LoadAndDisplayMeditations()
@@ -60,12 +150,10 @@ public class DojoController : MonoBehaviour
         if (!string.IsNullOrEmpty(json))
         {
             meditationList = JsonUtility.FromJson<MeditationList>(json);
-            UnityEngine.Debug.Log("Loaded " + meditationList.entries.Count + " meditations");
         }
         else
         {
             meditationList = new MeditationList();
-            UnityEngine.Debug.Log("No saved meditations found, created new list");
         }
 
         DisplaySavedMeditations();
@@ -145,8 +233,6 @@ public class DojoController : MonoBehaviour
         SharedData.chime = entry.chime;
         SharedData.effectData = entry.effect;
 
-        UnityEngine.Debug.Log("Loaded meditation: " + entry.duration + " min, " + entry.effect);
-
         SceneManager.LoadScene("CustomMeditation");
     }
 
@@ -155,18 +241,12 @@ public class DojoController : MonoBehaviour
         SharedData.duration = GetScrollValue(durationContent, durationSelect);
         SharedData.interval = GetScrollValue(intervalContent, intervalSelect);
 
-        UnityEngine.Debug.Log("DojoController - Duration: " + SharedData.duration);
-        UnityEngine.Debug.Log("DojoController - Interval: " + SharedData.interval);
-        UnityEngine.Debug.Log("DojoController - Chime: " + SharedData.chime);
-        UnityEngine.Debug.Log("DojoController - Effect: " + SharedData.effectData);
-
         SceneManager.LoadScene("CustomMeditation");
     }
 
     public void OnDropdownValueChanged(int index)
     {
         SharedData.chime = chime.options[index].text;
-        UnityEngine.Debug.Log("Chime selected: " + SharedData.chime);
     }
 
     private int GetScrollValue(RectTransform content, UnityEngine.UI.Image select)
@@ -190,7 +270,6 @@ public class DojoController : MonoBehaviour
         if (closestButton != null)
         {
             int value = int.Parse(closestButton.GetComponentInChildren<TMP_Text>().text);
-            UnityEngine.Debug.Log("Scroll value selected: " + value);
             return value;
         }
 
@@ -201,33 +280,32 @@ public class DojoController : MonoBehaviour
     {
         if (audioSource == null)
         {
-            UnityEngine.Debug.LogError("AudioSource is null!");
             return;
         }
 
         string selectedChime = chime.options[index].text;
-        UnityEngine.Debug.Log("Playing chime preview: " + selectedChime);
 
-        if (selectedChime.Contains("Bell 1"))
+        if (selectedChime.Contains("Classic Bell"))
+        {
+            audioSource.PlayOneShot(bell);
+        }
+        else if (selectedChime.Contains("Echo Bell"))
         {
             audioSource.PlayOneShot(bell1);
         }
-        else if (selectedChime.Contains("Bell 2"))
+        else if (selectedChime.Contains("Mellow Bell"))
         {
             audioSource.PlayOneShot(bell2);
-        }
-        else if (selectedChime.Contains("Bell 3"))
-        {
-            audioSource.PlayOneShot(bell3);
-        }
-        else if (selectedChime.Contains("Bell"))
-        {
-            audioSource.PlayOneShot(bell);
         }
     }
 
     public void RefreshMeditations()
     {
         LoadAndDisplayMeditations();
+    }
+
+    public void RefreshBookmarkedLessons()
+    {
+        LoadAndDisplayBookmarkedLessons();
     }
 }

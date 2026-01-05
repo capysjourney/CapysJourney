@@ -20,7 +20,6 @@ public class DeleteMeditation : MonoBehaviour
 
         if (string.IsNullOrEmpty(json))
         {
-            UnityEngine.Debug.LogError("No saved meditations found!");
             return;
         }
 
@@ -28,8 +27,6 @@ public class DeleteMeditation : MonoBehaviour
 
         int siblingIndex = transform.parent.parent.GetSiblingIndex();
         int index = siblingIndex - 1;
-
-        UnityEngine.Debug.Log("Sibling index: " + siblingIndex + ", List index: " + index);
 
         if (index >= 0 && index < meditationList.entries.Count)
         {
@@ -39,8 +36,6 @@ public class DeleteMeditation : MonoBehaviour
             PlayerPrefs.SetString("SavedMeditations", json);
             PlayerPrefs.Save();
 
-            UnityEngine.Debug.Log("Meditation deleted at index: " + index);
-
             Destroy(transform.parent.parent.gameObject);
 
             DojoController dojoController = FindObjectOfType<DojoController>();
@@ -48,10 +43,6 @@ public class DeleteMeditation : MonoBehaviour
             {
                 dojoController.RefreshMeditations();
             }
-        }
-        else
-        {
-            UnityEngine.Debug.LogError("Index out of range: " + index + ", list count: " + meditationList.entries.Count);
         }
     }
 }
