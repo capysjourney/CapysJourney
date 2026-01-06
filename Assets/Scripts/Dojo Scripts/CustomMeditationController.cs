@@ -28,6 +28,7 @@ public class CustomMeditationController : MonoBehaviour
     [SerializeField] private Button _backArrow;
     [SerializeField] private TMP_Text _levelNumText;
     [SerializeField] private GameObject _levelCompletePopup;
+    [SerializeField] private TMP_Text carrotCount;
 
     [SerializeField] private AudioClip rainAudio;
     [SerializeField] private AudioClip oceanAudio;
@@ -270,10 +271,10 @@ public class CustomMeditationController : MonoBehaviour
 
     private void OnDone()
     {
-        _levelCompletePopup.SetActive(true);
 
         int carrotsEarned = Mathf.RoundToInt(10.1f * Mathf.Log(1 + 0.36f * _duration));
-
+        _levelCompletePopup.SetActive(true);
+        carrotCount.text = carrotsEarned + "";
         GameManager.WithStats(stats =>
         {
             stats.IncreaseCarrots(carrotsEarned);

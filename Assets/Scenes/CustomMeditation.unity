@@ -2360,6 +2360,7 @@ MonoBehaviour:
   _backArrow: {fileID: 1376606581}
   _levelNumText: {fileID: 0}
   _levelCompletePopup: {fileID: 929365464}
+  carrotCount: {fileID: 341426347}
   rainAudio: {fileID: 8300000, guid: 0e0c8fcc236920146824ffd73053f36e, type: 3}
   oceanAudio: {fileID: 8300000, guid: fece2faa1c730474a929878bb8e25f0a, type: 3}
   riverAudio: {fileID: 8300000, guid: 58b5d6e97dc25ab41b89fc17a2b25d8c, type: 3}
