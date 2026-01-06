@@ -1,5 +1,3 @@
-using Firebase.Extensions;
-using Firebase.Storage;
 using System;
 using TMPro;
 using UnityEngine;
@@ -91,51 +89,6 @@ public class LessonScript : MonoBehaviour
         }
         _banner.sprite = sprite;
     }
-
-    // private void LoadImage()
-    //{
-    //    string bannerName = GameManager.GetCurrLevel().BannerFile;
-    //    FirebaseStorage storage = FirebaseStorage.DefaultInstance;
-    //    StorageReference gsReference;
-    //    try
-    //    {
-    //        gsReference = storage.GetReferenceFromUrl("gs://capy-s-journey-bc2f8.firebasestorage.app/Banners/IntroWorld/" + bannerName + ".png");
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        Debug.LogError("Error getting storage reference: " + e.Message);
-    //        return;
-    //    }
-    //    gsReference.GetDownloadUrlAsync().ContinueWithOnMainThread(task =>
-    //    {
-    //        if (!task.IsFaulted && !task.IsCanceled)
-    //        {
-    //            string url = task.Result.ToString();
-    //            StartCoroutine(DownloadImage(url));
-    //        }
-    //        else
-    //        {
-    //            Debug.LogError("Failed to get download URL for banner image: " + bannerName);
-    //        }
-    //    });
-    //}
-
-    //private System.Collections.IEnumerator DownloadImage(string url)
-    //{
-    //    UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequestTexture.GetTexture(url);
-    //    yield return request.SendWebRequest();
-
-    //    if (request.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
-    //    {
-    //        Texture2D texture = UnityEngine.Networking.DownloadHandlerTexture.GetContent(request);
-    //        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-    //        _banner.sprite = sprite;
-    //    }
-    //    else
-    //    {
-    //        Debug.LogError("Failed to download banner image: " + request.error);
-    //    }
-    //}
 
     private void LoadAudio()
     {

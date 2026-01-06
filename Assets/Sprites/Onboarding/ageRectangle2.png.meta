@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3d194a9559f480c4ab8bb17290a244fd
+guid: 2061da4089cc39a47b5995367c04f40c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8855716434826014153
-    second: ageRectangle_0
+      213: -1144672724189973337
+    second: ageRectangle2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -110,19 +110,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
     buildTarget: iOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -139,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ageRectangle_0
+      name: ageRectangle2_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 200
-        height: 158
+        width: 31
+        height: 34
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 42, y: 42, z: 42, w: 42}
+      border: {x: 12, y: 12, z: 12, w: 12}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7325b9672dc2a1580800000000000000
-      internalID: -8855716434826014153
+      spriteID: 7a4f39ad83e4d10f0800000000000000
+      internalID: -1144672724189973337
       vertices: []
       indices: 
       edges: []
@@ -164,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 53b318b1c9092824e9bfed472367f126
+    spriteID: 22a60b9fab86a28419793d24ffdd099c
     internalID: 0
     vertices: []
     indices: 
@@ -174,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ageRectangle_0: -8855716434826014153
+      ageRectangle2_0: -1144672724189973337
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
