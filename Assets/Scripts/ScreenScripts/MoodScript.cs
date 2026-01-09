@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -70,48 +71,54 @@ public class MoodScript : MonoBehaviour
     void Update()
     {
         if (_darkened) return;
-        // Handle pointer drag for both mouse and touch
-        if (Input.GetMouseButtonDown(0) && IsPointerHit(Input.mousePosition))
+
+        // Handle pointer drag for mouse/pen
+        if (Mouse.current != null)
         {
-            _isDragging = true;
-        }
-        if (Input.GetMouseButtonUp(0) && _isDragging)
-        {
-            _isDragging = false;
-            SnapPointerAndSetMood();
-        }
-        if (_isDragging)
-        {
-            UpdatePointerAngle(Input.mousePosition);
+            if (Mouse.current.leftButton.wasPressedThisFrame && IsPointerHit(Mouse.current.position.ReadValue()))
+            {
+                _isDragging = true;
+            }
+            if (Mouse.current.leftButton.wasReleasedThisFrame && _isDragging)
+            {
+                _isDragging = false;
+                SnapPointerAndSetMood();
+            }
+            if (_isDragging)
+            {
+                UpdatePointerAngle(Mouse.current.position.ReadValue());
+            }
         }
 
         // Touch support (for mobile)
-        if (Input.touchCount <= 0)
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
         {
-            return;
-        }
-        Touch touch = Input.GetTouch(0);
-        switch (touch.phase)
-        {
-            case TouchPhase.Began:
-                if (IsPointerHit(touch.position))
-                    _isDragging = true;
-                break;
-            case TouchPhase.Ended:
-            case TouchPhase.Canceled:
-                if (_isDragging)
-                {
-                    _isDragging = false;
-                    SnapPointerAndSetMood();
-                }
-                break;
-            case TouchPhase.Moved:
-            case TouchPhase.Stationary:
-                if (_isDragging)
-                {
-                    UpdatePointerAngle((Vector3)touch.position);
-                }
-                break;
+            UnityEngine.InputSystem.Controls.TouchControl touch = Touchscreen.current.primaryTouch;
+            UnityEngine.InputSystem.TouchPhase phase = touch.phase.ReadValue();
+            Vector2 touchPosition = touch.position.ReadValue();
+
+            switch (phase)
+            {
+                case UnityEngine.InputSystem.TouchPhase.Began:
+                    if (IsPointerHit(touchPosition))
+                        _isDragging = true;
+                    break;
+                case UnityEngine.InputSystem.TouchPhase.Ended:
+                case UnityEngine.InputSystem.TouchPhase.Canceled:
+                    if (_isDragging)
+                    {
+                        _isDragging = false;
+                        SnapPointerAndSetMood();
+                    }
+                    break;
+                case UnityEngine.InputSystem.TouchPhase.Moved:
+                case UnityEngine.InputSystem.TouchPhase.Stationary:
+                    if (_isDragging)
+                    {
+                        UpdatePointerAngle(touchPosition);
+                    }
+                    break;
+            }
         }
     }
     private void SnapToMood(Mood mood)
@@ -155,10 +162,10 @@ public class MoodScript : MonoBehaviour
         }
     }
 
-    private void UpdatePointerAngle(Vector3 touchPosition)
+    private void UpdatePointerAngle(Vector2 touchPosition)
     {
         Vector3 pointerScreenPos = _pointer.transform.position;
-        Vector3 dir = touchPosition - pointerScreenPos;
+        Vector3 dir = (Vector3)touchPosition - pointerScreenPos;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
         if (angle < -180f) angle += 360f;
         angle = Mathf.Clamp(angle, -85f, 85f);
@@ -168,7 +175,7 @@ public class MoodScript : MonoBehaviour
 
 
     // Returns true if the screen position is over the pointer object
-    private bool IsPointerHit(Vector3 screenPosition)
+    private bool IsPointerHit(Vector2 screenPosition)
     {
         RectTransform pointerRect = _pointer.GetComponent<RectTransform>();
         Canvas canvas = _pointer.GetComponentInParent<Canvas>();
