@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public enum Tier
 {
     Common,
@@ -74,10 +72,9 @@ public class Accessory
 
 
     /// <summary>
-    /// Overrides Equals to compare accessories based on Name, Type, and Tier.
+    /// Returns whether <c>obj</c> has the same name, type, and tier as <c>this</c>.
     /// </summary>
     /// <param name="obj"></param>
-    /// <returns></returns>
     public override bool Equals(object obj)
     {
         if (obj is not Accessory acc) return false;
@@ -85,9 +82,8 @@ public class Accessory
     }
 
     /// <summary>
-    /// Overrides GetHashCode to provide a hash code based on Name, Type, and Tier.
+    /// Returns a hash code based on Name, Type, and Tier.
     /// </summary>
-    /// <returns></returns>
     public override int GetHashCode()
     {
         return System.HashCode.Combine(Name, Type, Tier);

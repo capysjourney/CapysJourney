@@ -14,6 +14,7 @@ public class AgeInputScript : MonoBehaviour
     [SerializeField] private Sprite _capyChild;
     [SerializeField] private Sprite _capyTeen;
     [SerializeField] private Sprite _capyAdult;
+    private Action<int> _externalOnAgeChanged;
 
     void Start()
     {
@@ -29,6 +30,7 @@ public class AgeInputScript : MonoBehaviour
 
     private void UpdateAge(float newAge)
     {
+        _externalOnAgeChanged?.Invoke((int)newAge);
         _age = (int)Math.Clamp(newAge, 0, 100);
         _slider.value = _age;
         _ageText.SetText(_age.ToString());
@@ -47,4 +49,13 @@ public class AgeInputScript : MonoBehaviour
         PlayerPrefs.SetInt("age", _age);
     }
 
+    public int GetAge()
+    {
+        return _age;
+    }
+
+    public void SetOnAgeChangedListener(Action<int> onAgeChanged)
+    {
+        _externalOnAgeChanged = onAgeChanged;
+    }
 }

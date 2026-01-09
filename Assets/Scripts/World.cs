@@ -41,7 +41,7 @@ public class Level
            { AgeGroup.OldTeen, "W1L1A3" },
            { AgeGroup.Adult, "W1L1A3" }
        },
-       bannerFile: "W1L1A0L",
+       bannerFile: "W1L1L",
        mapPosition: new Vector2(129, 200.525f),
        capyPosition: new Vector2(-84, -440),
        enumName: LevelEnum.W1L1);
@@ -105,7 +105,7 @@ public class Level
            { AgeGroup.OldTeen, "W1L5A3" },
            { AgeGroup.Adult, "W1L5A3" }
        },
-        bannerFile: "W1L5L1_3",
+        bannerFile: "W1L5L_1",
         mapPosition: new Vector2(-286, -59),
         capyPosition: new Vector2(355.4f, -47),
         enumName: LevelEnum.W1L5);
@@ -327,22 +327,22 @@ public class Level
     }
     public static Dictionary<Level, Level[]> NextLevelMap = new()
     {
-        {Level.World1Level1, new Level[]{World1Level2} },
-        {Level.World1Level2, new Level[]{World1Level3 } },
-        {Level.World1Level3, new Level[]{World1Level4, World1SideLevel1} },
-        {Level.World1Level4, new Level[]{World1Level5 } },
-        {Level.World1Level5, new Level[]{World1Level6, World1SideLevel3 } },
-        {Level.World1Level6, new Level[]{World1Level7 } },
-        {Level.World1Level7, new Level[]{World1Level8 } },
-        {Level.World1Level8, new Level[]{World1Level9 } },
-        {Level.World1Level9, new Level[]{World1Level10, World1MiniLevel1, World1MiniLevel2, World1MiniLevel3 } },
-        {Level.World1Level10, new Level[]{} },
-        {Level.World1SideLevel1, new Level[]{World1SideLevel2 } },
-        {Level.World1SideLevel2, new Level[]{ } },
-        {Level.World1SideLevel3, new Level[]{ } },
-        {Level.World1MiniLevel1, new Level[]{ } },
-        {Level.World1MiniLevel2, new Level[]{ } },
-        {Level.World1MiniLevel3, new Level[]{ } },
+        {World1Level1, new Level[]{World1Level2} },
+        {World1Level2, new Level[]{World1Level3 } },
+        {World1Level3, new Level[]{World1Level4, World1SideLevel1} },
+        {World1Level4, new Level[]{World1Level5 } },
+        {World1Level5, new Level[]{World1Level6, World1SideLevel3 } },
+        {World1Level6, new Level[]{World1Level7 } },
+        {World1Level7, new Level[]{World1Level8 } },
+        {World1Level8, new Level[]{World1Level9 } },
+        {World1Level9, new Level[]{World1Level10, World1MiniLevel1, World1MiniLevel2, World1MiniLevel3 } },
+        {World1Level10, new Level[]{} },
+        {World1SideLevel1, new Level[]{World1SideLevel2 } },
+        {World1SideLevel2, new Level[]{ } },
+        {World1SideLevel3, new Level[]{ } },
+        {World1MiniLevel1, new Level[]{ } },
+        {World1MiniLevel2, new Level[]{ } },
+        {World1MiniLevel3, new Level[]{ } },
     };
 
     public Level(string shortName, string name, string description, Dictionary<AgeGroup, string> audioFile, string bannerFile, Vector2 mapPosition, Vector2 capyPosition, LevelEnum enumName)

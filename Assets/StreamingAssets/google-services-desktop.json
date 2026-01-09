@@ -7,22 +7,37 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:284558679555:ios:25617d66f8790e760eb836",
+        "mobilesdk_app_id": "1:284558679555:android:109e1b14c88899f60eb836",
         "android_client_info": {
           "package_name": "com.CapysJourney.CapysJourney"
         }
       },
+      "oauth_client": [
+        {
+          "client_id": "284558679555-t9u5469s7h4l2df6racvgjfeu966hcih.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyB27fzC3mX6qbqBIlb6O3LzVY6HJ7W0Nr4"
+          "current_key": "AIzaSyCoIHKfh_jlfee4z1jOH4q_bloY43ndFQE"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 0
-        },
         "appinvite_service": {
-          "status": 1
+          "other_platform_oauth_client": [
+            {
+              "client_id": "284558679555-t9u5469s7h4l2df6racvgjfeu966hcih.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "284558679555-h21brobodtt086nci9vd79f19vjbleg0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.CapysJourney.CapysJourney"
+              }
+            }
+          ]
         }
       }
     }

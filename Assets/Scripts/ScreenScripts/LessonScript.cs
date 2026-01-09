@@ -31,16 +31,13 @@ public class LessonScript : MonoBehaviour
     private Image _pauseButtonImage;
     private Image _bookmarkButtonImage;
     private Image _forwardButtonImage;
-    private float _maxTimeReached = 0;
-
-    /// <summary>
-    /// Duration of the audio clip in seconds.
-    /// </summary>
-    private float _duration;
+    private float _maxTimeReached;
+    private float _durationInSeconds;
 
     private bool _playAudio = false;
     private bool _hasCompleted = false;
     private bool _userIsDraggingSlider = false;
+    private readonly bool DebugMode = true; // todo - set to false for production
 
     void Start()
     {
@@ -53,9 +50,9 @@ public class LessonScript : MonoBehaviour
 
         LoadImage();
         LoadAudio();
-        _slider.maxValue = _duration;
-        TimeSpan durationTS = TimeSpan.FromSeconds(_duration);
-        _durationText.text = FormatSeconds(_duration);
+        _slider.maxValue = _durationInSeconds;
+        TimeSpan durationTS = TimeSpan.FromSeconds(_durationInSeconds);
+        _durationText.text = FormatSeconds(_durationInSeconds);
         _backwardButton.onClick.AddListener(OnBackward);
         _forwardButton.onClick.AddListener(OnForward);
         _pauseButton.onClick.AddListener(OnPause);
@@ -104,8 +101,8 @@ public class LessonScript : MonoBehaviour
             Debug.LogError("Audio clip not found: " + audioName);
         }
         _audioSource.clip = audioClip;
-        _duration = audioClip.length;
-        _maxTimeReached = _hasCompleted ? _duration : 0;
+        _durationInSeconds = audioClip.length;
+        _maxTimeReached = _hasCompleted ? _durationInSeconds : 0;
         _playAudio = true;
         UnpauseAudio();
     }
@@ -140,15 +137,18 @@ public class LessonScript : MonoBehaviour
 
     private void OnForward()
     {
-        float targetTime = Mathf.Min(_duration, _audioSource.time + 15);
+        float targetTime = Mathf.Min(_durationInSeconds, _audioSource.time + 15);
 
         // Only allow forward if user has already reached that point or lesson is completed
-        if (targetTime <= _maxTimeReached)
+        if (DebugMode || targetTime <= _maxTimeReached)
         {
-            _audioSource.time = targetTime;
-            _slider.SetValueWithoutNotify(_audioSource.time);
-            _timeElapsedText.text = FormatSeconds(_audioSource.time);
-            if (_audioSource.time == _duration)
+            _slider.SetValueWithoutNotify(targetTime);
+            _timeElapsedText.text = FormatSeconds(targetTime);
+            if (!Mathf.Approximately(targetTime, _durationInSeconds))
+            {
+                _audioSource.time = targetTime;
+            }
+            else
             {
                 OnDone();
             }
@@ -178,7 +178,6 @@ public class LessonScript : MonoBehaviour
         {
             _slider.SetValueWithoutNotify(_maxTimeReached);
         }
-        // We consider the user to be dragging if they are in range
         _userIsDraggingSlider = value <= _maxTimeReached;
     }
 
@@ -188,7 +187,6 @@ public class LessonScript : MonoBehaviour
         float sliderValue = _slider.value;
         if (sliderValue > _maxTimeReached)
         {
-            // illegal sliding, revert to max allowed
             _slider.SetValueWithoutNotify(_maxTimeReached);
         }
         else
@@ -196,7 +194,17 @@ public class LessonScript : MonoBehaviour
             _slider.SetValueWithoutNotify(sliderValue);
             if (!Mathf.Approximately(_audioSource.time, sliderValue))
             {
-                _audioSource.time = sliderValue;
+                if (Mathf.Approximately(sliderValue, _durationInSeconds))
+                {
+                    _timeElapsedText.text = FormatSeconds(_audioSource.time);
+                    _userIsDraggingSlider = false;
+                    OnDone();
+                    return;
+                }
+                else
+                {
+                    _audioSource.time = sliderValue;
+                }
             }
             _timeElapsedText.text = FormatSeconds(_audioSource.time);
         }
@@ -204,7 +212,8 @@ public class LessonScript : MonoBehaviour
     }
     private void UpdateForwardButtonState()
     {
-        float targetTime = Mathf.Min(_duration, _audioSource.time + 15);
+        if (DebugMode) return;
+        float targetTime = Mathf.Min(_durationInSeconds, _audioSource.time + 15);
         bool canFastForward = targetTime <= _maxTimeReached;
 
         _forwardButton.interactable = canFastForward;
@@ -217,9 +226,9 @@ public class LessonScript : MonoBehaviour
     void Update()
     {
         if (!_playAudio) return;
-        if (_audioSource.time >= _duration)
+        if (_audioSource.time >= _durationInSeconds)
         {
-            _timeElapsedText.text = FormatSeconds(_duration);
+            _timeElapsedText.text = FormatSeconds(_durationInSeconds);
             OnDone();
             return;
         }
@@ -251,7 +260,7 @@ public class LessonScript : MonoBehaviour
         PauseAudio();
         Darken();
         _levelNumText.text = GameManager.GetCurrLevel().ShortName;
-        GameManager.CompleteLevel(_duration);
+        GameManager.CompleteLevel(_durationInSeconds);
         _hasCompleted = true;
         if (GameManager.IsLevelBookmarked())
         {

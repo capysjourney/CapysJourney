@@ -1,7 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -29,8 +29,14 @@ abstract public class MapScript : MonoBehaviour
      */
     protected const float Threshold = -94;
 
+    protected Vector3 PopUpBelowPositionRelativeToCapy = new(0, -177.7f, 0);
+    protected Vector3 PopUpAbovePositionRelativeToCapy = new(0, 180, 0);
+
     protected LevelPopupScript _scriptBelow;
     protected LevelPopupScript _scriptAbove;
+
+    private Coroutine _repositionCoroutine;
+    private const float AnimationDuration = 0.5f;
 
     abstract protected void InitializeMaps();
     public virtual void Initialize(Level level, Dictionary<Level, LevelStatus> levelStatuses)
@@ -39,19 +45,48 @@ abstract public class MapScript : MonoBehaviour
         _level = level;
         _scriptBelow = _levelPopupBelow.GetComponent<LevelPopupScript>();
         _scriptAbove = _levelPopupAbove.GetComponent<LevelPopupScript>();
-        RepositionMap(level);
+        RepositionMap(level, true);
         StyleRoads();
         StyleLevelButtons(level.World);
         SetClickListeners(level.World);
     }
 
-    protected void RepositionMap(Level level)
+    protected void RepositionMap(Level level, bool instant = false)
     {
         Vector2 mapPos = level.MapPosition;
         Vector2 capyPos = level.CapyPosition;
-        _mapContainer.anchoredPosition = mapPos;
         _capy.anchoredPosition = capyPos;
+
+        if (instant)
+        {
+            _mapContainer.anchoredPosition = mapPos;
+        }
+        else
+        {
+            if (_repositionCoroutine != null)
+            {
+                StopCoroutine(_repositionCoroutine);
+            }
+            _repositionCoroutine = StartCoroutine(AnimateRepositionMap(mapPos));
+        }
     }
+
+    private IEnumerator AnimateRepositionMap(Vector2 targetMapPos)
+    {
+        Vector2 startMapPos = _mapContainer.anchoredPosition;
+        float time = 0;
+        while (time < AnimationDuration)
+        {
+            time += Time.deltaTime;
+            AnimationCurve ease = AnimationCurve.EaseInOut(0, 0, 1, 1);
+            float lerpFactor = ease.Evaluate(time / AnimationDuration);
+            _mapContainer.anchoredPosition = Vector2.Lerp(startMapPos, targetMapPos, lerpFactor);
+            yield return null;
+        }
+        _mapContainer.anchoredPosition = targetMapPos;
+        _repositionCoroutine = null;
+    }
+
     protected void StyleRoads()
     {
         if (_previousLevel == null)
@@ -115,13 +150,13 @@ abstract public class MapScript : MonoBehaviour
         {
             levelPopup = _levelPopupBelow;
             script = _scriptBelow;
-            levelPopup.GetComponent<RectTransform>().position = _capy.position + new Vector3(0, -177.7f, 0);
+            levelPopup.GetComponent<RectTransform>().position = _capy.position + PopUpBelowPositionRelativeToCapy;
         }
         else
         {
             levelPopup = _levelPopupAbove;
             script = _scriptAbove;
-            levelPopup.GetComponent<RectTransform>().position = _capy.position + new Vector3(0, 140, 0);
+            levelPopup.GetComponent<RectTransform>().position = _capy.position + PopUpAbovePositionRelativeToCapy;
         }
         script.UpdatePopup(btnLevel.ShortName, btnLevel.Name, btnLevel.Description, 10);
         script.ConfigureStartButton(() =>
