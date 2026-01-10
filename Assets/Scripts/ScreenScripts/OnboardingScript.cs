@@ -62,7 +62,7 @@ public class OnboardingScript : MonoBehaviour
             LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[0];
         }
         AddContinueButtonListener();
-        AddBackBtnListener();
+        AddBackButtonListener();
         _didParentVerify = !GameManager.NeedParentConfirmation;
         _confirmationSpeechBubbleText = _parentConfirmationArea.GetComponentInChildren<TMP_Text>();
         if (GameManager.NeedParentConfirmation)
@@ -132,16 +132,14 @@ public class OnboardingScript : MonoBehaviour
                 //    break;
                 case Stage.TRANSITION:
                     CreatePlayerStats();
-                    SceneManager.LoadSceneAsync("Journey");
-                    // todo - add transition to tutorial instead of journey
-                    //SceneManager.LoadSceneAsync("Tutorial");
+                    SceneManager.LoadSceneAsync("Tutorial");
                     break;
                 default:
                     break;
             }
         });
     }
-    private void AddBackBtnListener()
+    private void AddBackButtonListener()
     {
         _backButton.GetComponent<Button>().onClick.AddListener(() =>
         {
