@@ -24,7 +24,12 @@ public static class GameManager
     /// </summary>
     private static Accessory _lastAccessoryObtained = null;
 
-    public const int NumWorlds = 1;
+    public static readonly int NumWorlds = 1;
+
+    /// <summary>
+    /// Whether to go to the "Waiting for parent confirmation" screen after registering.
+    /// </summary>
+    public static bool NeedParentConfirmation = false;
 
     public static void UpdateWorldAndLevel()
     {

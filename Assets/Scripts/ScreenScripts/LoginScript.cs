@@ -38,8 +38,6 @@ public class LoginScript : MonoBehaviour
 
     private FirebaseAuth _auth = null;
     private bool _isLoginMode = true;
-    private bool _toOnboarding = false;
-    private bool _toJourney = false;
     private bool _isChild = true;
 
     void Start()
@@ -216,7 +214,8 @@ public class LoginScript : MonoBehaviour
             FirebaseUser user = task.Result.User;
             Debug.LogFormat("Firebase user created successfully: {0} ({1})",
                 user.DisplayName, user.UserId);
-            _toOnboarding = true;
+            GameManager.NeedParentConfirmation = _isChild;
+            SceneManager.LoadSceneAsync("Onboarding");
         });
     }
 
@@ -250,14 +249,14 @@ public class LoginScript : MonoBehaviour
             _errorMessageGO.SetActive(false);
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 user.DisplayName, user.UserId);
-            _toJourney = true;
+            SceneManager.LoadSceneAsync("Journey");
         });
     }
 
     private void OnContinueAsGuest()
     {
         // todo - guest login logic
-        _toOnboarding = true;
+        SceneManager.LoadSceneAsync("Onboarding");
     }
 
     private void OnAgeChanged(int newAge)
@@ -274,16 +273,6 @@ public class LoginScript : MonoBehaviour
     }
     void Update()
     {
-        if (_toOnboarding)
-        {
-            SceneManager.LoadSceneAsync("Onboarding");
-            _toOnboarding = false;
-        }
-        else if (_toJourney)
-        {
-            SceneManager.LoadSceneAsync("Journey");
-            _toJourney = false;
-        }
         if (_auth == null && FirebaseManager.Instance.IsFirebaseInitialized)
         {
             _auth = FirebaseAuth.DefaultInstance;

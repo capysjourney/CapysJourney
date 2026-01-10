@@ -1,4 +1,6 @@
+using Firebase.Auth;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,10 +10,11 @@ using UnityEngine.Localization.SmartFormat.PersistentVariables;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class SelectLanguagesScript : MonoBehaviour
+public class OnboardingScript : MonoBehaviour
 {
     private enum Stage
     {
+        PARENT_CONFIRMATION,
         SELECT_LANGUAGE,
         CAPY_INTRO,
         INPUT_NAME,
@@ -23,9 +26,10 @@ public class SelectLanguagesScript : MonoBehaviour
 
     private readonly string[] _languages = { "English", "Spanish" };
     private readonly string[] _locales = { "English (en)", "Spanish (es)" };
-    [SerializeField] private GameObject _continueButton;
+    [SerializeField] private Button _continueButton;
     [SerializeField] private GameObject _backButton;
     [SerializeField] private GameObject _languageSelection;
+    [SerializeField] private GameObject _parentConfirmationArea;
     [SerializeField] private GameObject _bigCapy;
     [SerializeField] private Image _progressBar;
     [SerializeField] private TMP_Text _questionText;
@@ -33,42 +37,84 @@ public class SelectLanguagesScript : MonoBehaviour
     [SerializeField] private GameObject _textInputArea;
     [SerializeField] private TMP_Text _inputLabel;
     [SerializeField] private TMP_Text _placeholder;
-    [SerializeField] private GameObject _ageInputArea;
     [SerializeField] private GameObject _appearanceInputArea;
     [SerializeField] private GameObject _bigSpeechBubble1;
     [SerializeField] private GameObject _bigSpeechBubble2;
-    private const string _askName = "What is your name?";
-    private const string _askAge = "How old are you?";
+    private const string _askUsername = "Pick a username!";
     private const string _askAppearance = "Pick an appearance!";
-    private const string _nameLabel = "Name:";
-    private const string _ageLabel = "Age:";
+    private const string _usernameLabel = "Username:";
     private const string _appearanceLabel = "Appearance:";
-    private const string _namePlaceholder = "Enter name...";
+    private const string _usernamePlaceholder = "Enter username";
     [SerializeField] private Sprite _noProgress;
     [SerializeField] private Sprite _halfProgress;
     [SerializeField] private Sprite _fullProgress;
-    private GameObject[] _uiElements;
+    private GameObject[] _stageUIs;
+    private TMP_Text _confirmationSpeechBubbleText;
+    private bool _didParentVerify = true;
 
     void Start()
     {
-        _uiElements = new GameObject[] { _languageSelection, _bigCapy, _continueButton, _backButton, _questionHeader, _textInputArea, _ageInputArea, _appearanceInputArea };
+        _stageUIs = new GameObject[] { _languageSelection, _bigCapy, _parentConfirmationArea, _continueButton.gameObject, _backButton, _questionHeader, _textInputArea, _appearanceInputArea };
         //LoadSelectLanguage(); 
         // todo - uncomment above and remove below
         if (LocalizationSettings.SelectedLocale == null)
         {
             LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[0];
         }
-        LoadCapyIntro();
-        AddContinueBtnListener();
+        AddContinueButtonListener();
         AddBackBtnListener();
+        _didParentVerify = !GameManager.NeedParentConfirmation;
+        _confirmationSpeechBubbleText = _parentConfirmationArea.GetComponentInChildren<TMP_Text>();
+        if (GameManager.NeedParentConfirmation)
+        {
+            LoadParentConfirmation();
+        }
+        else
+        {
+            _parentConfirmationArea.SetActive(false);
+            LoadCapyIntro();
+        }
     }
 
-    private void AddContinueBtnListener()
+    private void LoadParentConfirmation()
     {
-        _continueButton.GetComponent<Button>().onClick.AddListener(() =>
+        _currStage = Stage.PARENT_CONFIRMATION;
+        HideAllStages();
+        _confirmationSpeechBubbleText.SetText("Waiting for parent confirmation....");
+        _continueButton.interactable = false;
+        _backButton.SetActive(false);
+        Show(_parentConfirmationArea);
+        StartCoroutine(WaitForParentConfirmation());
+    }
+
+    private IEnumerator WaitForParentConfirmation()
+    {
+        FirebaseAuth.DefaultInstance.CurrentUser.SendEmailVerificationAsync();
+        while (!_didParentVerify)
+        {
+            FirebaseAuth.DefaultInstance.CurrentUser.ReloadAsync().ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    _didParentVerify = FirebaseAuth.DefaultInstance.CurrentUser.IsEmailVerified;
+                }
+            });
+            yield return new WaitForSeconds(1f);
+        }
+        GameManager.NeedParentConfirmation = false;
+        _confirmationSpeechBubbleText.SetText("Parent confirmation received!");
+        _continueButton.interactable = true;
+    }
+
+    private void AddContinueButtonListener()
+    {
+        _continueButton.onClick.AddListener(() =>
         {
             switch (_currStage)
             {
+                case Stage.PARENT_CONFIRMATION:
+                    LoadCapyIntro();
+                    break;
                 //case Stage.SELECT_LANGUAGE: todo - uncomment
                 //    LoadCapyIntro();
                 //    break;
@@ -77,11 +123,7 @@ public class SelectLanguagesScript : MonoBehaviour
                     break;
                 case Stage.INPUT_NAME:
                     PlayerPrefs.SetString("username", _textInputArea.GetComponentInChildren<TMP_InputField>().text);
-                    LoadInputAge();
-                    break;
-                case Stage.INPUT_AGE:
-                    //LoadInputAppearance();
-                    // todo - uncomment
+                    // LoadInputAppearance();
                     LoadTransition();
                     break;
                 // todo - uncomment
@@ -116,11 +158,11 @@ public class SelectLanguagesScript : MonoBehaviour
                     LoadInputName();
                     break;
                 case Stage.INPUT_APPEARANCE:
-                    LoadInputAge();
+                    LoadInputName();
                     break;
                 case Stage.TRANSITION:
                     //LoadInputAppearance(); //todo - uncomment
-                    LoadInputAge(); // todo - remove
+                    LoadInputName(); // todo - remove
                     break;
                 default: break;
             }
@@ -132,13 +174,13 @@ public class SelectLanguagesScript : MonoBehaviour
         _currStage = Stage.SELECT_LANGUAGE;
         HideAllStages();
         Show(_languageSelection);
-        Show(_continueButton);
+        Show(_continueButton.gameObject);
         GameObject[] languageBoxes = GameObject.FindGameObjectsWithTag("Language");
         foreach (GameObject languageBox in languageBoxes)
         {
             GetScript(languageBox).SetOnClickListener(() => SelectLanguage(languageBox.name, languageBoxes));
         }
-        if(LocalizationSettings.SelectedLocale == null)
+        if (LocalizationSettings.SelectedLocale == null)
         {
             LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[0];
         }
@@ -155,9 +197,9 @@ public class SelectLanguagesScript : MonoBehaviour
         int idx = Array.IndexOf(_languages, languageName);
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[idx];
     }
-    private ToggleLanguageScript GetScript(GameObject go)
+    private ToggleLanguageScript GetScript(GameObject gameObject)
     {
-        return go.transform.GetComponentInChildren<ToggleLanguageScript>();
+        return gameObject.transform.GetComponentInChildren<ToggleLanguageScript>();
     }
 
     private void LoadCapyIntro()
@@ -166,7 +208,7 @@ public class SelectLanguagesScript : MonoBehaviour
         HideAllStages();
         _bigSpeechBubble2.SetActive(false);
         Show(_bigCapy);
-        Show(_continueButton);
+        Show(_continueButton.gameObject);
         //Show(_backButton);
         Show(_bigSpeechBubble1);
     }
@@ -176,27 +218,14 @@ public class SelectLanguagesScript : MonoBehaviour
         _currStage = Stage.INPUT_NAME;
         HideAllStages();
         _progressBar.sprite = _noProgress;
-        SetText(_questionText, _askName);
-        SetText(_inputLabel, _nameLabel);
-        SetText(_placeholder, _namePlaceholder);
+        _questionText.text = _askUsername;
+        _inputLabel.text = _usernameLabel;
+        _placeholder.text = _usernamePlaceholder;
         _textInputArea.GetComponentInChildren<TMP_InputField>().text = PlayerPrefs.GetString("username", "");
-        Show(_continueButton);
+        Show(_continueButton.gameObject);
         Show(_questionHeader);
         Show(_textInputArea);
         Show(_backButton);
-    }
-
-    private void LoadInputAge()
-    {
-        _currStage = Stage.INPUT_AGE;
-        HideAllStages();
-        _progressBar.sprite = _halfProgress;
-        SetText(_questionText, _askAge);
-        SetText(_inputLabel, _ageLabel);
-        Show(_continueButton);
-        Show(_questionHeader);
-        Show(_backButton);
-        Show(_ageInputArea);
     }
 
     private void LoadInputAppearance()
@@ -207,7 +236,7 @@ public class SelectLanguagesScript : MonoBehaviour
         SetText(_questionText, _askAppearance);
         SetText(_inputLabel, _appearanceLabel);
         Show(_questionHeader);
-        Show(_continueButton);
+        Show(_continueButton.gameObject);
         Show(_backButton);
         Show(_appearanceInputArea);
     }
@@ -222,7 +251,7 @@ public class SelectLanguagesScript : MonoBehaviour
         _bigSpeechBubble2.GetComponentInChildren<TMP_Text>().SetText(transitionText.GetLocalizedString());
         _bigSpeechBubble1.SetActive(false);
         Show(_bigCapy);
-        Show(_continueButton);
+        Show(_continueButton.gameObject);
         Show(_backButton);
         Show(_bigSpeechBubble2);
     }
@@ -240,11 +269,11 @@ public class SelectLanguagesScript : MonoBehaviour
         // Track user registration with PostHog
         string username = PlayerPrefs.GetString("username", "");
         int age = PlayerPrefs.GetInt("age", 0);
-        
+
         // Ensure PostHogManager is initialized
         PostHogManager.Instance.Initialize();
         string distinctId = PostHogManager.Instance.DistinctId;
-        
+
         PostHogManager.Instance.Identify(distinctId, new Dictionary<string, object>
         {
             { "username", username },
@@ -260,15 +289,15 @@ public class SelectLanguagesScript : MonoBehaviour
 
     private void HideAllStages()
     {
-        foreach (GameObject go in _uiElements)
+        foreach (GameObject gameObject in _stageUIs)
         {
-            go.SetActive(false);
+            gameObject.SetActive(false);
         }
     }
 
-    private void Show(GameObject go)
+    private void Show(GameObject gameObject)
     {
-        go.SetActive(true);
+        gameObject.SetActive(true);
     }
     private void SetText(TMP_Text tmp_Text, string text, bool translate = true)
     {
