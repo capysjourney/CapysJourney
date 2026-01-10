@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Localization;
@@ -21,6 +22,8 @@ public class NavBarScript : MonoBehaviour
 
     private Scene _currScene = Scene.Journey;
 
+    // for tutorial use
+    private bool _isForTutorial = false;
     public enum Scene
     {
         Journey,
@@ -32,6 +35,14 @@ public class NavBarScript : MonoBehaviour
 
     void Start()
     {
+        if (_isForTutorial)
+        {
+            _currScene = Scene.Journey;
+        }
+        else
+        {
+            _currScene = SceneOf(SceneManager.GetActiveScene().name);
+        }
         ConfigureButtons();
         InitializeContent();
     }
@@ -41,14 +52,26 @@ public class NavBarScript : MonoBehaviour
         _level.text = level.ShortName;
     }
 
+    public void SetIsForTutorial(bool isForTutorial)
+    {
+        _isForTutorial = isForTutorial;
+    }
+
+    public void ChangeScene(Scene newScene)
+    {
+        if (_isForTutorial)
+        {
+            _currScene = newScene;
+            ConfigureButtons();
+        }
+    }
+
     /// <summary>
     /// Configures the order, appearance, and click behavior of navigation buttons based on the current scene.
     /// </summary>
     private void ConfigureButtons()
     {
         Button[] buttons = new Button[] { _journeyTab, _dailyTab, _denTab, _profileTab, _dojoButton };
-        string sceneName = SceneManager.GetActiveScene().name;
-        _currScene = SceneOf(sceneName);
         ResetOrder();
         Button currButton = ButtonOf(_currScene);
         if (_currScene != Scene.Profile)
@@ -66,10 +89,12 @@ public class NavBarScript : MonoBehaviour
             button.onClick.RemoveAllListeners();
             if (button != currButton)
             {
-                button.onClick.AddListener(() => SceneManager.LoadSceneAsync(scene.ToString()));
+                if (!_isForTutorial)
+                {
+                    button.onClick.AddListener(() => SceneManager.LoadSceneAsync(scene.ToString()));
+                }
             }
         }
-
     }
 
     private void InitializeContent()

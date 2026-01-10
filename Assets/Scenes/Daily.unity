@@ -332,6 +332,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -907,15 +908,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2213203657013090334, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Color.b
-      value: 0.46666667
+      value: 0.1764706
       objectReference: {fileID: 0}
     - target: {fileID: 2213203657013090334, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Color.g
-      value: 0.49411765
+      value: 0.7529412
       objectReference: {fileID: 0}
     - target: {fileID: 2213203657013090334, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Color.r
-      value: 0.5529412
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4768946785958430727, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Pivot.x
@@ -999,12 +1000,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5101919363049712773, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_text
-      value: Neutral
+      value: Meh
       objectReference: {fileID: 0}
     - target: {fileID: 6568564808756101889, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 789994498101818059, guid: 413693703976e8a41a1e3dacdbf06d75, type: 3}
+      objectReference: {fileID: 7738495196999853142, guid: 6e48976ee62029b45a9c4871c39dccfc, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1396,6 +1397,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1653,6 +1655,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2008,6 +2011,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2463,6 +2467,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2569,15 +2574,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2213203657013090334, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Color.b
-      value: 0.827451
+      value: 0.33333334
       objectReference: {fileID: 0}
     - target: {fileID: 2213203657013090334, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Color.g
-      value: 0.53333336
+      value: 0.7607843
       objectReference: {fileID: 0}
     - target: {fileID: 2213203657013090334, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Color.r
-      value: 0.28627452
+      value: 0.54509807
       objectReference: {fileID: 0}
     - target: {fileID: 4768946785958430727, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Pivot.x
@@ -2661,12 +2666,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5101919363049712773, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_text
-      value: Down
+      value: Good
       objectReference: {fileID: 0}
     - target: {fileID: 6568564808756101889, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 205005969685647215, guid: ebfe07fcfe71d5d4d98b2e0f313bf371, type: 3}
+      objectReference: {fileID: -3618663592786925122, guid: 83d760780efd9e74d9aeee39cae7ee96, type: 3}
+    - target: {fileID: 6568564808756101889, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6568564808756101889, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6568564808756101889, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2940,15 +2957,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2213203657013090334, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Color.b
-      value: 0.49803922
+      value: 0.12156863
       objectReference: {fileID: 0}
     - target: {fileID: 2213203657013090334, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Color.g
-      value: 0.33333334
+      value: 0.59607846
       objectReference: {fileID: 0}
     - target: {fileID: 2213203657013090334, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Color.r
-      value: 0.19607843
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4768946785958430727, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Pivot.x
@@ -3032,12 +3049,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5101919363049712773, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_text
-      value: Tense
+      value: Bad
       objectReference: {fileID: 0}
     - target: {fileID: 6568564808756101889, guid: a6c7d1c28b9569141af04cd5704a8a8e, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -3485417120855524292, guid: f5261abd68bebe24a854a4a6d250e432, type: 3}
+      objectReference: {fileID: 2548315555373635053, guid: 480fb74cee94c474ba4df1d746b2266a, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3177,6 +3194,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

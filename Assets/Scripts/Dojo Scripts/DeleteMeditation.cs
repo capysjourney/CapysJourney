@@ -38,7 +38,7 @@ public class DeleteMeditation : MonoBehaviour
 
             Destroy(transform.parent.parent.gameObject);
 
-            DojoController dojoController = FindObjectOfType<DojoController>();
+            DojoController dojoController = FindFirstObjectByType<DojoController>();
             if (dojoController != null)
             {
                 dojoController.RefreshMeditations();
