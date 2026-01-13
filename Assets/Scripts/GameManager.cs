@@ -53,6 +53,7 @@ public static class GameManager
             MakeNextLevelsAvailable(stats);
             numExercisesCompleted = stats.NumExercisesCompleted;
             numWorldsCompleted = stats.NumWorldsCompleted;
+            stats.UpdateStreakForCompletedActivity();
         }, true);
 
         // Track level completion with PostHog
@@ -202,58 +203,92 @@ public static class GameManager
         return result ?? new LinkedList<MoodEntry>();
     }
 
-    public static void LogMood(Mood mood, DateTime dateTime)
-    {
-        WithStats(stats => stats.LogMood(mood, dateTime), true);
-    }
-
     public static LinkedList<GratitudeEntry> GetGratitudeEntries()
     {
         LinkedList<GratitudeEntry> result = null;
         WithStats(stats => result = stats.GratitudeLog, false);
         return result ?? new LinkedList<GratitudeEntry>();
     }
-
-    public static void LogGratitude(string gratitude, DateTime dateTime)
+    public static int LogGratitudeAndGetCarrotsEarned(string gratitude, DateTime dateTime)
     {
-        WithStats(stats => stats.LogGratitude(gratitude, dateTime), true);
-    }
-
-    public static bool LoggedMoodToday()
-    {
-        bool result = false;
-        WithStats(stats =>
-        {
-            LinkedList<MoodEntry> log = stats.MoodLog;
-            result = log != null && log.Count > 0 && log.First().Timestamp.Date == DateTime.Now.Date;
-        }, false);
-        return result;
-    }
-
-    public static bool LoggedGratitudeToday()
-    {
-        bool result = false;
+        int carrotsEarned = 0;
+        bool alreadyLoggedToday = false;
         WithStats(stats =>
         {
             LinkedList<GratitudeEntry> log = stats.GratitudeLog;
-            result = log != null && log.Count > 0 && log.Last().Timestamp.Date == DateTime.Now.Date;
-        }, false);
-        return result;
+            alreadyLoggedToday = log != null && log.Count > 0 && log.Last().Timestamp.Date == dateTime.Date;
+            if (!alreadyLoggedToday)
+            {
+                IncreaseCarrots(10);
+                carrotsEarned = 10;
+                stats.UpdateStreakForCompletedActivity();
+            }
+            stats.LogGratitude(gratitude, dateTime);
+        }, true);
+
+        // Track gratitude completion with PostHog
+        PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
+        {
+            { "activity_type", "gratitude" },
+            { "gratitude_length", gratitude.Length },
+            { "carrots_earned", carrotsEarned },
+            { "is_first_today", !alreadyLoggedToday }
+        });
+        return carrotsEarned;
     }
 
-    public static bool DidBreathworkToday()
+    public static int LogMoodAndGetCarrotsEarned(Mood mood, DateTime dateTime)
     {
-        bool result = false;
+        int carrotsEarned = 0;
+        bool alreadyLoggedToday = false;
         WithStats(stats =>
         {
-            result = stats.LastBreathworkTime.Date == DateTime.Now.Date;
-        }, false);
-        return result;
+            LinkedList<MoodEntry> log = stats.MoodLog;
+            alreadyLoggedToday = log != null && log.Count > 0 && log.Last().Timestamp.Date == dateTime.Date;
+            if (!alreadyLoggedToday)
+            {
+                IncreaseCarrots(10);
+                carrotsEarned = 10;
+                stats.UpdateStreakForCompletedActivity();
+            }
+            stats.LogMood(mood, dateTime);
+        }, true);
+
+        // Track mood check-in completion with PostHog
+        PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
+        {
+            { "activity_type", "mood_check_in" },
+            { "mood", mood.ToString() },
+            { "carrots_earned", carrotsEarned },
+            { "is_first_today", !alreadyLoggedToday }
+        });
+        return carrotsEarned;
     }
 
-    public static void DoBreathwork()
+    public static int CompleteBreathworkAndGetCarrotsEarned()
     {
-        WithStats(stats => stats.LastBreathworkTime = DateTime.Now, true);
+        int carrotsEarned = 0;
+        WithStats(stats =>
+        {
+            bool alreadyCompletedToday = stats.LastBreathworkTime.Date == DateTime.Now.Date;
+            if (!alreadyCompletedToday)
+            {
+                IncreaseCarrots(10);
+                carrotsEarned = 10;
+                stats.UpdateStreakForCompletedActivity();
+            }
+            stats.LastBreathworkTime = DateTime.Now;
+
+            // Track breathwork completion with PostHog
+            PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
+            {
+                { "activity_type", "breathwork" },
+                { "duration_seconds", BreathworkScript.Duration },
+                { "carrots_earned", alreadyCompletedToday ? 0 : 10 },
+                { "is_first_today", !alreadyCompletedToday }
+            });
+        }, true);
+        return carrotsEarned;
     }
 
     public static int GetNumCarrots()
@@ -275,10 +310,10 @@ public static class GameManager
         WithStats(stats =>
         {
             DateTime lastLogin = stats.LastLogin;
-            stats.Login();
+            stats.UpdateLastLogin();
             // Check if this is the first login (LastLogin was DateTime.MinValue)
             isFirstLogin = lastLogin == DateTime.MinValue;
-        }, true);
+        }, false);
 
         // Track login with PostHog
         PostHogManager.Instance.Capture("user_logged_in", new Dictionary<string, object>

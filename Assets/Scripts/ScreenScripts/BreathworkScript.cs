@@ -29,7 +29,7 @@ public class BreathworkScript : MonoBehaviour
     /// Number of seconds for the breathwork session.
     /// Should be a multiple of 12 so that the breathing cycles align properly.
     /// </summary>
-    private const int Duration = 60;
+    public static readonly int Duration = 60;
 
     private bool _isFinished = false;
     private bool _isMeditating = false;
@@ -76,21 +76,9 @@ public class BreathworkScript : MonoBehaviour
         if (_progressBar.value >= Duration)
         {
             _isFinished = true;
-            bool alreadyCompletedToday = GameManager.DidBreathworkToday();
-            int carrotsEarned = alreadyCompletedToday ? 0 : 10;
-            _carrotCount.text = carrotsEarned.ToString();
-            GameManager.IncreaseCarrots(carrotsEarned);
-            GameManager.DoBreathwork();
+            int carrotsEarned = GameManager.CompleteBreathworkAndGetCarrotsEarned();
+            _carrotCount.text = $"{carrotsEarned}";
             _endObjects.SetActive(true);
-
-            // Track breathwork completion with PostHog
-            PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
-            {
-                { "activity_type", "breathwork" },
-                { "duration_seconds", Duration },
-                { "carrots_earned", carrotsEarned },
-                { "is_first_today", !alreadyCompletedToday }
-            });
         }
         else
         {

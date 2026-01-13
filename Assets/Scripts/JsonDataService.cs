@@ -13,18 +13,14 @@ public class JsonDataService : IDataService
 
     public bool SaveData<T>(string RelativePath, T Data, bool Encrypted=true)
     {
+        // https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Application-persistentDataPath.html
         string path = Path.Combine(Application.persistentDataPath, RelativePath);
 
         try
         {
             if (File.Exists(path))
             {
-                //Debug.Log("Data exists. Deleting old file and writing a new one!");
                 File.Delete(path);
-            }
-            else
-            {
-                //Debug.Log("Writing file for the first time!");
             }
             using FileStream stream = File.Create(path);
             if (Encrypted)

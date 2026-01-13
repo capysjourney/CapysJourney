@@ -43,7 +43,12 @@ public class PlayerStats
         ZenMaster,
         AdventureAwaits,
         MindfulBeginnings,
+        MeetingQuincy,
         TrailBlazer,
+        // TODO - add back later
+        //MindfulVoyager,
+        //SereneExplorer,
+        //CapyConqueror,
         TinyButMighty,
         LilyLounge,
         JustBreathe,
@@ -55,14 +60,14 @@ public class PlayerStats
         SeedsOfGratitude,
         BloomingThanks,
         GratitudeGardener,
-        CapysClosetBegins,
-        DressedToImpress,
-        FreshFit,
-        OneStepToCozy,
-        CapyLovesHome,
         TinyTrader,
         CapyCollector,
-        CarrotTycoon
+        CarrotTycoon,
+        CapysClosetBegins,
+        DressedToImpress,
+        OneStepToCozy,
+        CapyLovesHome,
+        FreshFit,
     }
 
     public Dictionary<LevelEnum, LevelStatus> LevelStatuses = new();
@@ -70,11 +75,13 @@ public class PlayerStats
 
     /// <summary>
     /// A log of the player's mood entries, with the most recent entry at the front.
+    /// Uses LinkedList for efficient addition/removal from both ends.
     /// </summary>
     public LinkedList<MoodEntry> MoodLog = new();
 
     /// <summary>
     /// A log of the player's gratitude entries, with the most recent entry at the back.
+    /// Uses LinkedList for efficient addition/removal from both ends.
     /// </summary>
     public LinkedList<GratitudeEntry> GratitudeLog = new();
 
@@ -99,8 +106,7 @@ public class PlayerStats
     public Accessory CurrFacewear = null;
     public Accessory CurrPet = null;
 
-    public int NumCarrots = 10;
-    //public int NumCarrots = 0;
+    public int NumCarrots = 0;
     public int BestStreak = 0;
     public int CurrStreak = 0;
     public float SecondsMeditated = 0;
@@ -108,12 +114,14 @@ public class PlayerStats
     public int NumWorldsCompleted = 0;
     public DateTime LastBreathworkTime = DateTime.MinValue;
     public DateTime LastLogin = DateTime.MinValue;
+    public DateTime TimeOfLastActivity = DateTime.MinValue;
 
     public HashSet<Badge> BadgesEarned = new();
 
     private const int MaxMoodEntries = 30;
     private const int MaxGratitudeEntries = 10;
     private const bool DebugMode = true; // todo - set to false for production
+
     public PlayerStats()
     {
         foreach (World world in World.AllWorlds)
@@ -126,6 +134,7 @@ public class PlayerStats
         LevelStatuses[Level.World1Level1.EnumName] = LevelStatus.Available;
         if (DebugMode)
         {
+            NumCarrots = 1000;
             foreach (Accessory accessory in Accessory.AllAccesories)
             {
                 if (accessory.Tier != Tier.Legendary)
@@ -136,31 +145,25 @@ public class PlayerStats
         }
     }
 
-    /// <summary>
-    /// Handles player login, updating streaks as necessary.
-    /// </summary>
-    public void Login()
+    public void UpdateLastLogin()
     {
-        DateTime today = DateTime.Now.Date;
-        if (LastLogin.Date == today)
-        {
-            return;
-        }
-        if (LastLogin.Date == today.AddDays(-1))
+        LastLogin = DateTime.Now.Date;
+    }
+
+    public void UpdateStreakForCompletedActivity()
+    {
+        if (TimeOfLastActivity.Date == DateTime.Now.Date.AddDays(-1))
         {
             IncreaseCurrStreak();
         }
-        else
+        else if (TimeOfLastActivity.Date != DateTime.Now.Date)
         {
             CurrStreak = 1;
-            BestStreak = Math.Max(BestStreak, CurrStreak);
+            BestStreak = Math.Max(BestStreak, 1);
         }
-        LastLogin = today;
+        TimeOfLastActivity = DateTime.Now;
     }
 
-    /// <summary>
-    /// Make <c>level</c> available if it is currently locked.
-    /// </summary>
     public void MakeLevelAvailable(Level level)
     {
         if (GetLevelStatus(level) == LevelStatus.Locked)
@@ -169,9 +172,6 @@ public class PlayerStats
         }
     }
 
-    /// <summary>
-    /// Whether all levels in <c>world</c> are completed.
-    /// </summary>
     private bool IsWorldComplete(World world)
     {
         foreach (Level level in world.Levels)
@@ -181,9 +181,6 @@ public class PlayerStats
         return true;
     }
 
-    /// <summary>
-    /// Mark <c>level</c> as completed, updating stats as necessary.
-    /// </summary>
     public void CompleteLevel(Level level)
     {
         LevelStatus currStatus = GetLevelStatus(level);
@@ -200,9 +197,6 @@ public class PlayerStats
         NumCarrots += 10;
     }
 
-    /// <summary>
-    /// Change the current level and world to match <c>level</c>.
-    /// </summary>
     public void ChangeLevel(Level level)
     {
         CurrLevel = level.EnumName;
@@ -227,12 +221,6 @@ public class PlayerStats
     public void IncreaseCarrots(int carrots)
     {
         NumCarrots += carrots;
-    }
-
-    public void IncreaseCurrStreak()
-    {
-        CurrStreak++;
-        BestStreak = Math.Max(BestStreak, CurrStreak);
     }
 
     public void IncreaseSecondsMeditated(float seconds)
@@ -322,7 +310,6 @@ public class PlayerStats
                 throw new Exception("Unknown accessory type");
         }
     }
-
     public void StopUsingAccessory(AccessoryType type)
     {
         switch (type)
@@ -346,4 +333,10 @@ public class PlayerStats
                 throw new Exception("Unknown accessory type");
         }
     }
+    private void IncreaseCurrStreak()
+    {
+        CurrStreak++;
+        BestStreak = Math.Max(BestStreak, CurrStreak);
+    }
+
 }
