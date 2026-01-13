@@ -51,7 +51,7 @@ public static class GameManager
             stats.CompleteLevel(CurrLevel);
             stats.IncreaseSecondsMeditated(lessonDuration);
             MakeNextLevelsAvailable(stats);
-            numExercisesCompleted = stats.NumExercisesCompleted;
+            numExercisesCompleted = stats.NumLevelsCompleted;
             numWorldsCompleted = stats.NumWorldsCompleted;
             stats.UpdateStreakForCompletedActivity();
         }, true);
@@ -153,7 +153,7 @@ public static class GameManager
     public static int GetNumLessonsCompleted()
     {
         int result = 0;
-        WithStats(stats => result = stats.NumExercisesCompleted, false);
+        WithStats(stats => result = stats.NumLevelsCompleted, false);
         return result;
     }
 
@@ -265,7 +265,7 @@ public static class GameManager
         return carrotsEarned;
     }
 
-    public static int CompleteBreathworkAndGetCarrotsEarned()
+    public static int CompleteBreathworkAndGetCarrotsEarned(int durationInSeconds)
     {
         int carrotsEarned = 0;
         WithStats(stats =>
@@ -277,13 +277,12 @@ public static class GameManager
                 carrotsEarned = 10;
                 stats.UpdateStreakForCompletedActivity();
             }
-            stats.LastBreathworkTime = DateTime.Now;
-
+            stats.CompleteBreathworkSession(durationInSeconds);
             // Track breathwork completion with PostHog
             PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
             {
                 { "activity_type", "breathwork" },
-                { "duration_seconds", BreathworkScript.Duration },
+                { "duration_seconds", durationInSeconds },
                 { "carrots_earned", alreadyCompletedToday ? 0 : 10 },
                 { "is_first_today", !alreadyCompletedToday }
             });

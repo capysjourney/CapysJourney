@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -76,7 +75,7 @@ public class BreathworkScript : MonoBehaviour
         if (_progressBar.value >= Duration)
         {
             _isFinished = true;
-            int carrotsEarned = GameManager.CompleteBreathworkAndGetCarrotsEarned();
+            int carrotsEarned = GameManager.CompleteBreathworkAndGetCarrotsEarned(Duration);
             _carrotCount.text = $"{carrotsEarned}";
             _endObjects.SetActive(true);
         }
