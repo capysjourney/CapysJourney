@@ -517,4 +517,14 @@ public static class GameManager
     }
 
     public static (Tier?, Accessory) GetLastBasketInfo() => (_lastBasketTier, _lastAccessoryObtained);
+
+    public static HashSet<Badge> GetBadgesOwned()
+    {
+        HashSet<Badge> result = new();
+        WithStats(stats =>
+        {
+            result = stats.BadgesEarned;
+        }, false);
+        return result;
+    }
 }

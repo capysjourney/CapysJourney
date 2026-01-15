@@ -36,42 +36,7 @@ public class GratitudeEntry
 
 public class PlayerStats
 {
-    public enum Badge
-    {
-        GettingCozy,
-        SettlingIn,
-        ZenMaster,
-        AdventureAwaits,
-        MindfulBeginnings,
-        MeetingQuincy,
-        TrailBlazer,
-        // TODO - add back later
-        //MindfulVoyager,
-        //SereneExplorer,
-        //CapyConqueror,
-        TinyButMighty,
-        LilyLounge,
-        JustBreathe,
-        DeepBreatheDevotee,
-        BreathSage,
-        FeelingFeeler,
-        MoodMapper,
-        InnerWeatherWatcher,
-        SeedsOfGratitude,
-        BloomingThanks,
-        GratitudeGardener,
-        TinyTrader,
-        CapyCollector,
-        CarrotTycoon,
-        CapysClosetBegins,
-        DressedToImpress,
-        OneStepToCozy,
-        CapyLovesHome,
-        FreshFit,
-    }
-
     // IMPORTANT: All relevant fields should be public for serialization to work properly.
-
     public Dictionary<LevelEnum, LevelStatus> LevelStatuses = new();
     public HashSet<LevelEnum> BookmarkedLevels = new();
 

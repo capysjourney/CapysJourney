@@ -65,25 +65,17 @@ public class Accessory
     {
         if (a1 is null && a2 is null) return true;
         if (a1 is null || a2 is null) return false;
-        return a1.Equals(a2);
+        return a1.Name == a2.Name && a1.Type == a2.Type && a1.Tier == a2.Tier;
     }
 
     public static bool operator !=(Accessory a1, Accessory a2) => !(a1 == a2);
 
-
-    /// <summary>
-    /// Returns whether <c>obj</c> has the same name, type, and tier as <c>this</c>.
-    /// </summary>
-    /// <param name="obj"></param>
     public override bool Equals(object obj)
     {
         if (obj is not Accessory acc) return false;
         return acc.Name == Name && acc.Type == Type && acc.Tier == Tier;
     }
 
-    /// <summary>
-    /// Returns a hash code based on Name, Type, and Tier.
-    /// </summary>
     public override int GetHashCode()
     {
         return System.HashCode.Combine(Name, Type, Tier);
