@@ -124,6 +124,7 @@ abstract public class MapScript : MonoBehaviour
             {
                 return;
             }
+            AudioManager.Instance.PlayUIEffect(Sound.InitialLevelClick);
             OnLevelClicked(btnLevel);
         });
     }
@@ -145,23 +146,24 @@ abstract public class MapScript : MonoBehaviour
             RepositionMap(_level);
         }
         GameObject levelPopup;
-        LevelPopupScript script;
+        LevelPopupScript popupScript;
         if (_mapContainer.anchoredPosition.y + _capy.anchoredPosition.y >= Threshold)
         {
             levelPopup = _levelPopupBelow;
-            script = _scriptBelow;
+            popupScript = _scriptBelow;
             levelPopup.GetComponent<RectTransform>().position = _capy.position + PopUpBelowPositionRelativeToCapy;
         }
         else
         {
             levelPopup = _levelPopupAbove;
-            script = _scriptAbove;
+            popupScript = _scriptAbove;
             levelPopup.GetComponent<RectTransform>().position = _capy.position + PopUpAbovePositionRelativeToCapy;
         }
-        script.UpdatePopup(btnLevel.ShortName, btnLevel.Name, btnLevel.Description, 10);
-        script.ConfigureStartButton(() =>
+        popupScript.UpdatePopup(btnLevel.ShortName, btnLevel.Name, btnLevel.Description, 10);
+        popupScript.ConfigureStartButton(() =>
         {
             GameManager.SetCurrLevel(btnLevel);
+            AudioManager.Instance.PlayUIEffect(Sound.LevelBegin);
             SceneManager.LoadSceneAsync("Lesson");
         });
         _levelPopupAbove.SetActive(levelPopup == _levelPopupAbove);

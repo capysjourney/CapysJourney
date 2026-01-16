@@ -105,7 +105,7 @@ public class PlayerStats
     private const int MaxMoodEntries = 30;
     private const int MaxGratitudeEntries = 10;
 
-    public PlayerStats(bool isGuest = false)
+    public PlayerStats(bool isGuest = true)
     {
         IsGuest = isGuest;
 
@@ -122,9 +122,13 @@ public class PlayerStats
         LevelStatuses[Level.World1Level1.EnumName] = LevelStatus.Available;
 
         if (DebugMode)
+        {
             foreach (Accessory a in Accessory.AllAccesories)
-                if (a.Tier != Tier.Legendary)
+                if (a.Tier != Tier.Legendary && a.Tier != Tier.Epic)
                     AccessoriesOwned.Add(a);
+            NumCarrots = 1000;
+            Debug.Log("Num carrots set to 1000");
+        }
     }
 
     public void SaveToFirestore()
@@ -202,7 +206,7 @@ public class PlayerStats
 
     public void LoadFromFirestore()
     {
-        if (!IsGuest)
+        if (!IsGuest && !DebugMode)
         {
             UnityEngine.Debug.Log("Loading player stats from Firestore");
 
