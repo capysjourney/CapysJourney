@@ -51,10 +51,7 @@ public class Map1Script : MapScript
     [SerializeField] private Sprite _level10Icon;
     [SerializeField] private Sprite _SL1And2Icon;
     [SerializeField] private Sprite _SL3Icon;
-    [SerializeField] private Sprite _miniLevel1Icon;
-    [SerializeField] private Sprite _miniLevel2Icon;
-    [SerializeField] private Sprite _miniLevel3Icon;
-    // todo - update these icons
+    [SerializeField] private Sprite _miniLevelIcon;
 
     override protected void InitializeMaps()
     {
@@ -92,9 +89,9 @@ public class Map1Script : MapScript
             { Level.World1SideLevel1, _SL1And2Icon },
             { Level.World1SideLevel2, _SL1And2Icon },
             { Level.World1SideLevel3, _SL3Icon },
-            { Level.World1MiniLevel1, _miniLevel1Icon },
-            { Level.World1MiniLevel2, _miniLevel2Icon },
-            { Level.World1MiniLevel3, _miniLevel3Icon }
+            { Level.World1MiniLevel1, _miniLevelIcon },
+            { Level.World1MiniLevel2, _miniLevelIcon },
+            { Level.World1MiniLevel3, _miniLevelIcon }
         };
         _previousLevel = new()
         {

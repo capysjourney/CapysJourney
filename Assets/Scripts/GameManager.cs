@@ -180,7 +180,14 @@ public static class GameManager
         return result;
     }
 
-    public  static PlayerStats GetStats()
+    public static AgeGroup GetAgeGroup()
+    {
+        // todo - migrate to playerstats
+        int age = PlayerPrefs.GetInt("age", 0);
+        return AgeGroupMethods.FromAge(age);
+    }
+
+    private static PlayerStats GetStats()
     {
         if (statsCache != null) return statsCache;
 

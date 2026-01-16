@@ -10,13 +10,21 @@ abstract public class MapScript : MonoBehaviour
 
     [SerializeField] protected RectTransform _capy;
     [SerializeField] protected RectTransform _mapContainer;
-    [SerializeField] protected GameObject _levelPopupBelow;
-    [SerializeField] protected GameObject _levelPopupAbove;
+
     [SerializeField] protected Button _background;
 
     [SerializeField] protected Sprite _lockedBtn;
     [SerializeField] protected Sprite _completedBtn;
     [SerializeField] protected NavBarScript _navBarScript;
+
+    [Header("Level Popups")]
+    [SerializeField] protected GameObject _levelPopupBelow;
+    [SerializeField] protected GameObject _levelPopupAbove;
+
+    [Header("Quincy")]
+    [SerializeField] protected Button _quincy;
+    [SerializeField] protected GameObject _mask;
+    [SerializeField] protected QuincyScript _quincyScript;
 
     protected Level _level; // level that capy is standing on
     protected Dictionary<Level, LevelStatus> _levelStatuses;
@@ -45,6 +53,8 @@ abstract public class MapScript : MonoBehaviour
         _level = level;
         _scriptBelow = _levelPopupBelow.GetComponent<LevelPopupScript>();
         _scriptAbove = _levelPopupAbove.GetComponent<LevelPopupScript>();
+        HideQuincysQuestions();
+        HidePopups();
         RepositionMap(level, true);
         StyleRoads();
         StyleLevelButtons(level.World);
@@ -87,7 +97,7 @@ abstract public class MapScript : MonoBehaviour
         _repositionCoroutine = null;
     }
 
-    protected void StyleRoads()
+    private void StyleRoads()
     {
         if (_previousLevel == null)
         {
@@ -102,9 +112,8 @@ abstract public class MapScript : MonoBehaviour
         }
     }
 
-    protected void SetClickListeners(World world)
+    private void SetClickListeners(World world)
     {
-        HidePopups();
         if (_levelButtonMap == null)
         {
             InitializeMaps();
@@ -115,6 +124,8 @@ abstract public class MapScript : MonoBehaviour
         }
         _background.onClick.AddListener(HidePopups);
         SetCapyClickListener();
+        SetQuincyClickListener();
+        SetMaskClickListener();
     }
     protected void SetLevelClickListener(Button btn, Level btnLevel)
     {
@@ -127,7 +138,7 @@ abstract public class MapScript : MonoBehaviour
             OnLevelClicked(btnLevel);
         });
     }
-    protected void SetCapyClickListener()
+    private void SetCapyClickListener()
     {
         _capy.GetComponent<Button>().onClick.AddListener(() =>
         {
@@ -135,7 +146,31 @@ abstract public class MapScript : MonoBehaviour
         });
     }
 
-    protected void OnLevelClicked(Level btnLevel)
+    private void HideQuincysQuestions()
+    {
+        _mask.SetActive(false);
+        _quincyScript.gameObject.SetActive(false);
+        _quincyScript.OnReset();
+    }
+
+    private void ShowQuincysQuestions()
+    {
+        _mask.SetActive(true);
+        _quincyScript.gameObject.SetActive(true);
+    }
+
+    private void SetQuincyClickListener()
+    {
+        _quincy.onClick.AddListener(ShowQuincysQuestions);
+        _quincyScript.SetOnFinish(HideQuincysQuestions);
+    }
+
+    private void SetMaskClickListener()
+    {
+        _mask.GetComponent<Button>().onClick.AddListener(HideQuincysQuestions);
+    }
+
+    private void OnLevelClicked(Level btnLevel)
     {
         if (_level != btnLevel)
         {
@@ -187,10 +222,9 @@ abstract public class MapScript : MonoBehaviour
         }
     }
 
-    protected void HidePopups()
+    private void HidePopups()
     {
         _levelPopupAbove.SetActive(false);
         _levelPopupBelow.SetActive(false);
     }
-
 }

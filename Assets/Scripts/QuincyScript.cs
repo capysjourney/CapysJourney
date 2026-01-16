@@ -1,0 +1,235 @@
+﻿using System;
+using System.Collections.Generic;
+using TMPro;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class QuincyScript : MonoBehaviour
+{
+    [SerializeField] private TMP_Text _subtitle;
+    [SerializeField] private TMP_Text _body;
+    [SerializeField] private Button _degree1Button;
+    [SerializeField] private Button _degree2Button;
+    [SerializeField] private Button _degree3Button;
+    [SerializeField] private Button _degree4Button;
+    [SerializeField] private Button _degree5Button;
+    [SerializeField] private Button _mainButton;
+    [SerializeField] private GameObject _selectionButtonArea;
+    [SerializeField] private GameObject _rewardBox;
+    [SerializeField] private TMP_Text _rewardText;
+    [SerializeField] private Sprite _unselectedButtonSprite;
+    [SerializeField] private Sprite _selectedButtonSprite;
+
+    private TMP_Text _mainButtonText;
+    private int _stage = 0;
+    private int _score = 0;
+    private int _currentlySelectedDegree = -1;
+    private Button[] _degreeButtons;
+    private Image[] _degreeButtonImages;
+    private TMP_Text[] _degreeButtonTexts;
+    private AgeGroup _ageGroup;
+    private Action _onFinish;
+
+    private readonly string[] questionsForOlder = new string[]
+    {
+        "I notice what’s happening in my body and surroundings right now, without being lost in thoughts about the past or future.",
+        "I can recognize and name what I’m feeling in the moment.",
+        "I allow my thoughts and emotions to exist without labeling them as “good” or “bad.”",
+        "When something upsetting happens, I can pause and respond calmly instead of reacting automatically.",
+        "I notice small details in my environment — like sounds, textures, or smells — that I might otherwise overlook.",
+        "When I do something, I give it my full attention rather than operating on “autopilot.”",
+        "I can notice an unpleasant thought or feeling and let it pass without holding onto it.",
+        "I’m aware of how my emotions affect my posture, tone of voice, and actions.",
+    };
+
+    private readonly string[] questionsForYounger = new string[]
+    {
+        "I notice what’s around me, like Capy noticing the forest.",
+        "I can tell what I’m feeling, like naming clouds in the sky.",
+        "I don’t call my feelings “good” or “bad,” I just watch them float by.",
+        "I can take a slow breath, like Capy before crossing a stream.",
+        "I notice tiny things, like a frog’s ripple in the water.",
+        "I focus on what I’m doing, like Capy building a sandcastle.",
+        "I let tricky thoughts drift away, like leaves on a river.",
+        "I notice how my body feels, like Capy feeling the sun and wind."
+    };
+
+    public class MindfulnessTier
+    {
+        public int MinScore;
+        public int MaxScore;
+        public string Title;
+        public string Description;
+        private MindfulnessTier(int minScore, int maxScore, string title, string description)
+        {
+            MinScore = minScore;
+            MaxScore = maxScore;
+            Title = title;
+            Description = description;
+        }
+        public static MindfulnessTier BuddingTraveler = new(8, 16, "Budding Traveler", "You’re just starting your mindfulness adventure. That’s amazing — every big journey begins with small steps. Keep noticing little things around you and taking slow breaths.");
+        public static MindfulnessTier GrowingAdventurer = new(17, 24, "Growing Adventurer", "You’re learning to pause, notice, and focus more often. Each day, you’re building new skills — like Capy spotting ripples in the water. Keep practicing, and you’ll see even more progress.");
+        public static MindfulnessTier BloomingExplorer = new(25, 32, "Blooming Explorer", "You’re getting really good at staying present and handling tricky thoughts. You’re noticing feelings, letting go when you need to, and paying attention in new ways. Great work — you’re showing real growth!");
+        public static MindfulnessTier MindfulVoyager = new(33, 40, "Mindful Voyager", "Wow — you’ve grown strong in your mindfulness practice! Like Capy resting calmly by the river, you can notice, breathe, and respond with wisdom. Keep it up — your skills will only deepen from here.");
+        private static readonly List<MindfulnessTier> Tiers = new()
+        {
+            BuddingTraveler,
+            GrowingAdventurer,
+            BloomingExplorer,
+            MindfulVoyager
+        };
+        public static MindfulnessTier GetTier(int score)
+        {
+            foreach (MindfulnessTier tier in Tiers)
+            {
+                if (score >= tier.MinScore && score <= tier.MaxScore)
+                {
+                    return tier;
+                }
+            }
+            return null;
+        }
+
+    }
+
+    public void SetOnFinish(Action onFinish)
+    {
+        _onFinish = onFinish;
+    }
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        _ageGroup = GameManager.GetAgeGroup();
+        _degreeButtons = new Button[] { _degree1Button, _degree2Button, _degree3Button, _degree4Button, _degree5Button };
+        _degreeButtonImages = new Image[_degreeButtons.Length];
+        for (int i = 0; i < _degreeButtons.Length; i++)
+        {
+            _degreeButtonImages[i] = _degreeButtons[i].GetComponent<Image>();
+        }
+        _degreeButtonTexts = new TMP_Text[_degreeButtons.Length];
+        for (int i = 0; i < _degreeButtons.Length; i++)
+        {
+            _degreeButtonTexts[i] = _degreeButtons[i].GetComponentInChildren<TMP_Text>();
+        }
+        _mainButtonText = _mainButton.GetComponentInChildren<TMP_Text>();
+        _mainButton.onClick.AddListener(OnMainButtonClicked);
+        _degree1Button.onClick.AddListener(() => OnDegreeButtonClicked(1));
+        _degree2Button.onClick.AddListener(() => OnDegreeButtonClicked(2));
+        _degree3Button.onClick.AddListener(() => OnDegreeButtonClicked(3));
+        _degree4Button.onClick.AddListener(() => OnDegreeButtonClicked(4));
+        _degree5Button.onClick.AddListener(() => OnDegreeButtonClicked(5));
+        UpdateUI();
+    }
+
+    private void UpdateUI()
+    {
+        ConfigureStageUI();
+        UpdateButtonUI();
+    }
+
+    private void ConfigureStageUI()
+    {
+        if (_stage == 0)
+        {
+            _subtitle.text = "Instructions";
+            _body.text = "For each question, choose how true it is for you in general:\r\n\r\n1 = Never\r\n2 = Rarely\r\n3 = Sometimes\r\n4 = Often\r\n5 = Always";
+            _mainButtonText.text = "I'm Ready!";
+            _selectionButtonArea.SetActive(false);
+        }
+        else if (_stage <= 8)
+        {
+            _subtitle.text = $"Question {_stage}";
+            _body.text = (_ageGroup == AgeGroup.Preschool || _ageGroup == AgeGroup.Child)
+                ? questionsForYounger[_stage - 1]
+                : questionsForOlder[_stage - 1];
+            if (_stage == 1)
+            {
+                _selectionButtonArea.SetActive(true);
+                _mainButtonText.text = "Next";
+            }
+            else if (_stage == 8)
+            {
+                _mainButtonText.text = "Finish";
+            }
+        }
+        else
+        {
+            // todo - finish
+            _mainButtonText.text = "Exit";
+            _selectionButtonArea.SetActive(false);
+
+            bool getReward = true;// todo - should depend on whether user has completed this quincy
+            int reward = getReward ? 10 : 0;
+            if (getReward)
+            {
+                GameManager.IncreaseCarrots(reward);
+            }
+            MindfulnessTier tier = MindfulnessTier.GetTier(_score);
+            _subtitle.text = tier.Title;
+            _body.text = tier.Description;
+
+            // do this for vertical layout group to update properly
+            _subtitle.SetAllDirty();
+            _body.SetAllDirty();
+            Canvas.ForceUpdateCanvases();
+        }
+        _rewardBox.SetActive(_stage > 8);
+    }
+
+    private void OnMainButtonClicked()
+    {
+        if (1 <= _stage && _stage <= 8)
+        {
+            if (_currentlySelectedDegree == -1)
+            {
+                return;
+            }
+            _score += _currentlySelectedDegree;
+            _currentlySelectedDegree = -1;
+        }
+        _stage++;
+        if (_stage > 9)
+        {
+            _onFinish?.Invoke();
+            return;
+        }
+        UpdateUI();
+    }
+
+    private void OnDegreeButtonClicked(int degree)
+    {
+        _currentlySelectedDegree = degree;
+        UpdateButtonUI();
+    }
+
+    public void OnReset()
+    {
+        _stage = 0;
+        _score = 0;
+        _currentlySelectedDegree = -1;
+        UpdateUI();
+    }
+
+    private void UpdateButtonUI()
+    {
+        for (int i = 0; i < _degreeButtons.Length; i++)
+        {
+            Image image = _degreeButtonImages[i];
+            TMP_Text text = _degreeButtonTexts[i];
+            if (i + 1 == _currentlySelectedDegree)
+            {
+                image.sprite = _selectedButtonSprite;
+                image.color = new Color32(86, 48, 26, 255);
+                text.color = new Color32(252, 248, 227, 100);
+            }
+            else
+            {
+                image.sprite = _unselectedButtonSprite;
+                image.color = new Color32(255, 255, 255, 255);
+                text.color = new Color32(0, 0, 0, 255);
+            }
+        }
+    }
+}

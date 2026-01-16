@@ -20,14 +20,6 @@ public enum LevelEnum
     W1MM2,
     W1MM3
 }
-
-public enum AgeGroup
-{
-    Child,
-    YoungTeen,
-    OldTeen,
-    Adult
-}
 public class Level
 {
     public static readonly Level World1Level1 = new(
