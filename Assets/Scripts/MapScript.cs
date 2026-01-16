@@ -124,7 +124,7 @@ abstract public class MapScript : MonoBehaviour
             {
                 return;
             }
-            AudioManager.Instance.PlayUIEffect(UISoundEffect.InitialLevelClick);
+            AudioManager.Instance.PlayUIEffect(Sound.InitialLevelClick);
             OnLevelClicked(btnLevel);
         });
     }
@@ -163,7 +163,7 @@ abstract public class MapScript : MonoBehaviour
         popupScript.ConfigureStartButton(() =>
         {
             GameManager.SetCurrLevel(btnLevel);
-            AudioManager.Instance.PlayUIEffect(UISoundEffect.LevelBegin);
+            AudioManager.Instance.PlayUIEffect(Sound.LevelBegin);
             SceneManager.LoadSceneAsync("Lesson");
         });
         _levelPopupAbove.SetActive(levelPopup == _levelPopupAbove);

@@ -41,6 +41,7 @@ public class LessonScript : MonoBehaviour
 
     void Start()
     {
+        AudioManager.Instance.PauseMusic();
         _pauseButtonImage = _pauseButton.GetComponent<Image>();
         _bookmarkButtonImage = _bookmarkButton.GetComponent<Image>();
         _forwardButtonImage = _forwardButton.GetComponent<Image>();
@@ -73,8 +74,11 @@ public class LessonScript : MonoBehaviour
         _levelCompletePopup.SetActive(false);
         UpdateForwardButtonState();
     }
-    private void ReturnToJourney() => SceneManager.LoadSceneAsync("Journey");
-
+    private void ReturnToJourney()
+    {
+        AudioManager.Instance.UnpauseMusic();
+        SceneManager.LoadSceneAsync("Journey");
+    }
     private void Darken() => _darkener.SetActive(true);
 
     private void Brighten() => _darkener.SetActive(false);
@@ -259,7 +263,7 @@ public class LessonScript : MonoBehaviour
     {
         PauseAudio();
         Darken();
-        AudioManager.Instance.PlayUIEffect(UISoundEffect.CompleteLevel);
+        AudioManager.Instance.PlayUIEffect(Sound.CompleteLevel);
         _levelNumText.text = GameManager.GetCurrLevel().ShortName;
         GameManager.CompleteLevel(_durationInSeconds);
         _hasCompleted = true;

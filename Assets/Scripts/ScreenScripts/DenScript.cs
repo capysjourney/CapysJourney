@@ -297,7 +297,7 @@ public class DenScript : MonoBehaviour
         bool bought = GameManager.BuyBasket(type);
         if (bought)
         {
-            AudioManager.Instance.PlayUIEffect(UISoundEffect.BuyItemFromShop);
+            AudioManager.Instance.PlayUIEffect(Sound.BuyItemFromShop);
             SceneManager.LoadSceneAsync("BasketOpening");
         }
         else
@@ -392,7 +392,7 @@ public class DenScript : MonoBehaviour
                 if (reset) { GameManager.StopUsingAccessory(type); }
                 else
                 {
-                    AudioManager.Instance.PlayUIEffect(UISoundEffect.EquipItem);
+                    AudioManager.Instance.PlayUIEffect(Sound.EquipItem);
                     GameManager.UseAccessory(accessory);
                 }
                 foreach (Transform childButtonTransform in _accessoryGrid.transform)
