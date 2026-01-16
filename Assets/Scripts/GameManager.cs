@@ -31,6 +31,8 @@ public static class GameManager
     /// </summary>
     public static bool NeedParentConfirmation = false;
 
+    private static PlayerStats statsCache = null;
+
     public static void UpdateWorldAndLevel()
     {
         WithStats(stats =>
@@ -132,8 +134,9 @@ public static class GameManager
 
     private static void SaveData(PlayerStats stats)
     {
-        DataService.SaveData("player-stats.json", stats);
+        stats.SaveToFirestore();
     }
+
 
     public static Dictionary<Level, LevelStatus> GetWorldStatus(World world)
     {
@@ -177,16 +180,14 @@ public static class GameManager
         return result;
     }
 
-    private static PlayerStats GetStats()
+    public  static PlayerStats GetStats()
     {
-        try
-        {
-            return DataService.LoadData<PlayerStats>("player-stats.json");
-        }
-        catch (Exception)
-        {
-            return null;
-        }
+        if (statsCache != null) return statsCache;
+
+        statsCache = new PlayerStats();
+        statsCache.LoadFromFirestore();
+
+        return statsCache;
     }
 
     public static string GetAudioName(AgeGroup ageGroup)

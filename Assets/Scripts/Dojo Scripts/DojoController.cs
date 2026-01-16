@@ -145,18 +145,27 @@ public class DojoController : MonoBehaviour
 
     private void LoadAndDisplayMeditations()
     {
-        string json = PlayerPrefs.GetString("SavedMeditations", "");
-
-        if (!string.IsNullOrEmpty(json))
+        foreach (Transform child in savedMeditationsContainer)
         {
-            meditationList = JsonUtility.FromJson<MeditationList>(json);
+            if (child != meditationTemplate.transform)
+            {
+                Destroy(child.gameObject);
+            }
         }
-        else
+
+        GameManager.WithStats(stats =>
         {
             meditationList = new MeditationList();
-        }
+            meditationList.entries = stats.MeditationLog.Select(m => new MeditationEntry
+            {
+                duration = m.duration,
+                interval = m.interval,
+                chime = m.chime,
+                effect = m.effect
+            }).ToList();
 
-        DisplaySavedMeditations();
+            DisplaySavedMeditations();
+        }, false);
     }
 
     private void DisplaySavedMeditations()

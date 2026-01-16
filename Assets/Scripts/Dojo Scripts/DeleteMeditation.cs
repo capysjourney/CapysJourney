@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class DeleteMeditation : MonoBehaviour
 {
@@ -16,25 +17,18 @@ public class DeleteMeditation : MonoBehaviour
 
     public void OnDeleteButtonClick()
     {
-        string json = PlayerPrefs.GetString("SavedMeditations", "");
-
-        if (string.IsNullOrEmpty(json))
-        {
-            return;
-        }
-
-        MeditationList meditationList = JsonUtility.FromJson<MeditationList>(json);
+        PlayerStats stats = GameManager.GetStats();
+        if (stats == null || stats.MeditationLog.Count == 0) return;
 
         int siblingIndex = transform.parent.parent.GetSiblingIndex();
         int index = siblingIndex - 1;
 
-        if (index >= 0 && index < meditationList.entries.Count)
+        if (index >= 0 && index < stats.MeditationLog.Count)
         {
-            meditationList.entries.RemoveAt(index);
+            var entryToRemove = stats.MeditationLog.ElementAt(index);
+            stats.MeditationLog.Remove(entryToRemove);
 
-            json = JsonUtility.ToJson(meditationList);
-            PlayerPrefs.SetString("SavedMeditations", json);
-            PlayerPrefs.Save();
+            stats.SaveToFirestore();
 
             Destroy(transform.parent.parent.gameObject);
 
