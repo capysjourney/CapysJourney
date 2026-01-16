@@ -16,6 +16,7 @@ public class LoginScript : MonoBehaviour
     [SerializeField] private GameObject _errorMessageGO;
     [SerializeField] private AgeInputScript _ageInputScript;
     [SerializeField] private TMP_Text _emailLabel;
+    [SerializeField] private TMP_Text _passwordLabel;
     [SerializeField] private TMP_InputField _emailField;
     [SerializeField] private TMP_InputField _passwordField;
     [SerializeField] private TMP_InputField _confirmPasswordField;
@@ -65,6 +66,19 @@ public class LoginScript : MonoBehaviour
         _ageInputScript.SetOnAgeChangedListener(OnAgeChanged);
         OnLoginTabClicked();
         _continueAsGuestBtn.onClick.AddListener(OnContinueAsGuest);
+        SetPasswordLabel();
+    }
+
+    private void SetPasswordLabel()
+    {
+        if (_isLoginMode)
+        {
+            _passwordLabel.SetText("Password");
+        }
+        else
+        {
+            _passwordLabel.SetText("Password (6+ characters)");
+        }
     }
 
     private void OnRevealClicked(TMP_InputField inputField)
@@ -101,6 +115,7 @@ public class LoginScript : MonoBehaviour
         ResetTextFields();
         ResetError();
         _ageInputScript.gameObject.SetActive(false);
+        SetPasswordLabel();
     }
 
     private void ResetTextFields()
@@ -123,6 +138,7 @@ public class LoginScript : MonoBehaviour
         ResetTextFields();
         OnAgeChanged(_ageInputScript.GetAge());
         _ageInputScript.gameObject.SetActive(true);
+        SetPasswordLabel();
     }
 
 
