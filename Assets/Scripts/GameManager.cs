@@ -187,7 +187,7 @@ public static class GameManager
         return AgeGroupMethods.FromAge(age);
     }
 
-    private static PlayerStats GetStats()
+    public static PlayerStats GetStats()
     {
         if (statsCache != null) return statsCache;
 
