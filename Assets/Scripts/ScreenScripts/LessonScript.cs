@@ -259,6 +259,7 @@ public class LessonScript : MonoBehaviour
     {
         PauseAudio();
         Darken();
+        AudioManager.Instance.PlayUIEffect(UISoundEffect.CompleteLevel);
         _levelNumText.text = GameManager.GetCurrLevel().ShortName;
         GameManager.CompleteLevel(_durationInSeconds);
         _hasCompleted = true;

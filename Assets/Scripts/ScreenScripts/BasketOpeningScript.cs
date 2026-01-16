@@ -108,6 +108,7 @@ public class BasketOpeningScript : MonoBehaviour
             if(_instruction.sprite == _tapToOpenSprite)
             {
                 // open basket
+                AudioManager.Instance.PlayUIEffect(UISoundEffect.OpenLootBox);
                 _light.SetActive(true);
                 _instruction.sprite = _continueSprite;
                 _basketRectTransform.anchoredPosition = new Vector2(0, 196);

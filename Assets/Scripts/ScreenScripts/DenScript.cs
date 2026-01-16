@@ -297,6 +297,7 @@ public class DenScript : MonoBehaviour
         bool bought = GameManager.BuyBasket(type);
         if (bought)
         {
+            AudioManager.Instance.PlayUIEffect(UISoundEffect.BuyItemFromShop);
             SceneManager.LoadSceneAsync("BasketOpening");
         }
         else
@@ -388,8 +389,12 @@ public class DenScript : MonoBehaviour
                 // if the accessory is already in use, reset to no accessory
                 bool reset = GameManager.GetCurrentAccessoryOfType(type) != null
                     && accessoryBtn.Image.sprite == _selectedSpriteByAccessory[accessory];
-                if (reset) GameManager.StopUsingAccessory(type);
-                else GameManager.UseAccessory(accessory);
+                if (reset) { GameManager.StopUsingAccessory(type); }
+                else
+                {
+                    AudioManager.Instance.PlayUIEffect(UISoundEffect.EquipItem);
+                    GameManager.UseAccessory(accessory);
+                }
                 foreach (Transform childButtonTransform in _accessoryGrid.transform)
                 {
                     AccessoryButtonScript childButtonScript = childButtonTransform.GetComponent<AccessoryButtonScript>();
