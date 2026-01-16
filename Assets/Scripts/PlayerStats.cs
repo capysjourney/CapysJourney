@@ -105,10 +105,9 @@ public class PlayerStats
     private const int MaxMoodEntries = 30;
     private const int MaxGratitudeEntries = 10;
 
-    public PlayerStats(bool isGuest = true)
+    public PlayerStats(bool isGuest)
     {
         IsGuest = isGuest;
-
         if (!IsGuest)
         {
             uid = FirebaseAuth.DefaultInstance.CurrentUser.UserId;

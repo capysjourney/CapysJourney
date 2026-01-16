@@ -237,6 +237,7 @@ public class LoginScript : MonoBehaviour
 
     private void OnLogin(string email, string password)
     {
+        GameManager.LaunchAsGuest = false;
         _auth = FirebaseAuth.DefaultInstance;
         if (_auth == null)
         {
@@ -271,8 +272,7 @@ public class LoginScript : MonoBehaviour
 
     private void OnContinueAsGuest()
     {
-        PlayerStats stats = GameManager.GetStats();
-        stats.IsGuest = true;
+        GameManager.LaunchAsGuest = true;
         SceneManager.LoadSceneAsync("Onboarding");
     }
 

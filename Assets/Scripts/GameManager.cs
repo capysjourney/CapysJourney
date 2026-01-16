@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Firebase.Auth;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public static class GameManager
 {
@@ -13,7 +16,8 @@ public static class GameManager
     /// <summary>
     /// The current level that Capy is standing on.
     /// </summary>
-    private static Level CurrLevel = null;
+    private static Level CurrLevel = null; 
+    public static bool LaunchAsGuest = false;
 
     private static readonly IDataService DataService = new JsonDataService();
     private static Tier? _lastBasketTier = null;
@@ -180,11 +184,17 @@ public static class GameManager
         return result;
     }
 
-    public  static PlayerStats GetStats()
+    public static void SetStats(PlayerStats stats)
     {
+        statsCache = stats;
+    }
+
+    public static PlayerStats GetStats()
+    {
+        Debug.Log("Fetching player stats");
         if (statsCache != null) return statsCache;
 
-        statsCache = new PlayerStats();
+        statsCache = new PlayerStats(LaunchAsGuest);
         statsCache.LoadFromFirestore();
 
         return statsCache;

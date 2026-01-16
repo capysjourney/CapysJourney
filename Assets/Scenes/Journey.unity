@@ -1735,7 +1735,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -147.7, y: 0}
+  m_AnchoredPosition: {x: 0.000061035156, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &712530777
@@ -2886,6 +2886,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3759373211757614432, guid: d2814630da11f3f4f85e60a587456054, type: 3}
+      propertyPath: _dojoButton
+      value: 
+      objectReference: {fileID: 1177708813}
     - target: {fileID: 4849576774684320514, guid: d2814630da11f3f4f85e60a587456054, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2975,7 +2979,8 @@ PrefabInstance:
       value: 9.299805
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 3461735010188620893, guid: d2814630da11f3f4f85e60a587456054, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2814630da11f3f4f85e60a587456054, type: 3}
@@ -3298,6 +3303,17 @@ MonoBehaviour:
   _miniLevel1Icon: {fileID: -7170248573941599763, guid: 1ad0c29d7b4c3fd449188b5bcfd050f0, type: 3}
   _miniLevel2Icon: {fileID: -7170248573941599763, guid: 1ad0c29d7b4c3fd449188b5bcfd050f0, type: 3}
   _miniLevel3Icon: {fileID: -7170248573941599763, guid: 1ad0c29d7b4c3fd449188b5bcfd050f0, type: 3}
+--- !u!114 &1177708813 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6118269128906881383, guid: d2814630da11f3f4f85e60a587456054, type: 3}
+  m_PrefabInstance: {fileID: 1086556417}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1190352654
 GameObject:
   m_ObjectHideFlags: 0
