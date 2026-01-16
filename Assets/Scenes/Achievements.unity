@@ -722,7 +722,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Settings
+  m_text: 'Achievements
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 78a2f7ffe4fa18c459e5af4c8477e63b, type: 2}
   m_sharedMaterial: {fileID: 740229054142333046, guid: 78a2f7ffe4fa18c459e5af4c8477e63b, type: 2}

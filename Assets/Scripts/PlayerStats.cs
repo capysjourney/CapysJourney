@@ -34,7 +34,7 @@ public class GratitudeEntry
     }
 }
 
-public class PlayerStats
+    public class PlayerStats
 {
     // IMPORTANT: All relevant fields should be public for serialization to work properly.
     public Dictionary<LevelEnum, LevelStatus> LevelStatuses = new();
@@ -93,8 +93,8 @@ public class PlayerStats
     public DateTime LastLogin = DateTime.MinValue;
     public DateTime TimeOfLastActivity = DateTime.MinValue;
     public bool HasCompletedQuincy = false;
-
     public HashSet<Badge> BadgesEarned = new();
+    public BadgesDisplayed BadgesCurrentlyDisplayed = new();
 
     private const int MaxMoodEntries = 30;
     private const int MaxGratitudeEntries = 10;

@@ -527,4 +527,22 @@ public static class GameManager
         }, false);
         return result;
     }
+
+    public static BadgesDisplayed GetBadgesDisplayed()
+    {
+        BadgesDisplayed result = null;
+        WithStats(stats =>
+        {
+            result = stats.BadgesCurrentlyDisplayed;
+        }, false);
+        return result;
+    }
+
+    public static void SetBadgesDisplayed(BadgesDisplayed badgesDisplayed)
+    {
+        WithStats(stats =>
+        {
+            stats.BadgesCurrentlyDisplayed = badgesDisplayed;
+        }, true);
+    }
 }
