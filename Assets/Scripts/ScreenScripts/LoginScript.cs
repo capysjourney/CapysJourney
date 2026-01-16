@@ -255,7 +255,8 @@ public class LoginScript : MonoBehaviour
 
     private void OnContinueAsGuest()
     {
-        // todo - guest login logic
+        PlayerStats stats = GameManager.GetStats();
+        stats.IsGuest = true;
         SceneManager.LoadSceneAsync("Onboarding");
     }
 
