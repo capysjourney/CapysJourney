@@ -2,6 +2,7 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class SaveMeditation : MonoBehaviour
 {
@@ -24,7 +25,6 @@ public class SaveMeditation : MonoBehaviour
 
     private void OnSaveButtonClick()
     {
-        LoadMeditations();
         MeditationEntry newEntry = new MeditationEntry
         {
             duration = GetScrollValue(durationContent, durationSelect),
@@ -33,9 +33,9 @@ public class SaveMeditation : MonoBehaviour
             effect = SharedData.effectData
         };
 
-        meditationList.entries.Add(newEntry);
-        SaveMeditations();
-
+        PlayerStats stats = GameManager.GetStats();
+        stats.MeditationLog.AddFirst(newEntry);
+        stats.SaveToFirestore();
 
         if (dojoController != null)
         {
@@ -45,16 +45,13 @@ public class SaveMeditation : MonoBehaviour
 
     private void LoadMeditations()
     {
-        string json = PlayerPrefs.GetString("SavedMeditations", "");
+        PlayerStats stats = GameManager.GetStats();
 
-        if (!string.IsNullOrEmpty(json))
-        {
-            meditationList = JsonUtility.FromJson<MeditationList>(json);
-        }
-        else
+        stats.LoadMeditationsFromFirestore(loadedList =>
         {
             meditationList = new MeditationList();
-        }
+            meditationList.entries = loadedList.ToList();
+        });
     }
 
     private void SaveMeditations()
