@@ -20,14 +20,6 @@ public enum LevelEnum
     W1MM2,
     W1MM3
 }
-
-public enum AgeGroup
-{
-    Child,
-    YoungTeen,
-    OldTeen,
-    Adult
-}
 public class Level
 {
     public static readonly Level World1Level1 = new(
@@ -345,7 +337,14 @@ public class Level
         {World1MiniLevel3, new Level[]{ } },
     };
 
-    public Level(string shortName, string name, string description, Dictionary<AgeGroup, string> audioFile, string bannerFile, Vector2 mapPosition, Vector2 capyPosition, LevelEnum enumName)
+    public Level(string shortName,
+        string name,
+        string description,
+        Dictionary<AgeGroup, string> audioFile,
+        string bannerFile,
+        Vector2 mapPosition,
+        Vector2 capyPosition,
+        LevelEnum enumName)
     {
         ShortName = shortName;
         Name = name;
@@ -386,20 +385,28 @@ public class World
             Level.World1MiniLevel2,
             Level.World1MiniLevel3
         },
-        enumName: WorldEnum.FirstSteps
+        enumName: WorldEnum.FirstSteps,
+        firstLevel: Level.World1Level1,
+        nextWorlds: new HashSet<WorldEnum>() // todo - add next worlds when available
     );
-    public string Name { get; }
-    public HashSet<Level> Levels { get; }
-    public WorldEnum EnumName { get; }
     public readonly static Dictionary<WorldEnum, World> WorldLookup = new()
     {
         { WorldEnum.FirstSteps, FirstSteps }
     };
+
+    public string Name { get; }
+    public HashSet<Level> Levels { get; }
+    public WorldEnum EnumName { get; }
+    public Level FirstLevel { get; }
     public static HashSet<World> AllWorlds = new() { FirstSteps };
-    private World(string name, HashSet<Level> levels, WorldEnum enumName)
+    public HashSet<WorldEnum> NextWorlds { get; }
+
+    private World(string name, HashSet<Level> levels, WorldEnum enumName, Level firstLevel, HashSet<WorldEnum> nextWorlds)
     {
         Name = name;
         Levels = levels;
         EnumName = enumName;
+        FirstLevel = firstLevel;
+        NextWorlds = nextWorlds;
     }
 }

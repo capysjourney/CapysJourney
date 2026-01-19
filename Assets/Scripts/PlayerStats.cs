@@ -75,11 +75,12 @@ public class PlayerStats
         OneStepToCozy, CapyLovesHome, TinyTrader, CapyCollector, CarrotTycoon
     }
 
-    private FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-    private string uid;
-    private DocumentReference docRef;
+    private readonly FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+    private readonly string uid;
+    private readonly DocumentReference docRef;
 
-    public Dictionary<LevelEnum, LevelStatus> LevelStatuses = new();
+    public Dictionary<LevelEnum, LevelStatus> StatusOfLevel = new();
+    public Dictionary<WorldEnum, LevelStatus> QuincyStatusOfWorld = new();
     public HashSet<LevelEnum> BookmarkedLevels = new();
     public LinkedList<MoodEntry> MoodLog = new();
     public LinkedList<GratitudeEntry> GratitudeLog = new();
@@ -115,10 +116,15 @@ public class PlayerStats
         }
 
         foreach (World world in World.AllWorlds)
+        {
             foreach (Level level in world.Levels)
-                LevelStatuses[level.EnumName] = LevelStatus.Locked;
+            {
+                StatusOfLevel[level.EnumName] = LevelStatus.Locked;
+            }
+            QuincyStatusOfWorld[world.EnumName] = LevelStatus.Locked;
+        }
 
-        LevelStatuses[Level.World1Level1.EnumName] = LevelStatus.Available;
+        StatusOfLevel[Level.World1Level1.EnumName] = LevelStatus.Available;
 
         if (DebugMode)
         {
@@ -134,7 +140,7 @@ public class PlayerStats
     {
         if (!IsGuest)
         {
-            UnityEngine.Debug.Log("Saving player stats to Firestore");
+            //UnityEngine.Debug.Log("Saving player stats to Firestore");
 
             var meditationListDict = MeditationLog.Select(m => new Dictionary<string, object>
             {
@@ -158,7 +164,7 @@ public class PlayerStats
                 { "CurrLevel", CurrLevel.ToString() },
                 { "BadgesEarned", BadgesEarned.Select(b => b.ToString()).ToList() },
                 { "BookmarkedLevels", BookmarkedLevels.Select(l => l.ToString()).ToList() },
-                { "LevelStatuses", LevelStatuses.ToDictionary(k => k.Key.ToString(), v => (int)v.Value) },
+                { "LevelStatuses", StatusOfLevel.ToDictionary(k => k.Key.ToString(), v => (int)v.Value) },
                 { "MoodLog", MoodLog.Select(m => new Dictionary<string, object>
                     {
                         { "Timestamp", m.Timestamp.Ticks },
@@ -178,7 +184,7 @@ public class PlayerStats
         }
         else
         {
-            UnityEngine.Debug.Log("Saving guest player stats to PlayerPrefs");
+            //UnityEngine.Debug.Log("Saving guest player stats to PlayerPrefs");
 
             var guestData = new
             {
@@ -194,7 +200,7 @@ public class PlayerStats
                 CurrLevel = CurrLevel.ToString(),
                 BadgesEarned = BadgesEarned.Select(b => b.ToString()).ToList(),
                 BookmarkedLevels = BookmarkedLevels.Select(l => l.ToString()).ToList(),
-                LevelStatuses = LevelStatuses.ToDictionary(k => k.Key.ToString(), v => (int)v.Value)
+                LevelStatuses = StatusOfLevel.ToDictionary(k => k.Key.ToString(), v => (int)v.Value)
             };
 
             string json = JsonUtility.ToJson(guestData);
@@ -207,7 +213,7 @@ public class PlayerStats
     {
         if (!IsGuest && !DebugMode)
         {
-            UnityEngine.Debug.Log("Loading player stats from Firestore");
+            //UnityEngine.Debug.Log("Loading player stats from Firestore");
 
             docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
             {
@@ -263,7 +269,7 @@ public class PlayerStats
 
             BadgesEarned = new HashSet<Badge>(guestData.BadgesEarned.Select(Enum.Parse<Badge>));
             BookmarkedLevels = new HashSet<LevelEnum>(guestData.BookmarkedLevels.Select(Enum.Parse<LevelEnum>));
-            LevelStatuses = guestData.LevelStatuses.ToDictionary()
+            StatusOfLevel = guestData.LevelStatuses.ToDictionary()
                 .ToDictionary(kv => Enum.Parse<LevelEnum>(kv.Key), kv => (LevelStatus)kv.Value);
         }
     }
@@ -271,19 +277,30 @@ public class PlayerStats
     public void CompleteLevel(Level level)
     {
         if (GetLevelStatus(level) == LevelStatus.Completed) return;
-
-        LevelStatuses[level.EnumName] = LevelStatus.Completed;
+        StatusOfLevel[level.EnumName] = LevelStatus.Completed;
         NumExercisesCompleted++;
+        if (AreAllLevelsCompletedInWorld(level.World))
+        {
+            QuincyStatusOfWorld[level.World.EnumName] = LevelStatus.Available;
+        }
+        NumCarrots += 10;
+    }
 
-        if (IsWorldComplete(level.World))
-            NumWorldsCompleted++;
-
+    public void CompleteQuincy(World world)
+    {
+        if (QuincyStatusOfWorld[world.EnumName] == LevelStatus.Completed) return;
+        QuincyStatusOfWorld[world.EnumName] = LevelStatus.Completed;
+        NumWorldsCompleted++;
+        foreach (WorldEnum nextWorld in world.NextWorlds)
+        {
+            StatusOfLevel[World.WorldLookup[nextWorld].FirstLevel.EnumName] = LevelStatus.Available;
+        }
         NumCarrots += 10;
     }
 
     public void IncreaseSecondsMeditated(float seconds) => SecondsMeditated += seconds;
 
-    public LevelStatus GetLevelStatus(Level level) => LevelStatuses[level.EnumName];
+    public LevelStatus GetLevelStatus(Level level) => StatusOfLevel[level.EnumName];
 
     public void ChangeLevel(Level level)
     {
@@ -294,7 +311,7 @@ public class PlayerStats
     public void MakeLevelAvailable(Level level)
     {
         if (GetLevelStatus(level) == LevelStatus.Locked)
-            LevelStatuses[level.EnumName] = LevelStatus.Available;
+            StatusOfLevel[level.EnumName] = LevelStatus.Available;
     }
 
     public bool IsLevelBookmarked(Level level) => BookmarkedLevels.Contains(level.EnumName);
@@ -375,7 +392,7 @@ public class PlayerStats
         LastLogin = today;
     }
 
-    private bool IsWorldComplete(World world)
+    private bool AreAllLevelsCompletedInWorld(World world)
     {
         foreach (Level level in world.Levels)
             if (GetLevelStatus(level) != LevelStatus.Completed) return false;

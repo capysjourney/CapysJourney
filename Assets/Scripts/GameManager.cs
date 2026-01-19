@@ -73,6 +73,15 @@ public static class GameManager
         });
     }
 
+    public static void CompleteQuincy()
+    {
+        World completedWorld = CurrWorld;
+        WithStats(stats =>
+        {
+            stats.CompleteQuincy(CurrWorld);
+        }, true);
+    }
+
     public static World GetCurrWorld()
     {
         if (CurrWorld == null)
@@ -149,6 +158,13 @@ public static class GameManager
         return result;
     }
 
+    public static bool IsQuincyUnlocked()
+    {
+        bool result = false;
+        WithStats(stats => result = stats.QuincyStatusOfWorld[CurrWorld.EnumName] == LevelStatus.Available, false);
+        return result;
+    }
+
     public static int GetNumWorldsCompleted()
     {
         int result = 0;
@@ -184,6 +200,13 @@ public static class GameManager
         return result;
     }
 
+    public static AgeGroup GetAgeGroup()
+    {
+        // todo - migrate to playerstats
+        int age = PlayerPrefs.GetInt("age", 0);
+        return AgeGroupMethods.FromAge(age);
+    }
+
     public static void SetStats(PlayerStats stats)
     {
         statsCache = stats;
@@ -191,7 +214,6 @@ public static class GameManager
 
     public static PlayerStats GetStats()
     {
-        Debug.Log("Fetching player stats");
         if (statsCache != null) return statsCache;
 
         statsCache = new PlayerStats(LaunchAsGuest);

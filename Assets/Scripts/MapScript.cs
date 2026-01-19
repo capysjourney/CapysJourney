@@ -8,50 +8,87 @@ using UnityEngine.UI;
 abstract public class MapScript : MonoBehaviour
 {
 
-    [SerializeField] protected RectTransform _capy;
-    [SerializeField] protected RectTransform _mapContainer;
-    [SerializeField] protected GameObject _levelPopupBelow;
-    [SerializeField] protected GameObject _levelPopupAbove;
-    [SerializeField] protected Button _background;
+    [SerializeField] private RectTransform _capy;
+    [SerializeField] private RectTransform _mapContainer;
 
-    [SerializeField] protected Sprite _lockedBtn;
-    [SerializeField] protected Sprite _completedBtn;
-    [SerializeField] protected NavBarScript _navBarScript;
+    [SerializeField] private Button _background;
 
-    protected Level _level; // level that capy is standing on
-    protected Dictionary<Level, LevelStatus> _levelStatuses;
-    protected Dictionary<Level, Button> _levelButtonMap = null;
-    protected Dictionary<Level, Sprite> _levelIconMap = null;
-    protected Dictionary<Image, Level> _previousLevel = null;
+    [SerializeField] private Sprite _lockedBtn;
+    [SerializeField] private Sprite _completedBtn;
+    [SerializeField] private NavBarScript _navBarScript;
+
+    [Header("Level Popups")]
+    [SerializeField] private GameObject _levelPopupBelow;
+    [SerializeField] private GameObject _levelPopupAbove;
+
+    [Header("Quincy")]
+    [SerializeField] private Button _quincy;
+    [SerializeField] private Button _mask;
+    [SerializeField] private QuincyScript _quincyScript;
+
+    private Image _quincyImage;
+
+    private Level _level; // level that capy is standing on
+    private Dictionary<Level, LevelStatus> _levelStatuses;
+    private Dictionary<Level, Button> _buttonOfLevel;
+    private Dictionary<Level, Sprite> _iconOfLevel;
+    private Dictionary<Image, Level> _LevelBeforeRoad;
+    private bool _isQuincyUnlocked;
 
     /*
      * Threshold for capy's position to determine whether popup should appear above or below capy
      */
-    protected const float Threshold = -94;
+    private const float Threshold = -94;
 
-    protected Vector3 PopUpBelowPositionRelativeToCapy = new(0, -177.7f, 0);
-    protected Vector3 PopUpAbovePositionRelativeToCapy = new(0, 180, 0);
+    private Vector3 PopUpBelowPositionRelativeToCapy = new(0, -177.7f, 0);
+    private Vector3 PopUpAbovePositionRelativeToCapy = new(0, 180, 0);
 
-    protected LevelPopupScript _scriptBelow;
-    protected LevelPopupScript _scriptAbove;
+    private LevelPopupScript _scriptBelow;
+    private LevelPopupScript _scriptAbove;
 
     private Coroutine _repositionCoroutine;
     private const float AnimationDuration = 0.5f;
 
-    abstract protected void InitializeMaps();
-    public virtual void Initialize(Level level, Dictionary<Level, LevelStatus> levelStatuses)
+    /// <summary>
+    /// Initialize and return a dictionary that maps levels to their corresponding buttons
+    /// </summary>
+    abstract protected Dictionary<Level, Button> CreateButtonDictionary();
+    /// <summary>
+    /// Initialize and return a dictionary that maps levels to their corresponding icon sprites
+    /// </summary>
+    abstract protected Dictionary<Level, Sprite> CreateIconDictionary();
+    /// <summary>
+    /// Initialize and return a dictionary that maps road images to the levels before them
+    /// </summary>
+    abstract protected Dictionary<Image, Level> CreateLevelBeforeRoadDictionary();
+
+    public void Initialize(Level level,
+        Dictionary<Level, LevelStatus> levelStatuses,
+        bool isQuincyUnlocked)
     {
+        _quincyImage = _quincy.GetComponent<Image>();
         _levelStatuses = levelStatuses;
+        _isQuincyUnlocked = isQuincyUnlocked;
         _level = level;
         _scriptBelow = _levelPopupBelow.GetComponent<LevelPopupScript>();
         _scriptAbove = _levelPopupAbove.GetComponent<LevelPopupScript>();
+        HideQuincysQuestions();
+        HidePopups();
         RepositionMap(level, true);
+        StyleQuincy();
         StyleRoads();
         StyleLevelButtons(level.World);
         SetClickListeners(level.World);
     }
 
-    protected void RepositionMap(Level level, bool instant = false)
+    private void InitializeDictionaries()
+    {
+        _buttonOfLevel = CreateButtonDictionary();
+        _iconOfLevel = CreateIconDictionary();
+        _LevelBeforeRoad = CreateLevelBeforeRoadDictionary();
+    }
+
+    private void RepositionMap(Level level, bool instant = false)
     {
         Vector2 mapPos = level.MapPosition;
         Vector2 capyPos = level.CapyPosition;
@@ -87,48 +124,56 @@ abstract public class MapScript : MonoBehaviour
         _repositionCoroutine = null;
     }
 
-    protected void StyleRoads()
+    private void StyleQuincy()
     {
-        if (_previousLevel == null)
+        _quincy.gameObject.SetActive(true);
+        _quincy.interactable = _isQuincyUnlocked;
+    }
+
+    private void StyleRoads()
+    {
+        if (_LevelBeforeRoad == null)
         {
-            InitializeMaps();
+            InitializeDictionaries();
         }
-        foreach (Image road in _previousLevel.Keys)
+        foreach (Image road in _LevelBeforeRoad.Keys)
         {
-            LevelStatus prevLevelStatus = _levelStatuses[_previousLevel[road]];
+            LevelStatus prevLevelStatus = _levelStatuses[_LevelBeforeRoad[road]];
             Color32 grayRoadColor = new(182, 202, 203, 255);
             Color32 greenRoadColor = new(29, 121, 64, 255);
             road.color = prevLevelStatus == LevelStatus.Completed ? greenRoadColor : grayRoadColor;
         }
     }
 
-    protected void SetClickListeners(World world)
+    private void SetClickListeners(World world)
     {
-        HidePopups();
-        if (_levelButtonMap == null)
+        if (_buttonOfLevel == null)
         {
-            InitializeMaps();
+            InitializeDictionaries();
         }
         foreach (Level level in world.Levels)
         {
-            SetLevelClickListener(_levelButtonMap[level], level);
+            SetLevelClickListener(level);
         }
         _background.onClick.AddListener(HidePopups);
         SetCapyClickListener();
+        SetQuincyClickListener();
+        SetMaskClickListener();
     }
-    protected void SetLevelClickListener(Button btn, Level btnLevel)
+    private void SetLevelClickListener(Level level)
     {
-        btn.onClick.AddListener(() =>
+        Button button = _buttonOfLevel[level];
+        button.onClick.AddListener(() =>
         {
-            if (btn.image.sprite == _lockedBtn)
+            if (button.image.sprite != _lockedBtn)
             {
-                return;
+                OnLevelClicked(level);
             }
             AudioManager.Instance.PlayUIEffect(Sound.InitialLevelClick);
-            OnLevelClicked(btnLevel);
+            OnLevelClicked(level);
         });
     }
-    protected void SetCapyClickListener()
+    private void SetCapyClickListener()
     {
         _capy.GetComponent<Button>().onClick.AddListener(() =>
         {
@@ -136,7 +181,35 @@ abstract public class MapScript : MonoBehaviour
         });
     }
 
-    protected void OnLevelClicked(Level btnLevel)
+    private void HideQuincysQuestions()
+    {
+        _mask.gameObject.SetActive(false);
+        _quincyScript.gameObject.SetActive(false);
+    }
+
+    private void ShowQuincysQuestions()
+    {
+        _mask.gameObject.SetActive(true);
+        _quincyScript.gameObject.SetActive(true);
+        _quincyScript.OnReset();
+    }
+
+    private void SetQuincyClickListener()
+    {
+        _quincy.onClick.AddListener(ShowQuincysQuestions);
+        _quincyScript.SetOnFinish(() =>
+        {
+            HideQuincysQuestions();
+            // todo - world transition
+        });
+    }
+
+    private void SetMaskClickListener()
+    {
+        _mask.onClick.AddListener(HideQuincysQuestions);
+    }
+
+    private void OnLevelClicked(Level btnLevel)
     {
         if (_level != btnLevel)
         {
@@ -171,9 +244,9 @@ abstract public class MapScript : MonoBehaviour
     }
     private void StyleLevelButtons(World world)
     {
-        if (_levelIconMap == null)
+        if (_iconOfLevel == null)
         {
-            InitializeMaps();
+            InitializeDictionaries();
         }
         foreach (Level level in world.Levels)
         {
@@ -182,17 +255,16 @@ abstract public class MapScript : MonoBehaviour
             {
                 LevelStatus.Locked => _lockedBtn,
                 LevelStatus.Completed => _completedBtn,
-                LevelStatus.Available => _levelIconMap[level],
+                LevelStatus.Available => _iconOfLevel[level],
                 _ => throw new NotImplementedException()
             };
-            _levelButtonMap[level].image.sprite = sprite;
+            _buttonOfLevel[level].image.sprite = sprite;
         }
     }
 
-    protected void HidePopups()
+    private void HidePopups()
     {
         _levelPopupAbove.SetActive(false);
         _levelPopupBelow.SetActive(false);
     }
-
 }
