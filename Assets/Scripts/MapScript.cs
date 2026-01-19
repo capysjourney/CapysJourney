@@ -170,7 +170,7 @@ abstract public class MapScript : MonoBehaviour
                 OnLevelClicked(level);
             }
             AudioManager.Instance.PlayUIEffect(Sound.InitialLevelClick);
-            OnLevelClicked(btnLevel);
+            OnLevelClicked(level);
         });
     }
     private void SetCapyClickListener()
