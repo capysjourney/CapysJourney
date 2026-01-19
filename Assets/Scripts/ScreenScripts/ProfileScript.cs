@@ -18,6 +18,7 @@ public class ProfileScript : MonoBehaviour
     [SerializeField] private Button _settingsButton;
     [SerializeField] private Button _editProfileButton;
     [SerializeField] private Sprite _plusButtonSprite;
+    [SerializeField] private GameObject _displayedBadgePrefab;
 
     [Header("Statistics")]
     [SerializeField] private TMP_Text _streakText;
@@ -50,7 +51,6 @@ public class ProfileScript : MonoBehaviour
     {
         First, Second, Third, None
     }
-    private BadgePosition _badgePosition = BadgePosition.None;
 
     void Start()
     {
@@ -73,7 +73,7 @@ public class ProfileScript : MonoBehaviour
             Debug.LogError("Error: " + e.Message);
         }
         AddButtonListeners();
-        PopulateDisplayedBadgesArea();
+        PopulateDisplayedBadgesArea(isEditMode: false);
         PopulateAchievementsBox();
         ShowDefaultView();
     }
@@ -84,37 +84,45 @@ public class ProfileScript : MonoBehaviour
         {
             button.onClick.RemoveAllListeners();
         }
-        _settingsButton.onClick.AddListener(() =>
-        {
-            SceneManager.LoadSceneAsync("Settings");
-        });
+        _settingsButton.onClick.AddListener(() => SceneManager.LoadSceneAsync("Settings"));
         _editProfileButton.onClick.AddListener(OnEditButtonClicked);
         _selectBadgeButton.onClick.AddListener(OnSelectBadgeButtonClicked);
         _backButton.onClick.AddListener(ShowDefaultView);
     }
 
 
-    private void PopulateDisplayedBadgesArea()
+    private void PopulateDisplayedBadgesArea(bool isEditMode)
     {
-        _badgesDisplayed = GameManager.GetBadgesDisplayed();
         foreach (Transform child in _displayedBadgesBox.transform)
         {
             Destroy(child.gameObject);
         }
-        List<Badge> displayedBadges = _badgesDisplayed.GetBadges();
+        List<Badge> displayedBadges = GameManager.GetBadgesDisplayed().GetBadges();
         foreach (Badge badge in displayedBadges)
         {
-            GameObject badgeObj = new("Badge", typeof(RectTransform), typeof(Image));
-            badgeObj.transform.SetParent(_displayedBadgesBox.transform);
+            GameObject badgeObj = Instantiate(_displayedBadgePrefab, _displayedBadgesBox.transform);
             RectTransform rectTransform = badgeObj.GetComponent<RectTransform>();
-            Image badgeImage = badgeObj.GetComponent<Image>();
-            badgeImage.preserveAspect = true;
-            Sprite badgeSprite = Resources.Load<Sprite>(badge.SpritePath);
-            badgeImage.sprite = badgeSprite;
             rectTransform.sizeDelta = new Vector2(73, 73);
+            DisplayedBadgeScript displayedBadgeScript = badgeObj.GetComponent<DisplayedBadgeScript>();
+            Sprite badgeSprite = Resources.Load<Sprite>(badge.SpritePath);
+            displayedBadgeScript.SetSprite(badgeSprite);
+            displayedBadgeScript.SetOnClose(() =>
+            {
+                _badgesDisplayed.RemoveBadge(badge);
+                GameManager.SetBadgesDisplayed(_badgesDisplayed);
+                AddPlusButton();
+                Destroy(displayedBadgeScript.gameObject);
+            });
+            if (isEditMode)
+            {
+                displayedBadgeScript.ShowCloseButton();
+            }
+            else
+            {
+                displayedBadgeScript.HideCloseButton();
+            }
         }
     }
-
 
     private void PopulateAchievementsBox()
     {
@@ -122,16 +130,14 @@ public class ProfileScript : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        HashSet<Badge> badges = GameManager.GetBadgesOwned();
+        HashSet<Badge> badgesOwned = GameManager.GetBadgesOwned();
         foreach (Badge badge in Badge.BadgesInOrder)
         {
-            if (badges.Contains(badge))
-            {
-                GameObject badgeObj = Instantiate(_badgePrefab, _achievementsBox.transform);
-                BadgeScript badgeScript = badgeObj.GetComponent<BadgeScript>();
-                badgeScript.SetBadge(badge);
-                RectTransform rectTransform = badgeObj.GetComponent<RectTransform>();
-            }
+            if (!badgesOwned.Contains(badge)) continue;
+            GameObject badgeObj = Instantiate(_badgePrefab, _achievementsBox.transform);
+            BadgeScript badgeScript = badgeObj.GetComponent<BadgeScript>();
+            badgeScript.SetBadge(badge);
+            RectTransform rectTransform = badgeObj.GetComponent<RectTransform>();
         }
     }
 
@@ -213,39 +219,41 @@ public class ProfileScript : MonoBehaviour
         {
             _isInEditMode = true;
             _editProfileButtonText.SetText("Save");
+            PopulateDisplayedBadgesArea(isEditMode: true);
             int numBadges = _badgesDisplayed.NumBadgesDisplayed();
             int numPlusButtonsToAdd = 3 - numBadges;
-            if (numPlusButtonsToAdd > 0)
+            for (int i = 0; i < numPlusButtonsToAdd; i++)
             {
-                for (int i = 0; i < numPlusButtonsToAdd; i++)
-                {
-                    GameObject plusButtonObj = new("PlusButton", typeof(RectTransform), typeof(Button), typeof(Image));
-                    plusButtonObj.transform.SetParent(_displayedBadgesBox.transform);
-                    Image plusImage = plusButtonObj.GetComponent<Image>();
-                    plusImage.sprite = _plusButtonSprite;
-                    plusImage.preserveAspect = true;
-                    BadgePosition badgePosition = (numBadges + i) switch
-                    {
-                        0 => BadgePosition.First,
-                        1 => BadgePosition.Second,
-                        2 => BadgePosition.Third,
-                        _ => BadgePosition.None
-                    };
-                    plusButtonObj.GetComponent<Button>().onClick.AddListener(() =>
-                        {
-                            _badgePosition = badgePosition;
-                            ShowBadgeSelectionView();
-                        });
-                    plusButtonObj.GetComponent<RectTransform>().sizeDelta = new Vector2(24, 24);
-                }
+                AddPlusButton();
             }
         }
+    }
+
+    private void AddPlusButton()
+    {
+        GameObject plusButtonObj = CreatePlusButtonObject();
+        plusButtonObj.transform.SetParent(_displayedBadgesBox.transform);
+
+    }
+
+    private GameObject CreatePlusButtonObject()
+    {
+        GameObject plusButtonObj = new("PlusButton", typeof(RectTransform), typeof(Button), typeof(Image));
+        Image plusImage = plusButtonObj.GetComponent<Image>();
+        plusImage.sprite = _plusButtonSprite;
+        plusImage.preserveAspect = true;
+        plusButtonObj.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            ShowBadgeSelectionView();
+        });
+        plusButtonObj.GetComponent<RectTransform>().sizeDelta = new Vector2(24, 24);
+        return plusButtonObj;
     }
 
     private void SetDisplayedBadgesToDisplayMode()
     {
         _isInEditMode = false;
-        PopulateDisplayedBadgesArea();
+        PopulateDisplayedBadgesArea(isEditMode: false);
         _editProfileButtonText.SetText("Edit Profile");
     }
 

@@ -7,23 +7,6 @@ public class BadgesDisplayed
     public Badge secondBadge = null;
     public Badge thirdBadge = null;
 
-    public void RemoveFirstBadge()
-    {
-        firstBadge = secondBadge;
-        secondBadge = thirdBadge;
-        thirdBadge = null;
-    }
-
-    public void RemoveSecondBadge()
-    {
-        secondBadge = thirdBadge;
-        thirdBadge = null;
-    }
-
-    public void RemoveThirdBadge()
-    {
-        thirdBadge = null;
-    }
 
     public void AddBadge(Badge badge)
     {
@@ -57,5 +40,24 @@ public class BadgesDisplayed
         if (secondBadge != null) badges.Add(secondBadge);
         if (thirdBadge != null) badges.Add(thirdBadge);
         return badges;
+    }
+
+    public void RemoveBadge(Badge badge)
+    {
+        if (firstBadge == badge)
+        {
+            firstBadge = secondBadge;
+            secondBadge = thirdBadge;
+            thirdBadge = null;
+        }
+        else if (secondBadge == badge)
+        {
+            secondBadge = thirdBadge;
+            thirdBadge = null;
+        }
+        else if (thirdBadge == badge)
+        {
+            thirdBadge = null;
+        }
     }
 }
