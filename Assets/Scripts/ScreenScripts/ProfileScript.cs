@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.SmartFormat.PersistentVariables;
@@ -35,12 +36,15 @@ public class ProfileScript : MonoBehaviour
     [SerializeField] private GameObject _badgeSelection;
     [SerializeField] private GameObject _selectableBadges;
     [SerializeField] private Button _selectBadgeButton;
+    [SerializeField] private GameObject _emptyState;
+    [SerializeField] private Button _backButton;
 
     private TMP_Text _editProfileButtonText;
     private bool _isInEditMode = false;
     private BadgesDisplayed _badgesDisplayed;
     private Badge _newBadgeSelected;
     private BadgeScript _newBadgeSelectedScript;
+    private TMP_Text _selectBadgeButtonText;
 
     private enum BadgePosition
     {
@@ -51,6 +55,7 @@ public class ProfileScript : MonoBehaviour
     void Start()
     {
         _editProfileButtonText = _editProfileButton.GetComponentInChildren<TMP_Text>();
+        _selectBadgeButtonText = _selectBadgeButton.GetComponentInChildren<TMP_Text>();
         _nameText.SetText(PlayerPrefs.GetString("username"));
         _badgesDisplayed = GameManager.GetBadgesDisplayed();
         try
@@ -85,6 +90,7 @@ public class ProfileScript : MonoBehaviour
         });
         _editProfileButton.onClick.AddListener(OnEditButtonClicked);
         _selectBadgeButton.onClick.AddListener(OnSelectBadgeButtonClicked);
+        _backButton.onClick.AddListener(ShowDefaultView);
     }
 
 
@@ -129,17 +135,19 @@ public class ProfileScript : MonoBehaviour
         }
     }
 
-    private void PopulateAddableBadges()
+    private void PopulateSelectableBadges()
     {
         foreach (Transform child in _selectableBadges.transform)
         {
             Destroy(child.gameObject);
         }
         HashSet<Badge> badgesOwned = GameManager.GetBadgesOwned();
+        bool noSelectableBadges = true;
         foreach (Badge badge in Badge.BadgesInOrder)
         {
             if (badgesOwned.Contains(badge) && !_badgesDisplayed.GetBadges().Contains(badge))
             {
+                noSelectableBadges = false;
                 GameObject badgeObj = Instantiate(_badgePrefab, _selectableBadges.transform);
                 BadgeScript badgeScript = badgeObj.GetComponent<BadgeScript>();
                 badgeScript.SetBadge(badge);
@@ -167,10 +175,22 @@ public class ProfileScript : MonoBehaviour
                 });
             }
         }
+        _emptyState.SetActive(noSelectableBadges);
+        if (noSelectableBadges)
+        {
+            _selectBadgeButtonText.text = "Return";
+        }
+        else
+        {
+            _selectBadgeButtonText.text = "Select Badge";
+        }
+        // start with button disabled unless there are no selectable badges
+        _selectBadgeButton.interactable = noSelectableBadges;
     }
 
     private void ShowDefaultView()
     {
+        SetDisplayedBadgesToDisplayMode();
         _profileView.SetActive(true);
         _badgeSelection.SetActive(false);
     }
@@ -179,7 +199,7 @@ public class ProfileScript : MonoBehaviour
     {
         _profileView.SetActive(false);
         _badgeSelection.SetActive(true);
-        PopulateAddableBadges();
+        PopulateSelectableBadges();
     }
 
     private void OnEditButtonClicked()
@@ -238,8 +258,7 @@ public class ProfileScript : MonoBehaviour
             _newBadgeSelected = null;
             _newBadgeSelectedScript = null;
             _selectBadgeButton.interactable = false;
-            SetDisplayedBadgesToDisplayMode();
-            ShowDefaultView();
         }
+        ShowDefaultView();
     }
 }
