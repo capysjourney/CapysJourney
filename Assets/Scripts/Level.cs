@@ -315,7 +315,8 @@ public class Level
         bannerFile: "BannerFiles/FirstSteps/MM1L",
         mapPosition: new Vector2(381, -200.525f),
         capyPosition: new Vector2(-307, 437),
-        enumName: LevelEnum.W1MM1);
+        enumName: LevelEnum.W1MM1,
+        isMiniMeditation: true);
 
     public static readonly Level World1MiniLevel2 = new(
         shortName: "Mini Meditation 1-2",
@@ -336,7 +337,8 @@ public class Level
         bannerFile: "BannerFiles/FirstSteps/MM2L",
         mapPosition: new Vector2(381, -200.525f),
         capyPosition: new Vector2(-453, 499),
-        enumName: LevelEnum.W1MM2);
+        enumName: LevelEnum.W1MM2,
+        isMiniMeditation: true);
 
     public static readonly Level World1MiniLevel3 = new(
         shortName: "Mini Meditation 1-3",
@@ -357,7 +359,8 @@ public class Level
         bannerFile: "BannerFiles/FirstSteps/MM3L",
         mapPosition: new Vector2(381, -200.525f),
         capyPosition: new Vector2(-450, 348),
-        enumName: LevelEnum.W1MM3);
+        enumName: LevelEnum.W1MM3,
+        isMiniMeditation: true);
 
     public static readonly Dictionary<LevelEnum, Level> LevelLookup = new()
     {
@@ -387,6 +390,7 @@ public class Level
     public Vector2 MapPosition { get; }
     public Vector2 CapyPosition { get; }
     public LevelEnum EnumName { get; }
+    public bool IsMiniMeditation { get; }
     public World World
     {
         get
@@ -428,7 +432,8 @@ public class Level
         string bannerFile,
         Vector2 mapPosition,
         Vector2 capyPosition,
-        LevelEnum enumName)
+        LevelEnum enumName,
+        bool isMiniMeditation = false)
     {
         ShortName = shortName;
         Name = name;
@@ -438,5 +443,6 @@ public class Level
         MapPosition = mapPosition;
         CapyPosition = capyPosition;
         EnumName = enumName;
+        IsMiniMeditation = isMiniMeditation;
     }
 }

@@ -556,7 +556,11 @@ public static class GameManager
         HashSet<Badge> result = new();
         WithStats(stats =>
         {
-            result = stats.BadgesEarned;
+            HashSet<BadgeEnum> badgeEnums = stats.BadgesEarned;
+            foreach (BadgeEnum badgeEnum in badgeEnums)
+            {
+                result.Add(Badge.BadgeOfEnum[badgeEnum]);
+            }
         }, false);
         return result;
     }
