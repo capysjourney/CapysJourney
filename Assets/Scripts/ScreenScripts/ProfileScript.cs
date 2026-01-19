@@ -34,13 +34,13 @@ public class ProfileScript : MonoBehaviour
     [Header("Badge Selection")]
     [SerializeField] private GameObject _badgeSelection;
     [SerializeField] private GameObject _selectableBadges;
-    //[SerializeField] private Button _selectBadgeButton;
-    [SerializeField] private RectTransform _mask;
+    [SerializeField] private Button _selectBadgeButton;
 
     private TMP_Text _editProfileButtonText;
     private bool _isInEditMode = false;
     private BadgesDisplayed _badgesDisplayed;
     private Badge _newBadgeSelected;
+    private BadgeScript _newBadgeSelectedScript;
 
     private enum BadgePosition
     {
@@ -84,6 +84,7 @@ public class ProfileScript : MonoBehaviour
             SceneManager.LoadSceneAsync("Settings");
         });
         _editProfileButton.onClick.AddListener(OnEditButtonClicked);
+        _selectBadgeButton.onClick.AddListener(OnSelectBadgeButtonClicked);
     }
 
 
@@ -101,6 +102,7 @@ public class ProfileScript : MonoBehaviour
             badgeObj.transform.SetParent(_displayedBadgesBox.transform);
             RectTransform rectTransform = badgeObj.GetComponent<RectTransform>();
             Image badgeImage = badgeObj.GetComponent<Image>();
+            badgeImage.preserveAspect = true;
             Sprite badgeSprite = Resources.Load<Sprite>(badge.SpritePath);
             badgeImage.sprite = badgeSprite;
             rectTransform.sizeDelta = new Vector2(73, 73);
@@ -141,6 +143,28 @@ public class ProfileScript : MonoBehaviour
                 GameObject badgeObj = Instantiate(_badgePrefab, _selectableBadges.transform);
                 BadgeScript badgeScript = badgeObj.GetComponent<BadgeScript>();
                 badgeScript.SetBadge(badge);
+                badgeScript.SetOnBadgeClicked(() =>
+                {
+                    bool isSelected = badgeScript.GetIsSelected();
+                    if (!isSelected)
+                    {
+                        if (_newBadgeSelectedScript != null)
+                        {
+                            _newBadgeSelectedScript.SetIsSelected(false);
+                        }
+                        _newBadgeSelectedScript = badgeScript;
+                        _newBadgeSelected = badge;
+                        badgeScript.SetIsSelected(true);
+                        _selectBadgeButton.interactable = true;
+                    }
+                    else
+                    {
+                        _newBadgeSelectedScript = null;
+                        _newBadgeSelected = null;
+                        badgeScript.SetIsSelected(false);
+                        _selectBadgeButton.interactable = false;
+                    }
+                });
             }
         }
     }
@@ -160,10 +184,15 @@ public class ProfileScript : MonoBehaviour
 
     private void OnEditButtonClicked()
     {
-        _isInEditMode = !_isInEditMode;
         if (_isInEditMode)
         {
-            _editProfileButtonText.SetText("Edit Profile");
+            _isInEditMode = false;
+            SetDisplayedBadgesToDisplayMode();
+        }
+        else
+        {
+            _isInEditMode = true;
+            _editProfileButtonText.SetText("Save");
             int numBadges = _badgesDisplayed.NumBadgesDisplayed();
             int numPlusButtonsToAdd = 3 - numBadges;
             if (numPlusButtonsToAdd > 0)
@@ -191,11 +220,26 @@ public class ProfileScript : MonoBehaviour
                 }
             }
         }
-        else
+    }
+
+    private void SetDisplayedBadgesToDisplayMode()
+    {
+        _isInEditMode = false;
+        PopulateDisplayedBadgesArea();
+        _editProfileButtonText.SetText("Edit Profile");
+    }
+
+    private void OnSelectBadgeButtonClicked()
+    {
+        if (_newBadgeSelected != null)
         {
-            // todo - save badge selection
-            PopulateDisplayedBadgesArea();
-            _editProfileButtonText.SetText("Save");
+            _badgesDisplayed.AddBadge(_newBadgeSelected);
+            GameManager.SetBadgesDisplayed(_badgesDisplayed);
+            _newBadgeSelected = null;
+            _newBadgeSelectedScript = null;
+            _selectBadgeButton.interactable = false;
+            SetDisplayedBadgesToDisplayMode();
+            ShowDefaultView();
         }
     }
 }
