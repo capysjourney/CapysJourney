@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,15 +8,19 @@ public class QuincyScript : MonoBehaviour
 {
     [SerializeField] private TMP_Text _subtitle;
     [SerializeField] private TMP_Text _body;
+    [SerializeField] private Button _mainButton;
+    [SerializeField] private GameObject _selectionButtonArea;
+    [SerializeField] private GameObject _rewardBox;
+    [SerializeField] private TMP_Text _rewardText;
+
+    [Header("Degree Buttons")]
     [SerializeField] private Button _degree1Button;
     [SerializeField] private Button _degree2Button;
     [SerializeField] private Button _degree3Button;
     [SerializeField] private Button _degree4Button;
     [SerializeField] private Button _degree5Button;
-    [SerializeField] private Button _mainButton;
-    [SerializeField] private GameObject _selectionButtonArea;
-    [SerializeField] private GameObject _rewardBox;
-    [SerializeField] private TMP_Text _rewardText;
+
+    [Header("Button Sprites")]
     [SerializeField] private Sprite _unselectedButtonSprite;
     [SerializeField] private Sprite _selectedButtonSprite;
 
@@ -124,7 +127,7 @@ public class QuincyScript : MonoBehaviour
         _degree3Button.onClick.AddListener(() => OnDegreeButtonClicked(3));
         _degree4Button.onClick.AddListener(() => OnDegreeButtonClicked(4));
         _degree5Button.onClick.AddListener(() => OnDegreeButtonClicked(5));
-        UpdateUI();
+        OnReset();
     }
 
     private void UpdateUI()
@@ -137,49 +140,48 @@ public class QuincyScript : MonoBehaviour
     {
         if (_stage == 0)
         {
-            _subtitle.text = "Instructions";
-            _body.text = "For each question, choose how true it is for you in general:\r\n\r\n1 = Never\r\n2 = Rarely\r\n3 = Sometimes\r\n4 = Often\r\n5 = Always";
-            _mainButtonText.text = "I'm Ready!";
+            _subtitle.SetText("Instructions");
+            _body.SetText("For each question, choose how true it is for you in general:\r\n\r\n1 = Never\r\n2 = Rarely\r\n3 = Sometimes\r\n4 = Often\r\n5 = Always");
+            if (_mainButtonText == null)
+            {
+                Debug.Log("[QuincyScript] main button text is null");
+                _mainButtonText = _mainButton.GetComponentInChildren<TMP_Text>();
+            }
+            _mainButtonText.SetText("I'm Ready!");
             _selectionButtonArea.SetActive(false);
         }
         else if (_stage <= 8)
         {
-            _subtitle.text = $"Question {_stage}";
-            _body.text = (_ageGroup == AgeGroup.Preschool || _ageGroup == AgeGroup.Child)
+            _subtitle.SetText($"Question {_stage}");
+            _body.SetText((_ageGroup == AgeGroup.Preschool || _ageGroup == AgeGroup.Child)
                 ? questionsForYounger[_stage - 1]
-                : questionsForOlder[_stage - 1];
+                : questionsForOlder[_stage - 1]);
             if (_stage == 1)
             {
                 _selectionButtonArea.SetActive(true);
-                _mainButtonText.text = "Next";
+                _mainButtonText.SetText("Next");
             }
             else if (_stage == 8)
             {
-                _mainButtonText.text = "Finish";
+                _mainButtonText.SetText("Finish");
             }
         }
         else
         {
-            // todo - finish
-            _mainButtonText.text = "Exit";
-            _selectionButtonArea.SetActive(false);
-
-            bool getReward = true;// todo - should depend on whether user has completed this quincy
-            int reward = getReward ? 10 : 0;
-            if (getReward)
-            {
-                GameManager.IncreaseCarrots(reward);
-            }
-            MindfulnessTier tier = MindfulnessTier.GetTier(_score);
-            _subtitle.text = tier.Title;
-            _body.text = tier.Description;
-
-            // do this for vertical layout group to update properly
-            _subtitle.SetAllDirty();
-            _body.SetAllDirty();
-            Canvas.ForceUpdateCanvases();
+            OnQuincyComplete();
         }
         _rewardBox.SetActive(_stage > 8);
+    }
+
+    private void OnQuincyComplete()
+    {
+        _mainButtonText.SetText("Exit");
+        _selectionButtonArea.SetActive(false);
+        GameManager.IncreaseCarrots(10);
+        MindfulnessTier tier = MindfulnessTier.GetTier(_score);
+        _subtitle.SetText(tier.Title);
+        _body.SetText(tier.Description);
+        GameManager.CompleteQuincy();
     }
 
     private void OnMainButtonClicked()

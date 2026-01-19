@@ -91,19 +91,19 @@ public class PostHogManager : MonoBehaviour
     {
         if (!enableTracking)
         {
-            Debug.LogWarning($"PostHog: Tracking disabled, ignoring event '{eventName}'");
+            //Debug.LogWarning($"PostHog: Tracking disabled, ignoring event '{eventName}'");
             return;
         }
 
         if (!_isInitialized)
         {
-            Debug.LogWarning($"PostHog: Not initialized yet, queueing event '{eventName}'");
+            //Debug.LogWarning($"PostHog: Not initialized yet, queueing event '{eventName}'");
             // Queue the event if not initialized yet
             _eventQueue.Enqueue(new PostHogEvent { EventName = eventName, Properties = properties });
             return;
         }
 
-        Debug.Log($"PostHog: Capturing event '{eventName}'");
+        //Debug.Log($"PostHog: Capturing event '{eventName}'");
         StartCoroutine(SendEvent(eventName, properties));
     }
 
@@ -176,26 +176,24 @@ public class PostHogManager : MonoBehaviour
         //Debug.Log($"PostHog: Sending event '{eventName}' to {host}/e/");
         //Debug.Log($"PostHog: JSON payload: {json}");
 
-        using (UnityWebRequest request = new UnityWebRequest($"{host}/e/", "POST"))
+        using UnityWebRequest request = new($"{host}/e/", "POST");
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
         {
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-
-            yield return request.SendWebRequest();
-
-            if (request.result == UnityWebRequest.Result.Success)
+            //Debug.Log($"PostHog: Successfully sent event '{eventName}'. Response: {request.downloadHandler.text}");
+        }
+        else
+        {
+            Debug.LogError($"PostHog: Failed to send event '{eventName}': {request.error}");
+            Debug.LogError($"PostHog: Response code: {request.responseCode}");
+            if (request.downloadHandler != null && !string.IsNullOrEmpty(request.downloadHandler.text))
             {
-                //Debug.Log($"PostHog: Successfully sent event '{eventName}'. Response: {request.downloadHandler.text}");
-            }
-            else
-            {
-                Debug.LogError($"PostHog: Failed to send event '{eventName}': {request.error}");
-                Debug.LogError($"PostHog: Response code: {request.responseCode}");
-                if (request.downloadHandler != null && !string.IsNullOrEmpty(request.downloadHandler.text))
-                {
-                    Debug.LogError($"PostHog: Response body: {request.downloadHandler.text}");
-                }
+                Debug.LogError($"PostHog: Response body: {request.downloadHandler.text}");
             }
         }
     }

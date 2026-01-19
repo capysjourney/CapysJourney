@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Map1Script : MapScript
+public class FirstStepsScript : MapScript
 {
     [Header("Roads")]
     [SerializeField] private Image _roadTo2;
@@ -53,9 +54,9 @@ public class Map1Script : MapScript
     [SerializeField] private Sprite _SL3Icon;
     [SerializeField] private Sprite _miniLevelIcon;
 
-    override protected void InitializeMaps()
+    protected override Dictionary<Level, Button> CreateButtonDictionary()
     {
-        _levelButtonMap = new()
+        return new()
         {
             { Level.World1Level1, _level1Btn },
             { Level.World1Level2, _level2Btn },
@@ -74,7 +75,11 @@ public class Map1Script : MapScript
             { Level.World1MiniLevel2, _miniLevel2Btn },
             { Level.World1MiniLevel3, _miniLevel3Btn },
         };
-        _levelIconMap = new()
+    }
+
+    protected override Dictionary<Level, Sprite> CreateIconDictionary()
+    {
+        return new()
         {
             { Level.World1Level1, _level1Icon },
             { Level.World1Level2, _level2Icon },
@@ -93,7 +98,11 @@ public class Map1Script : MapScript
             { Level.World1MiniLevel2, _miniLevelIcon },
             { Level.World1MiniLevel3, _miniLevelIcon }
         };
-        _previousLevel = new()
+    }
+
+    protected override Dictionary<Image, Level> CreateLevelBeforeRoadDictionary()
+    {
+        return new()
         {
             { _roadTo2, Level.World1Level1 },
             { _roadTo3, Level.World1Level2 },

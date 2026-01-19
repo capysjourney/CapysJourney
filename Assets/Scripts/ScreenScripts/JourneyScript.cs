@@ -5,10 +5,10 @@ using UnityEngine.UI;
 
 public class JourneyScript : MonoBehaviour
 {
-    [SerializeField] private Image _map1;
+    [SerializeField] private Image _firstStepsMap;
     [SerializeField] private RectTransform _capy;
     [SerializeField] private RectTransform _mapContainer;
-    [SerializeField] private Map1Script _map1Script;
+    [SerializeField] private FirstStepsScript _map1Script;
     [SerializeField] private GameObject _worldButtonGO;
     private Button _worldButton;
     private Image _map;
@@ -27,9 +27,10 @@ public class JourneyScript : MonoBehaviour
         World world = GameManager.GetCurrWorld();
         Level level = GameManager.GetCurrLevel();
         Dictionary<Level, LevelStatus> statuses = GameManager.GetWorldStatus(world);
+        bool isQuincyUnlocked = GameManager.IsQuincyUnlocked();
         Dictionary<World, Image> maps = new()
         {
-            { World.FirstSteps, _map1 }
+            { World.FirstSteps, _firstStepsMap }
         };
         _map = maps[world];
         foreach (Image image in maps.Values)
@@ -37,7 +38,7 @@ public class JourneyScript : MonoBehaviour
             image.gameObject.SetActive(image == _map);
         }
         Dictionary<World, MapScript> scripts = new() { { World.FirstSteps, _map1Script } };
-        scripts[world].Initialize(level, statuses);
+        scripts[world].Initialize(level, statuses, isQuincyUnlocked);
         _worldButtonGO.SetActive(false);
     }
 

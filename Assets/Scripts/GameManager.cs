@@ -69,6 +69,15 @@ public static class GameManager
         });
     }
 
+    public static void CompleteQuincy()
+    {
+        World completedWorld = CurrWorld;
+        WithStats(stats =>
+        {
+            stats.CompleteQuincy(CurrWorld);
+        }, true);
+    }
+
     public static World GetCurrWorld()
     {
         if (CurrWorld == null)
@@ -142,6 +151,13 @@ public static class GameManager
     {
         Dictionary<Level, LevelStatus> result = null;
         WithStats(stats => result = stats.GetWorldStatus(world), false);
+        return result;
+    }
+
+    public static bool IsQuincyUnlocked()
+    {
+        bool result = false;
+        WithStats(stats => result = stats.QuincyStatusOfWorld[CurrWorld.EnumName] == LevelStatus.Available, false);
         return result;
     }
 
