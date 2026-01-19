@@ -8,7 +8,7 @@ public class JourneyScript : MonoBehaviour
     [SerializeField] private Image _firstStepsMap;
     [SerializeField] private RectTransform _capy;
     [SerializeField] private RectTransform _mapContainer;
-    [SerializeField] private FirstStepsScript _map1Script;
+    [SerializeField] private FirstStepsScript _firstStepsScript;
     [SerializeField] private GameObject _worldButtonGO;
     private Button _worldButton;
     private Image _map;
@@ -41,7 +41,7 @@ public class JourneyScript : MonoBehaviour
         {
             image.gameObject.SetActive(image == _map);
         }
-        Dictionary<World, MapScript> scripts = new() { { World.FirstSteps, _map1Script } };
+        Dictionary<World, MapScript> scripts = new() { { World.FirstSteps, _firstStepsScript } };
         scripts[world].Initialize(level, statuses, isQuincyUnlocked);
         _worldButtonGO.SetActive(false);
     }

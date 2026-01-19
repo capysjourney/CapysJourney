@@ -225,7 +225,7 @@ public static class GameManager
     public static string GetAudioName(AgeGroup ageGroup)
     {
         // todo - age specific audio
-        return CurrLevel.AudioFile[ageGroup];
+        return CurrLevel.GetAudioFilePathOfAgeGroup(ageGroup);
     }
 
     public static LinkedList<MoodEntry> GetMoodEntries()
