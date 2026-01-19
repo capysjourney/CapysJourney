@@ -68,10 +68,14 @@ public class QuincyScript : MonoBehaviour
             Title = title;
             Description = description;
         }
-        public static MindfulnessTier BuddingTraveler = new(8, 16, "Budding Traveler", "You’re just starting your mindfulness adventure. That’s amazing — every big journey begins with small steps. Keep noticing little things around you and taking slow breaths.");
-        public static MindfulnessTier GrowingAdventurer = new(17, 24, "Growing Adventurer", "You’re learning to pause, notice, and focus more often. Each day, you’re building new skills — like Capy spotting ripples in the water. Keep practicing, and you’ll see even more progress.");
-        public static MindfulnessTier BloomingExplorer = new(25, 32, "Blooming Explorer", "You’re getting really good at staying present and handling tricky thoughts. You’re noticing feelings, letting go when you need to, and paying attention in new ways. Great work — you’re showing real growth!");
-        public static MindfulnessTier MindfulVoyager = new(33, 40, "Mindful Voyager", "Wow — you’ve grown strong in your mindfulness practice! Like Capy resting calmly by the river, you can notice, breathe, and respond with wisdom. Keep it up — your skills will only deepen from here.");
+        public static MindfulnessTier BuddingTraveler = new(8, 16, "Budding Traveler",
+            "You’re just beginning your mindfulness adventure, and that’s something to be proud of. Keep noticing little details around you and taking slow, gentle breaths.");
+        public static MindfulnessTier GrowingAdventurer = new(17, 24, "Growing Adventurer",
+            "You’re learning to pause, notice, and focus more often. Each day you’re building new skills, like Capy watching ripples move across the water.");
+        public static MindfulnessTier BloomingExplorer = new(25, 32, "Blooming Explorer",
+            "You’re getting better at staying present and working with tricky thoughts. You notice your feelings and let go when you need to.");
+        public static MindfulnessTier MindfulVoyager = new(33, 40, "Mindful Voyager",
+            "You’ve built strong mindfulness skills and respond with more calm and care. Like Capy resting by the river, you can notice and breathe with ease.");
         private static readonly List<MindfulnessTier> Tiers = new()
         {
             BuddingTraveler,
