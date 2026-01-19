@@ -20,6 +20,10 @@ public class JourneyScript : MonoBehaviour
         GameManager.UpdateWorldAndLevel();
         InitializeMap();
         ConfigureWorldButton();
+        if (!AudioManager.Instance.IsMusicPlaying)
+        {
+            AudioManager.Instance.PlayMusic(Sound.MainTheme);
+        }
     }
 
     private void InitializeMap()

@@ -4375,6 +4375,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3759373211757614432, guid: d2814630da11f3f4f85e60a587456054, type: 3}
+      propertyPath: _dojoButton
+      value: 
+      objectReference: {fileID: 1177708813}
     - target: {fileID: 4849576774684320514, guid: d2814630da11f3f4f85e60a587456054, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4464,7 +4468,8 @@ PrefabInstance:
       value: 9.299805
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 3461735010188620893, guid: d2814630da11f3f4f85e60a587456054, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2814630da11f3f4f85e60a587456054, type: 3}
@@ -4673,7 +4678,6 @@ RectTransform:
   - {fileID: 1096577475}
   - {fileID: 1335626873}
   - {fileID: 2012668832}
-  - {fileID: 187040199}
   - {fileID: 426741711}
   - {fileID: 736009851}
   - {fileID: 136555189}
@@ -4811,7 +4815,20 @@ MonoBehaviour:
   _level10Icon: {fileID: 4151725610889775364, guid: fd093f09b60d9b944ad3026866681254, type: 3}
   _SL1And2Icon: {fileID: 145073883627282716, guid: 6fa6187f54d4caf4db602da08ba0892a, type: 3}
   _SL3Icon: {fileID: -1836965902069038767, guid: 4e84e0bc1aa9d904f9ef15c2b0ed5d64, type: 3}
-  _miniLevelIcon: {fileID: 715472991027101957, guid: 8a58befac57095549a2072fa103362a3, type: 3}
+  _miniLevel1Icon: {fileID: -7170248573941599763, guid: 1ad0c29d7b4c3fd449188b5bcfd050f0, type: 3}
+  _miniLevel2Icon: {fileID: -7170248573941599763, guid: 1ad0c29d7b4c3fd449188b5bcfd050f0, type: 3}
+  _miniLevel3Icon: {fileID: -7170248573941599763, guid: 1ad0c29d7b4c3fd449188b5bcfd050f0, type: 3}
+--- !u!114 &1177708813 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6118269128906881383, guid: d2814630da11f3f4f85e60a587456054, type: 3}
+  m_PrefabInstance: {fileID: 1086556417}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1190352654
 GameObject:
   m_ObjectHideFlags: 0
@@ -8970,4 +8987,5 @@ SceneRoots:
   - {fileID: 1485563172}
   - {fileID: 892263072}
   - {fileID: 59293736}
+  - {fileID: 1125175935}
   - {fileID: 1520460819}
