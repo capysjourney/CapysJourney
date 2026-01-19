@@ -57,8 +57,6 @@ public class OnboardingScript : MonoBehaviour
     void Start()
     {
         _stageUIs = new GameObject[] { _languageSelection, _bigCapy, _parentConfirmationArea, _continueButton.gameObject, _backButton, _questionHeader, _textInputArea, _appearanceInputArea };
-        //LoadSelectLanguage(); 
-        // todo - uncomment above and remove below
         if (LocalizationSettings.SelectedLocale == null)
         {
             LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[0];
@@ -117,21 +115,13 @@ public class OnboardingScript : MonoBehaviour
                 case Stage.PARENT_CONFIRMATION:
                     LoadCapyIntro();
                     break;
-                //case Stage.SELECT_LANGUAGE: todo - uncomment
-                //    LoadCapyIntro();
-                //    break;
                 case Stage.CAPY_INTRO:
                     LoadInputName();
                     break;
                 case Stage.INPUT_NAME:
                     PlayerPrefs.SetString("username", _textInputArea.GetComponentInChildren<TMP_InputField>().text);
-                    // LoadInputAppearance();
                     LoadTransition();
                     break;
-                // todo - uncomment
-                //case Stage.INPUT_APPEARANCE:
-                //    LoadTransition();
-                //    break;
                 case Stage.TRANSITION:
                     CreatePlayerStats();
                     SceneManager.LoadSceneAsync("Tutorial");
@@ -161,8 +151,7 @@ public class OnboardingScript : MonoBehaviour
                     LoadInputName();
                     break;
                 case Stage.TRANSITION:
-                    //LoadInputAppearance(); //todo - uncomment
-                    LoadInputName(); // todo - remove
+                    LoadInputName();
                     break;
                 default: break;
             }
@@ -209,7 +198,6 @@ public class OnboardingScript : MonoBehaviour
         _bigSpeechBubble2.SetActive(false);
         Show(_bigCapy);
         Show(_continueButton.gameObject);
-        //Show(_backButton);
         Show(_bigSpeechBubble1);
     }
 

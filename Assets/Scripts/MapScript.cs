@@ -214,8 +214,8 @@ abstract public class MapScript : MonoBehaviour
         if (_level != btnLevel)
         {
             _level = btnLevel;
-            _navBarScript.ChangeLevel(_level);
             GameManager.SetCurrLevel(_level);
+            _navBarScript.ChangeLevel(_level);
             RepositionMap(_level);
         }
         GameObject levelPopup;
