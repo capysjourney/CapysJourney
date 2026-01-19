@@ -49,7 +49,8 @@ public class NavBarScript : MonoBehaviour
 
     public void ChangeLevel(Level level)
     {
-        _level.text = level.ShortName;
+        _level.SetText(level.ShortName);
+        _worldLabel.SetText(level.World.Name);
     }
 
     public void SetIsForTutorial(bool isForTutorial)
@@ -124,15 +125,15 @@ public class NavBarScript : MonoBehaviour
             _centerText.SetText(new LocalizedString("String Table", label).GetLocalizedString());
             ToggleLabels(false);
         }
-        _carrotCount.text = $"{GameManager.GetNumCarrots()}";
+        _carrotCount.SetText($"{GameManager.GetNumCarrots()}");
     }
 
     private void JourneyContent()
     {
         ToggleLabels(true);
         Level currLevel = GameManager.GetCurrLevel();
-        _level.text = currLevel.ShortName;
-        _worldLabel.text = currLevel.World.Name;
+        _level.SetText(currLevel.ShortName);
+        _worldLabel.SetText(currLevel.World.Name);
     }
 
     private void ToggleLabels(bool isJourney)

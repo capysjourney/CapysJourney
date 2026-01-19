@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Firebase.Auth;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public static class GameManager
 {
@@ -13,7 +16,8 @@ public static class GameManager
     /// <summary>
     /// The current level that Capy is standing on.
     /// </summary>
-    private static Level CurrLevel = null;
+    private static Level CurrLevel = null; 
+    public static bool LaunchAsGuest = false;
 
     private static readonly IDataService DataService = new JsonDataService();
     private static Tier? _lastBasketTier = null;
@@ -30,6 +34,8 @@ public static class GameManager
     /// Whether to go to the "Waiting for parent confirmation" screen after registering.
     /// </summary>
     public static bool NeedParentConfirmation = false;
+
+    private static PlayerStats statsCache = null;
 
     public static void UpdateWorldAndLevel()
     {
@@ -66,6 +72,15 @@ public static class GameManager
             { "total_exercises_completed", numExercisesCompleted },
             { "total_worlds_completed", numWorldsCompleted }
         });
+    }
+
+    public static void CompleteQuincy()
+    {
+        World completedWorld = CurrWorld;
+        WithStats(stats =>
+        {
+            stats.CompleteQuincy(CurrWorld);
+        }, true);
     }
 
     public static World GetCurrWorld()
@@ -133,13 +148,21 @@ public static class GameManager
 
     private static void SaveData(PlayerStats stats)
     {
-        DataService.SaveData("player-stats.json", stats);
+        stats.SaveToFirestore();
     }
+
 
     public static Dictionary<Level, LevelStatus> GetWorldStatus(World world)
     {
         Dictionary<Level, LevelStatus> result = null;
         WithStats(stats => result = stats.GetWorldStatus(world), false);
+        return result;
+    }
+
+    public static bool IsQuincyUnlocked()
+    {
+        bool result = false;
+        WithStats(stats => result = stats.QuincyStatusOfWorld[CurrWorld.EnumName] == LevelStatus.Available, false);
         return result;
     }
 
@@ -178,22 +201,32 @@ public static class GameManager
         return result;
     }
 
-    private static PlayerStats GetStats()
+    public static AgeGroup GetAgeGroup()
     {
-        try
-        {
-            return DataService.LoadData<PlayerStats>("player-stats.json");
-        }
-        catch (Exception)
-        {
-            return null;
-        }
+        // todo - migrate to playerstats
+        int age = PlayerPrefs.GetInt("age", 0);
+        return AgeGroupMethods.FromAge(age);
+    }
+
+    public static void SetStats(PlayerStats stats)
+    {
+        statsCache = stats;
+    }
+
+    public static PlayerStats GetStats()
+    {
+        if (statsCache != null) return statsCache;
+
+        statsCache = new PlayerStats(LaunchAsGuest);
+        statsCache.LoadFromFirestore();
+
+        return statsCache;
     }
 
     public static string GetAudioName(AgeGroup ageGroup)
     {
         // todo - age specific audio
-        return CurrLevel.AudioFile[ageGroup];
+        return CurrLevel.GetAudioFilePathOfAgeGroup(ageGroup);
     }
 
     public static LinkedList<MoodEntry> GetMoodEntries()

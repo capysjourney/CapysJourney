@@ -872,6 +872,7 @@ MonoBehaviour:
   _errorMessageGO: {fileID: 2131052056}
   _ageInputScript: {fileID: 809990266}
   _emailLabel: {fileID: 1613939171}
+  _passwordLabel: {fileID: 1103983363}
   _emailField: {fileID: 1613939172}
   _passwordField: {fileID: 1137035286}
   _confirmPasswordField: {fileID: 789605140}
@@ -1844,6 +1845,17 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &1103983363 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6420599039691395802, guid: d7827c0667a0a1042ada6cb2ba240275, type: 3}
+  m_PrefabInstance: {fileID: 1137035282}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1001 &1137035282
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1925,6 +1937,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5435243651500578171, guid: d7827c0667a0a1042ada6cb2ba240275, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 273.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435243651500578171, guid: d7827c0667a0a1042ada6cb2ba240275, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -1938,7 +1954,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6420599039691395802, guid: d7827c0667a0a1042ada6cb2ba240275, type: 3}
       propertyPath: m_text
-      value: Password
+      value: Password (6+ characters)
       objectReference: {fileID: 0}
     - target: {fileID: 6707315357056870708, guid: d7827c0667a0a1042ada6cb2ba240275, type: 3}
       propertyPath: m_Name
