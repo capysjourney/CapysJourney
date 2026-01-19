@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b3e0d818eba0745449cbdd8cb0a25e47
+guid: c5ae62633769df541becbc17324b9f34
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 997867683338996711
-    second: lilyLounge_0
+      213: -1919117018502837616
+    second: meetingQuincy_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,11 +126,11 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: lilyLounge_0
+      name: meetingQuincy_0
       rect:
         serializedVersion: 2
-        x: 18
-        y: 1
+        x: 15
+        y: 0
         width: 208
         height: 236
       alignment: 0
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7eb434efe5329dd00800000000000000
-      internalID: 997867683338996711
+      spriteID: 09a4bb55d3ded55e0800000000000000
+      internalID: -1919117018502837616
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      lilyLounge_0: 997867683338996711
+      meetingQuincy_0: -1919117018502837616
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
