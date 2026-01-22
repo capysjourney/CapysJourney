@@ -1,9 +1,11 @@
 using Firebase.Auth;
 using Firebase.Extensions;
+using System.Diagnostics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 public class LoginScript : MonoBehaviour
 {
@@ -22,7 +24,7 @@ public class LoginScript : MonoBehaviour
     [SerializeField] private TMP_InputField _confirmPasswordField;
     [SerializeField] private GameObject _confirmPasswordBox;
     // todo - implement forgot password
-    //[SerializeField] private Button _forgotPasswordButton;
+    [SerializeField] private Button _forgotPasswordButton;
     [SerializeField] private Button _passwordRevealButton;
     [SerializeField] private Button _confirmRevealButton;
     [SerializeField] private Button _logInOrSignUpButton;
@@ -57,7 +59,7 @@ public class LoginScript : MonoBehaviour
         _confirmPasswordInputBoxScript.SetOnResetErrorState(ResetError);
         _logInTab.onClick.AddListener(OnLoginTabClicked);
         _signUpTab.onClick.AddListener(OnSignUpTabClicked);
-        //_forgotPasswordButton.onClick.AddListener(OnForgotPasswordClicked);
+        _forgotPasswordButton.onClick.AddListener(OnForgotPasswordClicked);
         _logInOrSignUpButton.onClick.AddListener(OnLogInOrSignUpClicked);
         _appleButton.onClick.AddListener(OnAppleButtonClicked);
         _googleButton.onClick.AddListener(OnGoogleButtonClicked);
@@ -112,6 +114,7 @@ public class LoginScript : MonoBehaviour
         _logInOrSignUpText.text = "Log In";
         _logInTabImage.color = Color.white;
         _signUpTabImage.color = DisabledButtonColor;
+        _forgotPasswordButton.gameObject.SetActive(true);
         ResetTextFields();
         ResetError();
         _ageInputScript.gameObject.SetActive(false);
@@ -134,6 +137,7 @@ public class LoginScript : MonoBehaviour
         _logInOrSignUpText.text = "Sign Up";
         _logInTabImage.color = DisabledButtonColor;
         _signUpTabImage.color = Color.white;
+        _forgotPasswordButton.gameObject.SetActive(false);
         ResetError();
         ResetTextFields();
         OnAgeChanged(_ageInputScript.GetAge());
@@ -141,11 +145,40 @@ public class LoginScript : MonoBehaviour
         SetPasswordLabel();
     }
 
+    private async void SendResetEmail()
+    {
+        if (_auth == null)
+        {
+            Debug.LogError("Firebase not initialized yet");
+            return;
+        }
+
+        try
+        {
+            await _auth.SendPasswordResetEmailAsync(_emailField.text);
+            ForgotPasswordScript.userEmail = _emailField.text;
+            Debug.Log("Password reset email sent successfully");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Failed to send reset email: " + e.Message);
+        }
+    }
 
     private void OnForgotPasswordClicked()
     {
-        // TODO - Implement forgot password logic here
         Debug.Log("Forgot Password Clicked");
+
+        if (_emailField.text.Length > 0)
+        {
+            SendResetEmail();
+            SceneManager.LoadSceneAsync("ForgotPassword");
+        } else
+        {
+            _errorMessage.SetText("Please enter your email to reset password.");
+            _errorMessageGO.SetActive(true);
+            _emailInputBoxScript.SetErrorState(true);
+        }
     }
 
     private void OnLogInOrSignUpClicked()

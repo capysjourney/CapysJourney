@@ -42,7 +42,7 @@ EditorBuildSettings:
     path: Assets/Scenes/BasketOpening.unity
     guid: 9ffa1b25d749e25458a263111256eb98
   - enabled: 1
-    path: Assets/Scenes/Login.unity
+    path: Assets/Scenes/ForgotPassword.unity
     guid: 2f37d1b6d1b80e24aaf7bc2a26af7a65
   - enabled: 1
     path: Assets/Scenes/Dojo.unity
@@ -53,6 +53,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Tutorial.unity
     guid: e2e8fca0e18f98a4ead007c6ac96c79e
+  - enabled: 1
+    path: Assets/Scenes/Login.unity
+    guid: e9b74e77fb5af5c4c9a7466b360f55d3
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 2a2ea9fb1856b0346ab1d1a028f4075f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
