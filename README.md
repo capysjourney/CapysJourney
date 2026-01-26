@@ -1,6 +1,7 @@
 # Capy's Journey
-
-![Capy's Journey Logo](capysJourneyLogo.png)
+<p align="center"> 
+ <img src="capysJourneyLogo.png" alt="Capy's Journey Logo" width="300">
+</p>
 
 ## Description
 
@@ -51,5 +52,3 @@ For questions, feedback, or support, please reach out to us:
 - [Additional contact methods or links]
  -->
 ---
-
-**Note**: This project is currently in beta.
