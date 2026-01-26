@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8c2852b2a09c4b645bc2de86b9993c00
+guid: 31302c9f83ff22240b1c82438be9fa2f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7673087709875284774
-    second: badgeNotif_0
+      213: -6182776874642934597
+    second: closeNotifButton_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: badgeNotif_0
+      name: closeNotifButton_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 388
-        height: 109
+        width: 100
+        height: 36
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 23, y: 23, z: 23, w: 23}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 62b288d4e984c7a60800000000000000
-      internalID: 7673087709875284774
+      spriteID: bb47865b03d523aa0800000000000000
+      internalID: -6182776874642934597
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 7655d9d6736e6234e9dab61ba81b9dbe
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      badgeNotif_0: 7673087709875284774
+      closeNotifButton_0: -6182776874642934597
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
