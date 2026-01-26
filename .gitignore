@@ -107,3 +107,5 @@ $RECYCLE.BIN/
 google-services*.json
 google-services.xml
 google-services*.meta
+GoogleService-Info.plist
+GoogleService-Info.plist.meta
