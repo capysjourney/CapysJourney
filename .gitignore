@@ -101,3 +101,9 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/unity,windows
+
+## Google Services (Firebase) configs
+# Ignore Google services config files and their Unity .meta companions
+google-services*.json
+google-services.xml
+google-services*.meta
