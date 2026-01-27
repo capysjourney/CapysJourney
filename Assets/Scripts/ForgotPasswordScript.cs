@@ -6,11 +6,11 @@ using TMPro;
 public class ForgotPasswordScript : MonoBehaviour
 {
     [SerializeField]
-    Button _back_button;
+    private Button _back_button;
     [SerializeField]
-    Button _back_to_login_button;
+    private Button _back_to_login_button;
     [SerializeField]
-    TMP_Text _content;
+    private TMP_Text _content;
 
     public static string userEmail;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -29,7 +29,7 @@ public class ForgotPasswordScript : MonoBehaviour
         }
         else
         {
-            _content.text = "Please check your email! A password reset link was sent to " + userEmail + ". If it’s not in your inbox, be sure to check your spam folder.";
+            _content.text = "Please check your email! A password reset link was sent to " + userEmail + ". If itâ€™s not in your inbox, be sure to check your spam folder.";
         }
 
     }
