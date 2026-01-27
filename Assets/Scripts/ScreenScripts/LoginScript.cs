@@ -23,7 +23,6 @@ public class LoginScript : MonoBehaviour
     [SerializeField] private TMP_InputField _passwordField;
     [SerializeField] private TMP_InputField _confirmPasswordField;
     [SerializeField] private GameObject _confirmPasswordBox;
-    // todo - implement forgot password
     [SerializeField] private Button _forgotPasswordButton;
     [SerializeField] private Button _passwordRevealButton;
     [SerializeField] private Button _confirmRevealButton;
