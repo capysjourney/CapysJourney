@@ -1997,6 +1997,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1029952084438850097, guid: 4cd5b84beb8e78d499e016e6c027e04d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 2.3043213
+      objectReference: {fileID: 0}
     - target: {fileID: 2811123074014055172, guid: 4cd5b84beb8e78d499e016e6c027e04d, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 28.599976
@@ -4671,7 +4675,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Appearance
+  m_text: Sound Effects
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 78a2f7ffe4fa18c459e5af4c8477e63b, type: 2}
   m_sharedMaterial: {fileID: 740229054142333046, guid: 78a2f7ffe4fa18c459e5af4c8477e63b, type: 2}
