@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BadgeNotifManager : MonoBehaviour
@@ -21,26 +22,38 @@ public class BadgeNotifManager : MonoBehaviour
             return _instance;
         }
     }
-
-    [Header("UI References")]
     [SerializeField] private Transform notificationParent;
 
-    private const float displayDuration = 4f;
+    private const float displayDuration = 3.5f;
     private const float fadeInDuration = 0.5f;
     private const float fadeOutDuration = 0.5f;
 
-    private readonly Queue<Badge> _badgeQueue = new();
-    private bool _isDisplayingNotification = false;
+    private static readonly Queue<Badge> BadgeQueue = new();
+    private static bool IsDisplayingNotification = false;
+
+    /// <summary>
+    /// Whether the scene was destroyed while displaying a notification
+    /// </summary>
+    private static bool WasInterrupted = false;
 
     private void Awake()
     {
-        if (_instance != null && _instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
         _instance = this;
+    }
+
+    private void OnEnable()
+    {
+        // Resume processing if queue has items after scene load
+        if (BadgeQueue.Count > 0 && !IsDisplayingNotification)
+        {
+            StartCoroutine(ProcessNotificationQueue(startFromMiddle: WasInterrupted));
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (IsDisplayingNotification) WasInterrupted = true;
+        IsDisplayingNotification = false;
     }
 
     public void ShowBadgeNotifications(List<BadgeEnum> badges)
@@ -50,30 +63,33 @@ public class BadgeNotifManager : MonoBehaviour
             Badge badge = Badge.BadgeOfEnum[badgeEnum];
             if (badge != null)
             {
-                _badgeQueue.Enqueue(badge);
+                BadgeQueue.Enqueue(badge);
             }
         }
-
-        if (!_isDisplayingNotification)
+        if (!IsDisplayingNotification)
         {
-            StartCoroutine(ProcessNotificationQueue());
+            StartCoroutine(ProcessNotificationQueue(startFromMiddle: false));
         }
     }
 
-    private IEnumerator ProcessNotificationQueue()
+    private IEnumerator ProcessNotificationQueue(bool startFromMiddle)
     {
-        _isDisplayingNotification = true;
+        IsDisplayingNotification = true;
 
-        while (_badgeQueue.Count > 0)
+        while (BadgeQueue.Count > 0)
         {
-            Badge currentBadge = _badgeQueue.Dequeue();
-            yield return StartCoroutine(DisplayNotification(currentBadge));
+            Badge currentBadge = BadgeQueue.Peek();
+            yield return StartCoroutine(DisplayNotification(currentBadge, startFromMiddle));
+            BadgeQueue.Dequeue();
         }
 
-        _isDisplayingNotification = false;
+        IsDisplayingNotification = false;
     }
 
-    private IEnumerator DisplayNotification(Badge badge)
+    /// <summary>
+    /// Displays a notification for given badge. If startFromMiddle is true, skips the fade-in animation.
+    /// 
+    private IEnumerator DisplayNotification(Badge badge, bool startFromMiddle)
     {
         GameObject notificationPrefab = Resources.Load<GameObject>("Prefabs/AchievementNotif");
 
@@ -85,13 +101,11 @@ public class BadgeNotifManager : MonoBehaviour
 
         if (notificationParent == null)
         {
-            Debug.LogWarning("BadgeManager: Notification parent not assigned!");
+            Debug.LogWarning("BadgeManager: Could not find valid notification parent in current scene!");
             yield break;
         }
 
         GameObject notification = Instantiate(notificationPrefab, notificationParent);
-
-        AudioManager.Instance.PlayUIEffect(Sound.AchievementUnlocked); 
         if (!notification.TryGetComponent<BadgeNotifScript>(out var notifScript))
         {
             Debug.LogWarning("BadgeManager: AchievementNotif prefab is missing BadgeNotifScript component!");
@@ -107,11 +121,19 @@ public class BadgeNotifManager : MonoBehaviour
 
         // Set badge data
         notifScript.SetBadge(badge);
-        notifScript.SetOnClose(() => Destroy(notification));
+        notifScript.SetOnClose(() => {
+            BadgeQueue.Dequeue();
+            IsDisplayingNotification = false;
+            StopAllCoroutines();
+            notification.SetActive(false);
+        });
 
-        // Fade in
-        yield return StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f, fadeInDuration));
-
+        if (!startFromMiddle)
+        {
+            AudioManager.Instance.PlayUIEffect(Sound.AchievementUnlocked);
+            // Fade in
+            yield return StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f, fadeInDuration));
+        }
         // Display
         yield return new WaitForSeconds(displayDuration);
 
@@ -132,7 +154,6 @@ public class BadgeNotifManager : MonoBehaviour
             canvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, elapsed / duration);
             yield return null;
         }
-
         canvasGroup.alpha = endAlpha;
     }
 }
