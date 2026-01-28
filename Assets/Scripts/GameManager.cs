@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Firebase.Auth;
-using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
 public static class GameManager
@@ -54,12 +52,12 @@ public static class GameManager
 
         WithStats(stats =>
         {
-            stats.CompleteLevel(CurrLevel);
+            stats.CompleteLevel(CurrLevel, HandleBadgesEarned);
             stats.IncreaseSecondsMeditated(lessonDuration);
             MakeNextLevelsAvailable(stats);
             numExercisesCompleted = stats.NumLevelsCompleted;
             numWorldsCompleted = stats.NumWorldsCompleted;
-            stats.UpdateStreakForCompletedActivity();
+            stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
         }, true);
 
         // Track level completion with PostHog
@@ -79,7 +77,7 @@ public static class GameManager
         World completedWorld = CurrWorld;
         WithStats(stats =>
         {
-            stats.CompleteQuincy(CurrWorld);
+            stats.CompleteQuincy(CurrWorld, HandleBadgesEarned);
         }, true);
     }
 
@@ -150,7 +148,6 @@ public static class GameManager
     {
         stats.SaveToFirestore();
     }
-
 
     public static Dictionary<Level, LevelStatus> GetWorldStatus(World world)
     {
@@ -254,9 +251,9 @@ public static class GameManager
             {
                 IncreaseCarrots(10);
                 carrotsEarned = 10;
-                stats.UpdateStreakForCompletedActivity();
+                stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
             }
-            stats.LogGratitude(gratitude, dateTime);
+            stats.LogGratitude(gratitude, dateTime, HandleBadgesEarned);
         }, true);
 
         // Track gratitude completion with PostHog
@@ -282,9 +279,9 @@ public static class GameManager
             {
                 IncreaseCarrots(10);
                 carrotsEarned = 10;
-                stats.UpdateStreakForCompletedActivity();
+                stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
             }
-            stats.LogMood(mood, dateTime);
+            stats.LogMood(mood, dateTime, HandleBadgesEarned);
         }, true);
 
         // Track mood check-in completion with PostHog
@@ -308,9 +305,9 @@ public static class GameManager
             {
                 IncreaseCarrots(10);
                 carrotsEarned = 10;
-                stats.UpdateStreakForCompletedActivity();
+                stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
             }
-            stats.CompleteBreathworkSession(durationInSeconds);
+            stats.CompleteBreathworkSession(durationInSeconds, HandleBadgesEarned);
             // Track breathwork completion with PostHog
             PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
             {
@@ -333,7 +330,7 @@ public static class GameManager
     public static void IncreaseCarrots(int numCarrots)
     {
         if (numCarrots <= 0) return;
-        WithStats(stats => stats.IncreaseCarrots(numCarrots), true);
+        WithStats(stats => stats.IncreaseCarrots(numCarrots, HandleBadgesEarned), true);
     }
 
     public static void Login()
@@ -462,12 +459,12 @@ public static class GameManager
             {
                 accessoryTier = Tier.Legendary;
             }
-            stats.IncreaseCarrots(-tierCosts[basketTier]);
+            stats.IncreaseCarrots(-tierCosts[basketTier], HandleBadgesEarned);
             List<Accessory> accessoriesOfTier = lockedAccessories.Where(a => a.Tier == accessoryTier).ToList();
             Accessory accessory = accessoriesOfTier[random.Next(accessoriesOfTier.Count)];
             _lastBasketTier = basketTier;
             _lastAccessoryObtained = accessory;
-            stats.AddAccessory(accessory);
+            stats.AddAccessory(accessory, HandleBadgesEarned);
             bought = true;
         }, true);
 
@@ -519,7 +516,7 @@ public static class GameManager
 
     public static void UseAccessory(Accessory accessory)
     {
-        WithStats(stats => stats.UseAccessory(accessory), true);
+        WithStats(stats => stats.UseAccessory(accessory, HandleBadgesEarned), true);
     }
 
     public static void StopUsingAccessory(AccessoryType type)
@@ -581,5 +578,10 @@ public static class GameManager
         {
             stats.BadgesCurrentlyDisplayed = badgesDisplayed;
         }, true);
+    }
+
+    public static void HandleBadgesEarned(List<BadgeEnum> badges)
+    {
+        BadgeManager.Instance.ShowBadgeNotifications(badges);
     }
 }

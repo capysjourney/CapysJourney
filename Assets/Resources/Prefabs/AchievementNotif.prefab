@@ -246,7 +246,7 @@ GameObject:
   - component: {fileID: 1941108538868002078}
   - component: {fileID: 8696979255136218871}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: New Achievement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -383,7 +383,7 @@ GameObject:
   - component: {fileID: 2731400101437740888}
   - component: {fileID: 4883011593032599712}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Badge Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -600,6 +600,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 371bda0e35e9c234fa371db8785dce12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  _image: {fileID: 3139703399262591989}
+  _badgeName: {fileID: 8696979255136218871}
+  _closeButton: {fileID: 6874680879032666159}
 --- !u!1 &8680183211105488337
 GameObject:
   m_ObjectHideFlags: 0
@@ -612,7 +615,7 @@ GameObject:
   - component: {fileID: 967186146844281044}
   - component: {fileID: 3265840064851829344}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Close
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

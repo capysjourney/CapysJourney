@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System.Collections.Generic;
 
 public class BadgesDisplayed
@@ -6,7 +5,6 @@ public class BadgesDisplayed
     public Badge firstBadge = null;
     public Badge secondBadge = null;
     public Badge thirdBadge = null;
-
 
     public void AddBadge(Badge badge)
     {

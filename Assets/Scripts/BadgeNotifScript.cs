@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AchievementNotifScript : MonoBehaviour
+public class BadgeNotifScript : MonoBehaviour
 {
     [SerializeField] private Image _image;
     [SerializeField] private TMP_Text _badgeName;
@@ -19,6 +19,4 @@ public class AchievementNotifScript : MonoBehaviour
     {
         _closeButton.onClick.AddListener(() => action());
     }
-
-
 }
