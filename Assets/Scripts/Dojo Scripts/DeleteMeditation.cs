@@ -17,7 +17,7 @@ public class DeleteMeditation : MonoBehaviour
 
     public void OnDeleteButtonClick()
     {
-        PlayerStats stats = GameManager.GetStats();
+        PlayerStats stats = DataManager.GetStats();
         if (stats == null || stats.MeditationLog.Count == 0) return;
 
         int siblingIndex = transform.parent.parent.GetSiblingIndex();

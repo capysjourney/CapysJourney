@@ -98,7 +98,7 @@ public class LessonScript : MonoBehaviour
     {
         _audioSource.Stop();
         int age = PlayerPrefs.GetInt("age", 10);
-        string audioName = GameManager.GetAudioName(GetAgeGroup(age));
+        string audioName = AudioManager.GetAudioName(GameManager.GetCurrLevel(), GetAgeGroup(age));
         AudioClip audioClip = Resources.Load<AudioClip>(audioName);
         if (audioClip == null)
         {
@@ -297,7 +297,7 @@ public class LessonScript : MonoBehaviour
         GameManager.ToggleBookmark();
         bool bookmarked = GameManager.IsLevelBookmarked();
         _bookmarkButtonImage.sprite = bookmarked ? _filledBookmark : _unfilledBookmark;
-        GameManager.Bookmark(bookmarked);
+        GameManager.BookmarkCurrLevel(bookmarked);
     }
 
     private string FormatSeconds(float time)

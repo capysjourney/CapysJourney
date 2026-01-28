@@ -248,7 +248,7 @@ public class OnboardingScript : MonoBehaviour
     {
         IDataService DataService = new JsonDataService();
 
-        PlayerStats stats = new PlayerStats(GameManager.LaunchAsGuest);
+        PlayerStats stats = new(GameManager.LaunchAsGuest);
 
         bool worked = DataService.SaveData("player-stats.json", stats);
         if (!worked)
@@ -257,7 +257,7 @@ public class OnboardingScript : MonoBehaviour
             return;
         }
 
-        GameManager.SetStats(stats);
+        DataManager.SetStats(stats);
 
         string username = PlayerPrefs.GetString("username", "");
         int age = PlayerPrefs.GetInt("age", 0);

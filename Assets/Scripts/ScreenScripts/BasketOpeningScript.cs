@@ -80,7 +80,7 @@ public class BasketOpeningScript : MonoBehaviour
             { Accessory.FloatingKoiFish, _floatingKoiFishSprite },
 
         };
-        (Tier? tier, Accessory accessory) = GameManager.GetLastBasketInfo();
+        (Tier? tier, Accessory accessory) = InventoryManager.GetLastBasketInfo();
         if(tier == null)
         {
             throw new System.InvalidOperationException("No basket info available");

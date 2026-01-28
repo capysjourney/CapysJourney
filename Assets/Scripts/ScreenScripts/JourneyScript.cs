@@ -31,7 +31,7 @@ public class JourneyScript : MonoBehaviour
         World world = GameManager.GetCurrWorld();
         Level level = GameManager.GetCurrLevel();
         Dictionary<Level, LevelStatus> statuses = GameManager.GetWorldStatus(world);
-        bool isQuincyUnlocked = GameManager.IsQuincyUnlocked();
+        bool isQuincyUnlocked = QuincyManager.IsQuincyUnlocked(world);
         Dictionary<World, Image> maps = new()
         {
             { World.FirstSteps, _firstStepsMap }

@@ -177,11 +177,11 @@ public class QuincyScript : MonoBehaviour
     {
         _mainButtonText.SetText("Exit");
         _selectionButtonArea.SetActive(false);
-        GameManager.IncreaseCarrots(10);
+        CarrotManager.IncreaseCarrots(10);
         MindfulnessTier tier = MindfulnessTier.GetTier(_score);
         _subtitle.SetText(tier.Title);
         _body.SetText(tier.Description);
-        GameManager.CompleteQuincy();
+        QuincyManager.CompleteQuincy(GameManager.GetCurrWorld());
     }
 
     private void OnMainButtonClicked()

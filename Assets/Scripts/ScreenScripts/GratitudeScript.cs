@@ -88,7 +88,7 @@ public class GratitudeScript : MonoBehaviour
 
     private void SetLeaves()
     {
-        LinkedList<GratitudeEntry> entries = GameManager.GetGratitudeEntries();
+        LinkedList<GratitudeEntry> entries = DailyExercisesManager.GetGratitudeEntries();
         int i = 0;
         _numLeavesInUse = Math.Min(entries.Count, _leaves.Length);
         foreach (GratitudeEntry entry in entries)
@@ -160,7 +160,7 @@ public class GratitudeScript : MonoBehaviour
         _popup.SetActive(true);
         _inputPaper.SetActive(false);
         string gratitudeText = _inputField.text;
-        int carrotsEarned = GameManager.LogGratitudeAndGetCarrotsEarned(gratitudeText, DateTime.Now);
+        int carrotsEarned = DailyExercisesManager.LogGratitudeAndGetCarrotsEarned(gratitudeText, DateTime.Now);
         _carrotCount.text = carrotsEarned.ToString();
         _numLeavesInUse = Math.Min(_numLeavesInUse + 1, _leaves.Length);
         _inputField.text = "";

@@ -32,7 +32,7 @@ public class DailyScript : MonoBehaviour
         {
             Destroy(_moodLog.transform.GetChild(i).gameObject);
         }
-        LinkedList<MoodEntry> entries = GameManager.GetMoodEntries();
+        LinkedList<MoodEntry> entries = DailyExercisesManager.GetMoodEntries();
         foreach (MoodEntry entry in entries)
         {
             GameObject entryObject = Instantiate(_moodEntryPrefab, _moodLog.transform);

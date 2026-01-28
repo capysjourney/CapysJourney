@@ -33,7 +33,7 @@ public class SaveMeditation : MonoBehaviour
             effect = SharedData.effectData
         };
 
-        PlayerStats stats = GameManager.GetStats();
+        PlayerStats stats = DataManager.GetStats();
         stats.MeditationLog.AddFirst(newEntry);
         stats.SaveToFirestore();
 
@@ -45,11 +45,11 @@ public class SaveMeditation : MonoBehaviour
 
     private void LoadMeditations()
     {
-        PlayerStats stats = GameManager.GetStats();
+        PlayerStats stats = DataManager.GetStats();
 
         stats.LoadMeditationsFromFirestore(loadedList =>
         {
-            meditationList = new MeditationList();
+            meditationList = new();
             meditationList.entries = loadedList.ToList();
         });
     }

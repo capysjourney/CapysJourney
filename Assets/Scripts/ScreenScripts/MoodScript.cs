@@ -214,9 +214,8 @@ public class MoodScript : MonoBehaviour
         _darkener.SetActive(true);
         _darkened = true;
         _popup.SetActive(true);
-        int carrotsEarned = GameManager.LogMoodAndGetCarrotsEarned(mood, dateTime);
+        int carrotsEarned = DailyExercisesManager.LogMoodAndGetCarrotsEarned(mood, dateTime);
         _rewardText.text = carrotsEarned.ToString();
-        GameManager.IncreaseCarrots(carrotsEarned);
-
+        CarrotManager.IncreaseCarrots(carrotsEarned);
     }
 }

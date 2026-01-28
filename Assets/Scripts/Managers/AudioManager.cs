@@ -110,5 +110,9 @@ public class AudioManager : MonoBehaviour
             _musicSource.volume = Mathf.Clamp01(volume);
         }
     }
+    public static string GetAudioName(Level level, AgeGroup ageGroup)
+    {
+        return level.GetAudioFilePathOfAgeGroup(ageGroup);
+    }
 }
 

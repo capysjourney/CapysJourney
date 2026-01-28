@@ -75,7 +75,7 @@ public class BreathworkScript : MonoBehaviour
         if (_progressBar.value >= Duration)
         {
             _isFinished = true;
-            int carrotsEarned = GameManager.CompleteBreathworkAndGetCarrotsEarned(Duration);
+            int carrotsEarned = DailyExercisesManager.CompleteBreathworkAndGetCarrotsEarned(Duration);
             _carrotCount.text = $"{carrotsEarned}";
             _endObjects.SetActive(true);
         }

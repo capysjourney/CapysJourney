@@ -125,7 +125,7 @@ public class NavBarScript : MonoBehaviour
             _centerText.SetText(new LocalizedString("String Table", label).GetLocalizedString());
             ToggleLabels(false);
         }
-        _carrotCount.SetText($"{GameManager.GetNumCarrots()}");
+        _carrotCount.SetText($"{CarrotManager.GetNumCarrots()}");
     }
 
     private void JourneyContent()
