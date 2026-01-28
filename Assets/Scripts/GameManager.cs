@@ -582,6 +582,6 @@ public static class GameManager
 
     public static void HandleBadgesEarned(List<BadgeEnum> badges)
     {
-        BadgeManager.Instance.ShowBadgeNotifications(badges);
+        BadgeNotifManager.Instance.ShowBadgeNotifications(badges);
     }
 }

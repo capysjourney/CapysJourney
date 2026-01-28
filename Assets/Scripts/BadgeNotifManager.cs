@@ -2,20 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BadgeManager : MonoBehaviour
+public class BadgeNotifManager : MonoBehaviour
 {
-    private static BadgeManager _instance;
-    public static BadgeManager Instance
+    private static BadgeNotifManager _instance;
+    public static BadgeNotifManager Instance
     {
         get
         {
             if (_instance == null)
             {
-                _instance = FindFirstObjectByType<BadgeManager>();
+                _instance = FindFirstObjectByType<BadgeNotifManager>();
                 if (_instance == null)
                 {
                     GameObject go = new("BadgeManager");
-                    _instance = go.AddComponent<BadgeManager>();
+                    _instance = go.AddComponent<BadgeNotifManager>();
                 }
             }
             return _instance;
@@ -91,6 +91,7 @@ public class BadgeManager : MonoBehaviour
 
         GameObject notification = Instantiate(notificationPrefab, notificationParent);
 
+        AudioManager.Instance.PlayUIEffect(Sound.AchievementUnlocked); 
         if (!notification.TryGetComponent<BadgeNotifScript>(out var notifScript))
         {
             Debug.LogWarning("BadgeManager: AchievementNotif prefab is missing BadgeNotifScript component!");
