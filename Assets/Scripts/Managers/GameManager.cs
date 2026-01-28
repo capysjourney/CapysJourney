@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public static class GameManager
@@ -57,15 +56,6 @@ public static class GameManager
             { "total_exercises_completed", numExercisesCompleted },
             { "total_worlds_completed", numWorldsCompleted }
         });
-    }
-
-    public static void CompleteQuincy()
-    {
-        World completedWorld = CurrWorld;
-        DataManager.WithStats(stats =>
-        {
-            stats.CompleteQuincy(CurrWorld, BadgeManager.HandleBadgesEarned);
-        }, true);
     }
 
     public static World GetCurrWorld()
@@ -126,7 +116,7 @@ public static class GameManager
         DataManager.WithStats(stats => stats.ToggleBookmark(CurrLevel), true);
     }
 
-    public static void Bookmark(bool bookmark)
+    public static void BookmarkCurrLevel(bool bookmark)
     {
         DataManager.WithStats(stats => stats.Bookmark(CurrLevel, bookmark), true);
     }
@@ -135,13 +125,6 @@ public static class GameManager
     {
         Dictionary<Level, LevelStatus> result = null;
         DataManager.WithStats(stats => result = stats.GetWorldStatus(world), false);
-        return result;
-    }
-
-    public static bool IsQuincyUnlocked()
-    {
-        bool result = false;
-        DataManager.WithStats(stats => result = stats.QuincyStatusOfWorld[CurrWorld.EnumName] == LevelStatus.Available, false);
         return result;
     }
 

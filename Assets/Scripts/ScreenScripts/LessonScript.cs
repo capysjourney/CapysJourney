@@ -297,7 +297,7 @@ public class LessonScript : MonoBehaviour
         GameManager.ToggleBookmark();
         bool bookmarked = GameManager.IsLevelBookmarked();
         _bookmarkButtonImage.sprite = bookmarked ? _filledBookmark : _unfilledBookmark;
-        GameManager.Bookmark(bookmarked);
+        GameManager.BookmarkCurrLevel(bookmarked);
     }
 
     private string FormatSeconds(float time)
