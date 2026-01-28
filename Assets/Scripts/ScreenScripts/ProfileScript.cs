@@ -2,7 +2,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.SmartFormat.PersistentVariables;
@@ -60,7 +59,7 @@ public class ProfileScript : MonoBehaviour
         _badgesDisplayed = BadgeManager.GetBadgesDisplayed();
         try
         {
-            _themesText.SetText($"{GameManager.GetNumWorldsCompleted()}/{GameManager.NumWorlds}");
+            _themesText.SetText($"{GameManager.GetNumWorldsCompleted()}/{World.AllWorlds.Count}");
             _exercisesText.SetText($"{GameManager.GetNumLessonsCompleted()}");
             _minMeditationText.SetText(GameManager.GetTotalMinutesMeditated().ToString());
             LocalizedString localizedStreakText = new("String Table", "streak") {

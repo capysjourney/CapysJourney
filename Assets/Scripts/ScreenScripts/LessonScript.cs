@@ -98,7 +98,7 @@ public class LessonScript : MonoBehaviour
     {
         _audioSource.Stop();
         int age = PlayerPrefs.GetInt("age", 10);
-        string audioName = GameManager.GetAudioName(GetAgeGroup(age));
+        string audioName = AudioManager.GetAudioName(GameManager.GetCurrLevel(), GetAgeGroup(age));
         AudioClip audioClip = Resources.Load<AudioClip>(audioName);
         if (audioClip == null)
         {
