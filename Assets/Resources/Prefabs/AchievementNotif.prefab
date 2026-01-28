@@ -601,7 +601,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   _image: {fileID: 3139703399262591989}
-  _badgeName: {fileID: 8696979255136218871}
+  _badgeName: {fileID: 4883011593032599712}
   _closeButton: {fileID: 6874680879032666159}
 --- !u!1 &8680183211105488337
 GameObject:
