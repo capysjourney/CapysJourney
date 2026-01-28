@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 public static class GameManager
 {
@@ -15,9 +14,7 @@ public static class GameManager
     /// The current level that Capy is standing on.
     /// </summary>
     private static Level CurrLevel = null; 
-    public static bool LaunchAsGuest = false;
 
-    private static readonly IDataService DataService = new JsonDataService();
     //private static Tier? _lastBasketTier = null;
 
     /// <summary>
@@ -33,11 +30,11 @@ public static class GameManager
     /// </summary>
     public static bool NeedParentConfirmation = false;
 
-    private static PlayerStats statsCache = null;
+    public static bool LaunchAsGuest = false;
 
     public static void UpdateWorldAndLevel()
     {
-        WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             CurrWorld = World.WorldLookup[stats.CurrWorld];
             CurrLevel = Level.LevelLookup[stats.CurrLevel];
@@ -50,7 +47,7 @@ public static class GameManager
         int numExercisesCompleted = 0;
         int numWorldsCompleted = 0;
 
-        WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             stats.CompleteLevel(CurrLevel, HandleBadgesEarned);
             stats.IncreaseSecondsMeditated(lessonDuration);
@@ -75,7 +72,7 @@ public static class GameManager
     public static void CompleteQuincy()
     {
         World completedWorld = CurrWorld;
-        WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             stats.CompleteQuincy(CurrWorld, HandleBadgesEarned);
         }, true);
@@ -102,7 +99,7 @@ public static class GameManager
     public static bool HasCompletedLevel(Level level)
     {
         bool result = false;
-        WithStats(stats => result = stats.GetLevelStatus(level) == LevelStatus.Completed, false);
+        DataManager.WithStats(stats => result = stats.GetLevelStatus(level) == LevelStatus.Completed, false);
         return result;
     }
 
@@ -115,7 +112,7 @@ public static class GameManager
     {
         CurrLevel = level;
         CurrWorld = level.World;
-        WithStats(stats => stats.ChangeLevel(level), true);
+        DataManager.WithStats(stats => stats.ChangeLevel(level), true);
     }
 
     private static void MakeNextLevelsAvailable(PlayerStats stats)
@@ -130,71 +127,66 @@ public static class GameManager
     public static bool IsLevelBookmarked()
     {
         bool result = false;
-        WithStats(stats => result = stats.IsLevelBookmarked(CurrLevel), false);
+        DataManager.WithStats(stats => result = stats.IsLevelBookmarked(CurrLevel), false);
         return result;
     }
 
     public static void ToggleBookmark()
     {
-        WithStats(stats => stats.ToggleBookmark(CurrLevel), true);
+        DataManager.WithStats(stats => stats.ToggleBookmark(CurrLevel), true);
     }
 
     public static void Bookmark(bool bookmark)
     {
-        WithStats(stats => stats.Bookmark(CurrLevel, bookmark), true);
-    }
-
-    private static void SaveData(PlayerStats stats)
-    {
-        stats.SaveToFirestore();
+        DataManager.WithStats(stats => stats.Bookmark(CurrLevel, bookmark), true);
     }
 
     public static Dictionary<Level, LevelStatus> GetWorldStatus(World world)
     {
         Dictionary<Level, LevelStatus> result = null;
-        WithStats(stats => result = stats.GetWorldStatus(world), false);
+        DataManager.WithStats(stats => result = stats.GetWorldStatus(world), false);
         return result;
     }
 
     public static bool IsQuincyUnlocked()
     {
         bool result = false;
-        WithStats(stats => result = stats.QuincyStatusOfWorld[CurrWorld.EnumName] == LevelStatus.Available, false);
+        DataManager.WithStats(stats => result = stats.QuincyStatusOfWorld[CurrWorld.EnumName] == LevelStatus.Available, false);
         return result;
     }
 
     public static int GetNumWorldsCompleted()
     {
         int result = 0;
-        WithStats(stats => result = stats.NumWorldsCompleted, false);
+        DataManager.WithStats(stats => result = stats.NumWorldsCompleted, false);
         return result;
     }
 
     public static int GetNumLessonsCompleted()
     {
         int result = 0;
-        WithStats(stats => result = stats.NumLevelsCompleted, false);
+        DataManager.WithStats(stats => result = stats.NumLevelsCompleted, false);
         return result;
     }
 
     public static int GetCurrStreak()
     {
         int result = 0;
-        WithStats(stats => result = stats.CurrStreak, false);
+        DataManager.WithStats(stats => result = stats.CurrStreak, false);
         return result;
     }
 
     public static int GetBestStreak()
     {
         int result = 0;
-        WithStats(stats => result = stats.BestStreak, false);
+        DataManager.WithStats(stats => result = stats.BestStreak, false);
         return result;
     }
 
     public static float GetTotalMinutesMeditated()
     {
         float result = 0;
-        WithStats(stats => result = MathF.Floor(stats.SecondsMeditated / 60f), false);
+        DataManager.WithStats(stats => result = MathF.Floor(stats.SecondsMeditated / 60f), false);
         return result;
     }
 
@@ -205,20 +197,6 @@ public static class GameManager
         return AgeGroupMethods.FromAge(age);
     }
 
-    public static void SetStats(PlayerStats stats)
-    {
-        statsCache = stats;
-    }
-
-    public static PlayerStats GetStats()
-    {
-        if (statsCache != null) return statsCache;
-
-        statsCache = new PlayerStats(LaunchAsGuest);
-        statsCache.LoadFromFirestore();
-
-        return statsCache;
-    }
 
     public static string GetAudioName(AgeGroup ageGroup)
     {
@@ -229,21 +207,21 @@ public static class GameManager
     public static LinkedList<MoodEntry> GetMoodEntries()
     {
         LinkedList<MoodEntry> result = null;
-        WithStats(stats => result = stats.MoodLog, false);
+        DataManager.WithStats(stats => result = stats.MoodLog, false);
         return result ?? new LinkedList<MoodEntry>();
     }
 
     public static LinkedList<GratitudeEntry> GetGratitudeEntries()
     {
         LinkedList<GratitudeEntry> result = null;
-        WithStats(stats => result = stats.GratitudeLog, false);
+        DataManager.WithStats(stats => result = stats.GratitudeLog, false);
         return result ?? new LinkedList<GratitudeEntry>();
     }
     public static int LogGratitudeAndGetCarrotsEarned(string gratitude, DateTime dateTime)
     {
         int carrotsEarned = 0;
         bool alreadyLoggedToday = false;
-        WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             LinkedList<GratitudeEntry> log = stats.GratitudeLog;
             alreadyLoggedToday = log != null && log.Count > 0 && log.Last().Timestamp.Date == dateTime.Date;
@@ -271,7 +249,7 @@ public static class GameManager
     {
         int carrotsEarned = 0;
         bool alreadyLoggedToday = false;
-        WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             LinkedList<MoodEntry> log = stats.MoodLog;
             alreadyLoggedToday = log != null && log.Count > 0 && log.Last().Timestamp.Date == dateTime.Date;
@@ -298,7 +276,7 @@ public static class GameManager
     public static int CompleteBreathworkAndGetCarrotsEarned(int durationInSeconds)
     {
         int carrotsEarned = 0;
-        WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             bool alreadyCompletedToday = stats.LastBreathworkTime.Date == DateTime.Now.Date;
             if (!alreadyCompletedToday)
@@ -324,7 +302,7 @@ public static class GameManager
     public static void Login()
     {
         bool isFirstLogin = false;
-        WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             DateTime lastLogin = stats.LastLogin;
             stats.UpdateLastLogin();
@@ -341,26 +319,11 @@ public static class GameManager
         });
     }
 
-    /// <summary>
-    /// Fetches the player stats, performs <c>action</c> on it, and saves the updated stats if <c>update</c> is true.
-    /// </summary>
-    /// <exception cref="Exception">Thrown when stats cannot be fetched.</exception>
-    public static void WithStats(Action<PlayerStats> action, bool update)
-    {
-        PlayerStats stats = GetStats() ?? throw new Exception("Could not fetch stats");
-        action(stats);
-        if (update)
-        {
-            SaveData(stats);
-        }
-    }
-
-
 
     public static HashSet<Badge> GetBadgesOwned()
     {
         HashSet<Badge> result = new();
-        WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             HashSet<BadgeEnum> badgeEnums = stats.BadgesEarned;
             foreach (BadgeEnum badgeEnum in badgeEnums)
@@ -374,7 +337,7 @@ public static class GameManager
     public static BadgesDisplayed GetBadgesDisplayed()
     {
         BadgesDisplayed result = null;
-        WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             result = stats.BadgesCurrentlyDisplayed;
         }, false);
@@ -383,7 +346,7 @@ public static class GameManager
 
     public static void SetBadgesDisplayed(BadgesDisplayed badgesDisplayed)
     {
-        WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             stats.BadgesCurrentlyDisplayed = badgesDisplayed;
         }, true);

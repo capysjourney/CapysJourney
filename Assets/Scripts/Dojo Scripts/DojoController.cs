@@ -93,7 +93,7 @@ public class DojoController : MonoBehaviour
             }
         }
 
-        GameManager.WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             List<Level> filteredLevels = new List<Level>();
 
@@ -132,7 +132,7 @@ public class DojoController : MonoBehaviour
 
     public static void PrintBookmarkedLevels()
     {
-        GameManager.WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             Debug.Log($"Found {stats.BookmarkedLevels.Count} bookmarked levels:");
 
@@ -153,7 +153,7 @@ public class DojoController : MonoBehaviour
             }
         }
 
-        GameManager.WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             meditationList = new MeditationList();
             meditationList.entries = stats.MeditationLog.Select(m => new MeditationEntry

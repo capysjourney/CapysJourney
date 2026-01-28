@@ -275,7 +275,7 @@ public class CustomMeditationController : MonoBehaviour
         int carrotsEarned = Mathf.RoundToInt(10.1f * Mathf.Log(1 + 0.36f * _duration));
         _levelCompletePopup.SetActive(true);
         carrotCount.text = carrotsEarned + "";
-        GameManager.WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             stats.IncreaseCarrots(carrotsEarned, GameManager.HandleBadgesEarned);
         }, true); 

@@ -24,7 +24,7 @@ public static class InventoryManager
         bool bought = false;
         HashSet<Accessory> lockedAccessories = new();
 
-        GameManager.WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             if (stats.NumCarrots < TierCosts[basketTier])
             {
@@ -143,7 +143,7 @@ public static class InventoryManager
     public static List<Accessory> GetOwnedAccessoriesOfType(AccessoryType type)
     {
         List<Accessory> result = new();
-        GameManager.WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             result = stats.AccessoriesOwned.Where(a => a.Type == type).ToList();
         }, false);
@@ -152,13 +152,13 @@ public static class InventoryManager
 
     public static void UseAccessory(Accessory accessory)
     {
-        GameManager.WithStats(stats => stats.UseAccessory(accessory, GameManager.HandleBadgesEarned), true);
+        DataManager.WithStats(stats => stats.UseAccessory(accessory, GameManager.HandleBadgesEarned), true);
     }
 
 
     public static void StopUsingAccessory(AccessoryType type)
     {
-        GameManager.WithStats(stats => stats.StopUsingAccessory(type), true);
+        DataManager.WithStats(stats => stats.StopUsingAccessory(type), true);
     }
     public static int NumTotalAccessoriesOfType(AccessoryType type)
     {
@@ -174,7 +174,7 @@ public static class InventoryManager
     public static Accessory GetCurrentAccessoryOfType(AccessoryType type)
     {
         Accessory result = null;
-        GameManager.WithStats(stats =>
+        DataManager.WithStats(stats =>
         {
             result = type switch
             {
