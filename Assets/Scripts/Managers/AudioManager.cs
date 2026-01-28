@@ -23,6 +23,10 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
     private AudioSource _musicSource;
     public bool IsMusicPlaying => _musicSource != null && _musicSource.isPlaying;
+    public static string GetAudioName(Level level, AgeGroup ageGroup)
+    {
+        return level.GetAudioFilePathOfAgeGroup(ageGroup);
+    }
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -62,19 +66,19 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    private void PlaySound(AudioClip clip, float volume = 1f)
+    private void PlaySound(AudioClip clip)
     {
         AudioSource audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.clip = clip;
-        audioSource.volume = volume;
+        audioSource.volume = PlayerPrefs.GetFloat("Volume", 1f);
         audioSource.Play();
         Destroy(audioSource, clip.length);
     }
 
-    private void PlayMusicLoop(AudioClip clip, float volume = 1f)
+    private void PlayMusicLoop(AudioClip clip)
     {
         _musicSource.clip = clip;
-        _musicSource.volume = volume;
+        _musicSource.volume = PlayerPrefs.GetFloat("Music", 1f);
         _musicSource.loop = true;
         _musicSource.Play();
     }
@@ -103,16 +107,22 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void SetMusicVolume(float volume)
+    public void OnChangedSFXVolume(float volume)
     {
-        if (_musicSource != null)
+        foreach (AudioSource source in FindObjectsByType<AudioSource>(FindObjectsSortMode.None))
         {
-            _musicSource.volume = Mathf.Clamp01(volume);
+            if (source == Instance._musicSource) continue;
+            source.volume = Mathf.Clamp01(volume);
         }
     }
-    public static string GetAudioName(Level level, AgeGroup ageGroup)
+
+    public void OnChangedMusicVolume(float volume)
     {
-        return level.GetAudioFilePathOfAgeGroup(ageGroup);
+        if (Instance == null) return;
+        if (Instance._musicSource != null)
+        {
+            Instance._musicSource.volume = Mathf.Clamp01(volume);
+        }
     }
 }
 

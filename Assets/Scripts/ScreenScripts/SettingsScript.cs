@@ -24,11 +24,10 @@ public class SettingsScript : MonoBehaviour
         _appearanceInputArea.SetActive(false);
         _ageArrow.onClick.AddListener(() => ToggleAge());
         _ageInputArea.SetActive(false);
-        _volumeSlider.value = PlayerPrefs.GetFloat("Volume", 100);
-        _musicSlider.value = PlayerPrefs.GetFloat("Music", 100);
-        _volumeSlider.onValueChanged.AddListener((float value) => PlayerPrefs.SetFloat("Volume", value));
-        _musicSlider.onValueChanged.AddListener((float value) => PlayerPrefs.SetFloat("Music", value));
-       
+        _volumeSlider.value = PlayerPrefs.GetFloat("Volume", 1f);
+        _musicSlider.value = PlayerPrefs.GetFloat("Music", 1f);
+        _volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
+        _musicSlider.onValueChanged.AddListener(OnMusicChanged);
     }
 
     private void ConfigureSwitch()
@@ -50,5 +49,17 @@ public class SettingsScript : MonoBehaviour
         _ageEnabled = !_ageEnabled;
         _ageInputArea.SetActive(_ageEnabled);
         // todo - animate
+    }
+
+    private void OnVolumeChanged(float value)
+    {
+        PlayerPrefs.SetFloat("Volume", value);
+        AudioManager.Instance.OnChangedSFXVolume(value);
+    }
+
+    private void OnMusicChanged(float value)
+    {
+        PlayerPrefs.SetFloat("Music", value);
+        AudioManager.Instance.OnChangedMusicVolume(value);
     }
 }
