@@ -133,7 +133,7 @@ public static class InventoryManager
                 { "accessory_tier", _lastAccessoryObtained.Tier.ToString() },
                 { "accessory_name", _lastAccessoryObtained.Name },
                 { "accessory_type", _lastAccessoryObtained.Type.ToString() },
-                { "remaining_carrots", GameManager.GetNumCarrots() }
+                { "remaining_carrots", CarrotManager.GetNumCarrots() }
             });
         }
 

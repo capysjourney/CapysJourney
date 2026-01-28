@@ -249,7 +249,7 @@ public static class GameManager
             alreadyLoggedToday = log != null && log.Count > 0 && log.Last().Timestamp.Date == dateTime.Date;
             if (!alreadyLoggedToday)
             {
-                IncreaseCarrots(10);
+                CarrotManager.IncreaseCarrots(10);
                 carrotsEarned = 10;
                 stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
             }
@@ -277,7 +277,7 @@ public static class GameManager
             alreadyLoggedToday = log != null && log.Count > 0 && log.Last().Timestamp.Date == dateTime.Date;
             if (!alreadyLoggedToday)
             {
-                IncreaseCarrots(10);
+                CarrotManager.IncreaseCarrots(10);
                 carrotsEarned = 10;
                 stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
             }
@@ -303,7 +303,7 @@ public static class GameManager
             bool alreadyCompletedToday = stats.LastBreathworkTime.Date == DateTime.Now.Date;
             if (!alreadyCompletedToday)
             {
-                IncreaseCarrots(10);
+                CarrotManager.IncreaseCarrots(10);
                 carrotsEarned = 10;
                 stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
             }
@@ -320,18 +320,6 @@ public static class GameManager
         return carrotsEarned;
     }
 
-    public static int GetNumCarrots()
-    {
-        int result = 0;
-        WithStats(stats => result = stats.NumCarrots, false);
-        return result;
-    }
-
-    public static void IncreaseCarrots(int numCarrots)
-    {
-        if (numCarrots <= 0) return;
-        WithStats(stats => stats.IncreaseCarrots(numCarrots, HandleBadgesEarned), true);
-    }
 
     public static void Login()
     {
