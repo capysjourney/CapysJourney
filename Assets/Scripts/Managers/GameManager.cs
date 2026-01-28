@@ -49,12 +49,12 @@ public static class GameManager
 
         DataManager.WithStats(stats =>
         {
-            stats.CompleteLevel(CurrLevel, HandleBadgesEarned);
+            stats.CompleteLevel(CurrLevel, BadgeManager.HandleBadgesEarned);
             stats.IncreaseSecondsMeditated(lessonDuration);
             MakeNextLevelsAvailable(stats);
             numExercisesCompleted = stats.NumLevelsCompleted;
             numWorldsCompleted = stats.NumWorldsCompleted;
-            stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
+            stats.UpdateStreakForCompletedActivity(BadgeManager.HandleBadgesEarned);
         }, true);
 
         // Track level completion with PostHog
@@ -74,7 +74,7 @@ public static class GameManager
         World completedWorld = CurrWorld;
         DataManager.WithStats(stats =>
         {
-            stats.CompleteQuincy(CurrWorld, HandleBadgesEarned);
+            stats.CompleteQuincy(CurrWorld, BadgeManager.HandleBadgesEarned);
         }, true);
     }
 
@@ -229,9 +229,9 @@ public static class GameManager
             {
                 CarrotManager.IncreaseCarrots(10);
                 carrotsEarned = 10;
-                stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
+                stats.UpdateStreakForCompletedActivity(BadgeManager.HandleBadgesEarned);
             }
-            stats.LogGratitude(gratitude, dateTime, HandleBadgesEarned);
+            stats.LogGratitude(gratitude, dateTime, BadgeManager.HandleBadgesEarned);
         }, true);
 
         // Track gratitude completion with PostHog
@@ -257,9 +257,9 @@ public static class GameManager
             {
                 CarrotManager.IncreaseCarrots(10);
                 carrotsEarned = 10;
-                stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
+                stats.UpdateStreakForCompletedActivity(BadgeManager.HandleBadgesEarned);
             }
-            stats.LogMood(mood, dateTime, HandleBadgesEarned);
+            stats.LogMood(mood, dateTime, BadgeManager.HandleBadgesEarned);
         }, true);
 
         // Track mood check-in completion with PostHog
@@ -283,9 +283,9 @@ public static class GameManager
             {
                 CarrotManager.IncreaseCarrots(10);
                 carrotsEarned = 10;
-                stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
+                stats.UpdateStreakForCompletedActivity(BadgeManager.HandleBadgesEarned);
             }
-            stats.CompleteBreathworkSession(durationInSeconds, HandleBadgesEarned);
+            stats.CompleteBreathworkSession(durationInSeconds, BadgeManager.HandleBadgesEarned);
             // Track breathwork completion with PostHog
             PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
             {
@@ -317,43 +317,5 @@ public static class GameManager
             { "current_streak", GetCurrStreak() },
             { "best_streak", GetBestStreak() }
         });
-    }
-
-
-    public static HashSet<Badge> GetBadgesOwned()
-    {
-        HashSet<Badge> result = new();
-        DataManager.WithStats(stats =>
-        {
-            HashSet<BadgeEnum> badgeEnums = stats.BadgesEarned;
-            foreach (BadgeEnum badgeEnum in badgeEnums)
-            {
-                result.Add(Badge.BadgeOfEnum[badgeEnum]);
-            }
-        }, false);
-        return result;
-    }
-
-    public static BadgesDisplayed GetBadgesDisplayed()
-    {
-        BadgesDisplayed result = null;
-        DataManager.WithStats(stats =>
-        {
-            result = stats.BadgesCurrentlyDisplayed;
-        }, false);
-        return result;
-    }
-
-    public static void SetBadgesDisplayed(BadgesDisplayed badgesDisplayed)
-    {
-        DataManager.WithStats(stats =>
-        {
-            stats.BadgesCurrentlyDisplayed = badgesDisplayed;
-        }, true);
-    }
-
-    public static void HandleBadgesEarned(List<BadgeEnum> badges)
-    {
-        BadgeNotifManager.Instance.ShowBadgeNotifications(badges);
     }
 }

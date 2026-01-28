@@ -114,12 +114,12 @@ public static class InventoryManager
             {
                 accessoryTier = Tier.Legendary;
             }
-            stats.IncreaseCarrots(-TierCosts[basketTier], GameManager.HandleBadgesEarned);
+            stats.IncreaseCarrots(-TierCosts[basketTier], BadgeManager.HandleBadgesEarned);
             List<Accessory> accessoriesOfTier = lockedAccessories.Where(a => a.Tier == accessoryTier).ToList();
             Accessory accessory = accessoriesOfTier[random.Next(accessoriesOfTier.Count)];
             _lastBasketTier = basketTier;
             _lastAccessoryObtained = accessory;
-            stats.AddAccessory(accessory, GameManager.HandleBadgesEarned);
+            stats.AddAccessory(accessory, BadgeManager.HandleBadgesEarned);
             bought = true;
         }, true);
 
@@ -152,7 +152,7 @@ public static class InventoryManager
 
     public static void UseAccessory(Accessory accessory)
     {
-        DataManager.WithStats(stats => stats.UseAccessory(accessory, GameManager.HandleBadgesEarned), true);
+        DataManager.WithStats(stats => stats.UseAccessory(accessory, BadgeManager.HandleBadgesEarned), true);
     }
 
 

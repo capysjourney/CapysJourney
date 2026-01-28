@@ -277,7 +277,7 @@ public class CustomMeditationController : MonoBehaviour
         carrotCount.text = carrotsEarned + "";
         DataManager.WithStats(stats =>
         {
-            stats.IncreaseCarrots(carrotsEarned, GameManager.HandleBadgesEarned);
+            stats.IncreaseCarrots(carrotsEarned, BadgeManager.HandleBadgesEarned);
         }, true); 
 
         PauseAudio();

@@ -10,6 +10,6 @@ public static class CarrotManager
     public static void IncreaseCarrots(int numCarrots)
     {
         if (numCarrots <= 0) return;
-        DataManager.WithStats(stats => stats.IncreaseCarrots(numCarrots, GameManager.HandleBadgesEarned), true);
+        DataManager.WithStats(stats => stats.IncreaseCarrots(numCarrots, BadgeManager.HandleBadgesEarned), true);
     }
 }

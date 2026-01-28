@@ -57,7 +57,7 @@ public class ProfileScript : MonoBehaviour
         _editProfileButtonText = _editProfileButton.GetComponentInChildren<TMP_Text>();
         _selectBadgeButtonText = _selectBadgeButton.GetComponentInChildren<TMP_Text>();
         _nameText.SetText(PlayerPrefs.GetString("username"));
-        _badgesDisplayed = GameManager.GetBadgesDisplayed();
+        _badgesDisplayed = BadgeManager.GetBadgesDisplayed();
         try
         {
             _themesText.SetText($"{GameManager.GetNumWorldsCompleted()}/{GameManager.NumWorlds}");
@@ -97,7 +97,7 @@ public class ProfileScript : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        List<Badge> displayedBadges = GameManager.GetBadgesDisplayed().GetBadges();
+        List<Badge> displayedBadges = BadgeManager.GetBadgesDisplayed().GetBadges();
         foreach (Badge badge in displayedBadges)
         {
             GameObject badgeObj = Instantiate(_displayedBadgePrefab, _displayedBadgesBox.transform);
@@ -109,7 +109,7 @@ public class ProfileScript : MonoBehaviour
             displayedBadgeScript.SetOnClose(() =>
             {
                 _badgesDisplayed.RemoveBadge(badge);
-                GameManager.SetBadgesDisplayed(_badgesDisplayed);
+                BadgeManager.SetBadgesDisplayed(_badgesDisplayed);
                 AddPlusButton();
                 Destroy(displayedBadgeScript.gameObject);
             });
@@ -130,7 +130,7 @@ public class ProfileScript : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        HashSet<Badge> badgesOwned = GameManager.GetBadgesOwned();
+        HashSet<Badge> badgesOwned = BadgeManager.GetBadgesOwned();
         foreach (Badge badge in Badge.BadgesInOrder)
         {
             if (!badgesOwned.Contains(badge)) continue;
@@ -147,7 +147,7 @@ public class ProfileScript : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        HashSet<Badge> badgesOwned = GameManager.GetBadgesOwned();
+        HashSet<Badge> badgesOwned = BadgeManager.GetBadgesOwned();
         bool noSelectableBadges = true;
         foreach (Badge badge in Badge.BadgesInOrder)
         {
@@ -262,7 +262,7 @@ public class ProfileScript : MonoBehaviour
         if (_newBadgeSelected != null)
         {
             _badgesDisplayed.AddBadge(_newBadgeSelected);
-            GameManager.SetBadgesDisplayed(_badgesDisplayed);
+            BadgeManager.SetBadgesDisplayed(_badgesDisplayed);
             _newBadgeSelected = null;
             _newBadgeSelectedScript = null;
             _selectBadgeButton.interactable = false;
