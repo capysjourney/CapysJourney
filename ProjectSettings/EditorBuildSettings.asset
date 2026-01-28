@@ -51,6 +51,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Lesson.unity
     guid: 48afaceb2916ddf489e544c8f7a8040f
   - enabled: 1
+    path: Assets/Scenes/Achievements.unity
+    guid: 315eacce37d28c041896b5c9e2011c3a
+  - enabled: 1
     path: Assets/Scenes/Tutorial.unity
     guid: e2e8fca0e18f98a4ead007c6ac96c79e
   - enabled: 1

@@ -8601,6 +8601,51 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6014888645460261995, guid: 8c87b9a2b667adc46b2e2818362352c0, type: 3}
   m_PrefabInstance: {fileID: 159065930}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2101111139
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2101111141}
+  - component: {fileID: 2101111140}
+  m_Layer: 0
+  m_Name: BadgeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2101111140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101111139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e25f38c3c06ea84fa40336687ff0f14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BadgeManager
+  notificationParent: {fileID: 1485563172}
+--- !u!4 &2101111141
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101111139}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 225.85641, y: 540.9858, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2121897848
 GameObject:
   m_ObjectHideFlags: 0
@@ -8956,3 +9001,4 @@ SceneRoots:
   - {fileID: 59293736}
   - {fileID: 1520460819}
   - {fileID: 311640580}
+  - {fileID: 2101111141}

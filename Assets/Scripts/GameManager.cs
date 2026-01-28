@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Firebase.Auth;
-using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
 public static class GameManager
@@ -54,11 +52,12 @@ public static class GameManager
 
         WithStats(stats =>
         {
-            stats.CompleteLevel(CurrLevel);
+            stats.CompleteLevel(CurrLevel, HandleBadgesEarned);
             stats.IncreaseSecondsMeditated(lessonDuration);
             MakeNextLevelsAvailable(stats);
-            numExercisesCompleted = stats.NumExercisesCompleted;
+            numExercisesCompleted = stats.NumLevelsCompleted;
             numWorldsCompleted = stats.NumWorldsCompleted;
+            stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
         }, true);
 
         // Track level completion with PostHog
@@ -78,7 +77,7 @@ public static class GameManager
         World completedWorld = CurrWorld;
         WithStats(stats =>
         {
-            stats.CompleteQuincy(CurrWorld);
+            stats.CompleteQuincy(CurrWorld, HandleBadgesEarned);
         }, true);
     }
 
@@ -150,7 +149,6 @@ public static class GameManager
         stats.SaveToFirestore();
     }
 
-
     public static Dictionary<Level, LevelStatus> GetWorldStatus(World world)
     {
         Dictionary<Level, LevelStatus> result = null;
@@ -175,7 +173,7 @@ public static class GameManager
     public static int GetNumLessonsCompleted()
     {
         int result = 0;
-        WithStats(stats => result = stats.NumExercisesCompleted, false);
+        WithStats(stats => result = stats.NumLevelsCompleted, false);
         return result;
     }
 
@@ -235,58 +233,91 @@ public static class GameManager
         return result ?? new LinkedList<MoodEntry>();
     }
 
-    public static void LogMood(Mood mood, DateTime dateTime)
-    {
-        WithStats(stats => stats.LogMood(mood, dateTime), true);
-    }
-
     public static LinkedList<GratitudeEntry> GetGratitudeEntries()
     {
         LinkedList<GratitudeEntry> result = null;
         WithStats(stats => result = stats.GratitudeLog, false);
         return result ?? new LinkedList<GratitudeEntry>();
     }
-
-    public static void LogGratitude(string gratitude, DateTime dateTime)
+    public static int LogGratitudeAndGetCarrotsEarned(string gratitude, DateTime dateTime)
     {
-        WithStats(stats => stats.LogGratitude(gratitude, dateTime), true);
-    }
-
-    public static bool LoggedMoodToday()
-    {
-        bool result = false;
-        WithStats(stats =>
-        {
-            LinkedList<MoodEntry> log = stats.MoodLog;
-            result = log != null && log.Count > 0 && log.First().Timestamp.Date == DateTime.Now.Date;
-        }, false);
-        return result;
-    }
-
-    public static bool LoggedGratitudeToday()
-    {
-        bool result = false;
+        int carrotsEarned = 0;
+        bool alreadyLoggedToday = false;
         WithStats(stats =>
         {
             LinkedList<GratitudeEntry> log = stats.GratitudeLog;
-            result = log != null && log.Count > 0 && log.Last().Timestamp.Date == DateTime.Now.Date;
-        }, false);
-        return result;
+            alreadyLoggedToday = log != null && log.Count > 0 && log.Last().Timestamp.Date == dateTime.Date;
+            if (!alreadyLoggedToday)
+            {
+                IncreaseCarrots(10);
+                carrotsEarned = 10;
+                stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
+            }
+            stats.LogGratitude(gratitude, dateTime, HandleBadgesEarned);
+        }, true);
+
+        // Track gratitude completion with PostHog
+        PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
+        {
+            { "activity_type", "gratitude" },
+            { "gratitude_length", gratitude.Length },
+            { "carrots_earned", carrotsEarned },
+            { "is_first_today", !alreadyLoggedToday }
+        });
+        return carrotsEarned;
     }
 
-    public static bool DidBreathworkToday()
+    public static int LogMoodAndGetCarrotsEarned(Mood mood, DateTime dateTime)
     {
-        bool result = false;
+        int carrotsEarned = 0;
+        bool alreadyLoggedToday = false;
         WithStats(stats =>
         {
-            result = stats.LastBreathworkTime.Date == DateTime.Now.Date;
-        }, false);
-        return result;
+            LinkedList<MoodEntry> log = stats.MoodLog;
+            alreadyLoggedToday = log != null && log.Count > 0 && log.Last().Timestamp.Date == dateTime.Date;
+            if (!alreadyLoggedToday)
+            {
+                IncreaseCarrots(10);
+                carrotsEarned = 10;
+                stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
+            }
+            stats.LogMood(mood, dateTime, HandleBadgesEarned);
+        }, true);
+
+        // Track mood check-in completion with PostHog
+        PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
+        {
+            { "activity_type", "mood_check_in" },
+            { "mood", mood.ToString() },
+            { "carrots_earned", carrotsEarned },
+            { "is_first_today", !alreadyLoggedToday }
+        });
+        return carrotsEarned;
     }
 
-    public static void DoBreathwork()
+    public static int CompleteBreathworkAndGetCarrotsEarned(int durationInSeconds)
     {
-        WithStats(stats => stats.LastBreathworkTime = DateTime.Now, true);
+        int carrotsEarned = 0;
+        WithStats(stats =>
+        {
+            bool alreadyCompletedToday = stats.LastBreathworkTime.Date == DateTime.Now.Date;
+            if (!alreadyCompletedToday)
+            {
+                IncreaseCarrots(10);
+                carrotsEarned = 10;
+                stats.UpdateStreakForCompletedActivity(HandleBadgesEarned);
+            }
+            stats.CompleteBreathworkSession(durationInSeconds, HandleBadgesEarned);
+            // Track breathwork completion with PostHog
+            PostHogManager.Instance.Capture("daily_activity_completed", new Dictionary<string, object>
+            {
+                { "activity_type", "breathwork" },
+                { "duration_seconds", durationInSeconds },
+                { "carrots_earned", alreadyCompletedToday ? 0 : 10 },
+                { "is_first_today", !alreadyCompletedToday }
+            });
+        }, true);
+        return carrotsEarned;
     }
 
     public static int GetNumCarrots()
@@ -299,7 +330,7 @@ public static class GameManager
     public static void IncreaseCarrots(int numCarrots)
     {
         if (numCarrots <= 0) return;
-        WithStats(stats => stats.IncreaseCarrots(numCarrots), true);
+        WithStats(stats => stats.IncreaseCarrots(numCarrots, HandleBadgesEarned), true);
     }
 
     public static void Login()
@@ -308,10 +339,10 @@ public static class GameManager
         WithStats(stats =>
         {
             DateTime lastLogin = stats.LastLogin;
-            stats.Login();
+            stats.UpdateLastLogin();
             // Check if this is the first login (LastLogin was DateTime.MinValue)
             isFirstLogin = lastLogin == DateTime.MinValue;
-        }, true);
+        }, false);
 
         // Track login with PostHog
         PostHogManager.Instance.Capture("user_logged_in", new Dictionary<string, object>
@@ -428,12 +459,12 @@ public static class GameManager
             {
                 accessoryTier = Tier.Legendary;
             }
-            stats.IncreaseCarrots(-tierCosts[basketTier]);
+            stats.IncreaseCarrots(-tierCosts[basketTier], HandleBadgesEarned);
             List<Accessory> accessoriesOfTier = lockedAccessories.Where(a => a.Tier == accessoryTier).ToList();
             Accessory accessory = accessoriesOfTier[random.Next(accessoriesOfTier.Count)];
             _lastBasketTier = basketTier;
             _lastAccessoryObtained = accessory;
-            stats.AddAccessory(accessory);
+            stats.AddAccessory(accessory, HandleBadgesEarned);
             bought = true;
         }, true);
 
@@ -485,7 +516,7 @@ public static class GameManager
 
     public static void UseAccessory(Accessory accessory)
     {
-        WithStats(stats => stats.UseAccessory(accessory), true);
+        WithStats(stats => stats.UseAccessory(accessory, HandleBadgesEarned), true);
     }
 
     public static void StopUsingAccessory(AccessoryType type)
@@ -516,4 +547,41 @@ public static class GameManager
     }
 
     public static (Tier?, Accessory) GetLastBasketInfo() => (_lastBasketTier, _lastAccessoryObtained);
+
+    public static HashSet<Badge> GetBadgesOwned()
+    {
+        HashSet<Badge> result = new();
+        WithStats(stats =>
+        {
+            HashSet<BadgeEnum> badgeEnums = stats.BadgesEarned;
+            foreach (BadgeEnum badgeEnum in badgeEnums)
+            {
+                result.Add(Badge.BadgeOfEnum[badgeEnum]);
+            }
+        }, false);
+        return result;
+    }
+
+    public static BadgesDisplayed GetBadgesDisplayed()
+    {
+        BadgesDisplayed result = null;
+        WithStats(stats =>
+        {
+            result = stats.BadgesCurrentlyDisplayed;
+        }, false);
+        return result;
+    }
+
+    public static void SetBadgesDisplayed(BadgesDisplayed badgesDisplayed)
+    {
+        WithStats(stats =>
+        {
+            stats.BadgesCurrentlyDisplayed = badgesDisplayed;
+        }, true);
+    }
+
+    public static void HandleBadgesEarned(List<BadgeEnum> badges)
+    {
+        BadgeNotifManager.Instance.ShowBadgeNotifications(badges);
+    }
 }

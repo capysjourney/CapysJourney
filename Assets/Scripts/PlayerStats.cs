@@ -16,7 +16,7 @@ public class GuestPlayerData
     public int BestStreak;
     public int CurrStreak;
     public float SecondsMeditated;
-    public int NumExercisesCompleted;
+    public int NumLevelsCompleted;
     public int NumWorldsCompleted;
     public long LastBreathworkTime;
     public long LastLogin;
@@ -65,16 +65,6 @@ public class PlayerStats
 
     public bool IsGuest = false;
 
-    public enum Badge
-    {
-        GettingCozy, SettlingIn, ZenMaster, AdventureAwaits, MindfulBeginnings,
-        TrailBlazer, TinyButMighty, LilyLounge, JustBreathe, DeepBreatheDevotee,
-        BreathSage, FeelingFeeler, MoodMapper, InnerWeatherWatcher,
-        SeedsOfGratitude, BloomingThanks, GratitudeGardener,
-        CapysClosetBegins, DressedToImpress, FreshFit,
-        OneStepToCozy, CapyLovesHome, TinyTrader, CapyCollector, CarrotTycoon
-    }
-
     private readonly FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
     private readonly string uid;
     private readonly DocumentReference docRef;
@@ -82,9 +72,21 @@ public class PlayerStats
     public Dictionary<LevelEnum, LevelStatus> StatusOfLevel = new();
     public Dictionary<WorldEnum, LevelStatus> QuincyStatusOfWorld = new();
     public HashSet<LevelEnum> BookmarkedLevels = new();
+
+    /// <summary>
+    /// A log of the player's mood entries, with the most recent entry at the front.
+    /// Uses LinkedList for efficient addition/removal from both ends.
+    /// </summary>
     public LinkedList<MoodEntry> MoodLog = new();
+
+    /// <summary>
+    /// A log of the player's gratitude entries, with the most recent entry at the back.
+    /// Uses LinkedList for efficient addition/removal from both ends.
+    /// </summary>
     public LinkedList<GratitudeEntry> GratitudeLog = new();
+
     public HashSet<Accessory> AccessoriesOwned = new();
+    public HashSet<Furniture> FurnituresOwned = new();
 
     public WorldEnum CurrWorld = World.FirstSteps.EnumName;
     public LevelEnum CurrLevel = Level.World1Level1.EnumName;
@@ -95,13 +97,26 @@ public class PlayerStats
     public int BestStreak = 0;
     public int CurrStreak = 0;
     public float SecondsMeditated = 0;
-    public int NumExercisesCompleted = 0;
+    public int NumLevelsCompleted = 0;
     public int NumWorldsCompleted = 0;
+    public int NumMiniMeditationsCompleted = 0;
+    public int NumBreathworkSessionsCompleted = 0;
+    public int NumCarrotsSpent = 0;
+
+    // Note - this is not equal to MoodLog.Count since MoodLog removes old entries
+    public int NumMoodLogEntriesCompleted = 0;
+
+    // Note - this is not equal to GratitudeLog.Count since GratitudeLog removes old entries
+    public int NumGratitudesCompleted = 0;
+
+    public bool HasUsedAccessory = false;
     public DateTime LastBreathworkTime = DateTime.MinValue;
     public DateTime LastLogin = DateTime.MinValue;
-
-    public HashSet<Badge> BadgesEarned = new();
+    public DateTime TimeOfLastActivity = DateTime.MinValue;
+    public bool HasCompletedQuincy = false;
+    public HashSet<BadgeEnum> BadgesEarned = new();
     public LinkedList<MeditationEntry> MeditationLog = new();
+    public BadgesDisplayed BadgesCurrentlyDisplayed = new();
 
     private const int MaxMoodEntries = 30;
     private const int MaxGratitudeEntries = 10;
@@ -132,7 +147,6 @@ public class PlayerStats
                 if (a.Tier != Tier.Legendary && a.Tier != Tier.Epic)
                     AccessoriesOwned.Add(a);
             NumCarrots = 1000;
-            Debug.Log("Num carrots set to 1000");
         }
     }
 
@@ -156,7 +170,7 @@ public class PlayerStats
                 { "BestStreak", BestStreak },
                 { "CurrStreak", CurrStreak },
                 { "SecondsMeditated", SecondsMeditated },
-                { "NumExercisesCompleted", NumExercisesCompleted },
+                { "NumLevelsCompleted", NumLevelsCompleted },
                 { "NumWorldsCompleted", NumWorldsCompleted },
                 { "LastBreathworkTime", LastBreathworkTime.Ticks },
                 { "LastLogin", LastLogin.Ticks },
@@ -192,7 +206,7 @@ public class PlayerStats
                 BestStreak,
                 CurrStreak,
                 SecondsMeditated,
-                NumExercisesCompleted,
+                NumLevelsCompleted,
                 NumWorldsCompleted,
                 LastBreathworkTime = LastBreathworkTime.Ticks,
                 LastLogin = LastLogin.Ticks,
@@ -213,8 +227,6 @@ public class PlayerStats
     {
         if (!IsGuest && !DebugMode)
         {
-            //UnityEngine.Debug.Log("Loading player stats from Firestore");
-
             docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
             {
                 if (!task.Result.Exists) return;
@@ -224,7 +236,7 @@ public class PlayerStats
                 BestStreak = d.GetValue<int>("BestStreak");
                 CurrStreak = d.GetValue<int>("CurrStreak");
                 SecondsMeditated = d.GetValue<float>("SecondsMeditated");
-                NumExercisesCompleted = d.GetValue<int>("NumExercisesCompleted");
+                NumLevelsCompleted = d.GetValue<int>("NumLevelsCompleted");
                 NumWorldsCompleted = d.GetValue<int>("NumWorldsCompleted");
 
                 LastBreathworkTime = new DateTime(d.GetValue<long>("LastBreathworkTime"));
@@ -260,33 +272,76 @@ public class PlayerStats
             BestStreak = guestData.BestStreak;
             CurrStreak = guestData.CurrStreak;
             SecondsMeditated = guestData.SecondsMeditated;
-            NumExercisesCompleted = guestData.NumExercisesCompleted;
+            NumLevelsCompleted = guestData.NumLevelsCompleted;
             NumWorldsCompleted = guestData.NumWorldsCompleted;
             LastBreathworkTime = new DateTime(guestData.LastBreathworkTime);
             LastLogin = new DateTime(guestData.LastLogin);
             CurrWorld = Enum.Parse<WorldEnum>(guestData.CurrWorld);
             CurrLevel = Enum.Parse<LevelEnum>(guestData.CurrLevel);
 
-            BadgesEarned = new HashSet<Badge>(guestData.BadgesEarned.Select(Enum.Parse<Badge>));
+            BadgesEarned = new HashSet<BadgeEnum>(guestData.BadgesEarned.Select(Enum.Parse<BadgeEnum>));
             BookmarkedLevels = new HashSet<LevelEnum>(guestData.BookmarkedLevels.Select(Enum.Parse<LevelEnum>));
             StatusOfLevel = guestData.LevelStatuses.ToDictionary()
                 .ToDictionary(kv => Enum.Parse<LevelEnum>(kv.Key), kv => (LevelStatus)kv.Value);
         }
     }
 
-    public void CompleteLevel(Level level)
+
+    public void UpdateLastLogin()
+    {
+        LastLogin = DateTime.Now.Date;
+    }
+
+    /// <summary>
+    /// Updates the current streak based on whether the player is active on consecutive days.
+    /// Increments streak if active yesterday, resets to 1 if not, and updates best streak.
+    /// </summary>
+    private void UpdateStreakBasedOnDate(DateTime compareDate)
+    {
+        if (compareDate == DateTime.Now.Date.AddDays(-1))
+        {
+            IncreaseCurrStreak();
+        }
+        else if (compareDate != DateTime.Now.Date)
+        {
+            CurrStreak = 1;
+            BestStreak = Math.Max(BestStreak, CurrStreak);
+        }
+    }
+
+    public void UpdateStreakForCompletedActivity(Action<List<BadgeEnum>> handleNewBadges)
+    {
+        UpdateStreakBasedOnDate(TimeOfLastActivity.Date);
+        TimeOfLastActivity = DateTime.Now;
+        CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewStreakBadges);
+    }
+
+    public void MakeLevelAvailable(Level level)
+    {
+        if (GetLevelStatus(level) == LevelStatus.Locked)
+        {
+            StatusOfLevel[level.EnumName] = LevelStatus.Available;
+        }
+    }
+
+    public void CompleteLevel(Level level, Action<List<BadgeEnum>> handleNewBadges)
     {
         if (GetLevelStatus(level) == LevelStatus.Completed) return;
         StatusOfLevel[level.EnumName] = LevelStatus.Completed;
-        NumExercisesCompleted++;
+        NumLevelsCompleted++;
         if (AreAllLevelsCompletedInWorld(level.World))
         {
             QuincyStatusOfWorld[level.World.EnumName] = LevelStatus.Available;
         }
-        NumCarrots += 10;
+        if (level.IsMiniMeditation)
+        {
+            NumMiniMeditationsCompleted++;
+        }
+        IncreaseCarrots(10, handleNewBadges);
+        CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewLevelBadges);
     }
 
-    public void CompleteQuincy(World world)
+    public void CompleteQuincy(World world, Action<List<BadgeEnum>> handleNewBadges)
     {
         if (QuincyStatusOfWorld[world.EnumName] == LevelStatus.Completed) return;
         QuincyStatusOfWorld[world.EnumName] = LevelStatus.Completed;
@@ -296,6 +351,7 @@ public class PlayerStats
             StatusOfLevel[World.WorldLookup[nextWorld].FirstLevel.EnumName] = LevelStatus.Available;
         }
         NumCarrots += 10;
+        CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewQuincyBadges);
     }
 
     public void IncreaseSecondsMeditated(float seconds) => SecondsMeditated += seconds;
@@ -307,13 +363,6 @@ public class PlayerStats
         CurrLevel = level.EnumName;
         CurrWorld = level.World.EnumName;
     }
-
-    public void MakeLevelAvailable(Level level)
-    {
-        if (GetLevelStatus(level) == LevelStatus.Locked)
-            StatusOfLevel[level.EnumName] = LevelStatus.Available;
-    }
-
     public bool IsLevelBookmarked(Level level) => BookmarkedLevels.Contains(level.EnumName);
 
     public void ToggleBookmark(Level level)
@@ -336,31 +385,101 @@ public class PlayerStats
         return result;
     }
 
-    public void LogMood(Mood moodLevel, DateTime date)
+    public void LogMood(Mood moodLevel, DateTime date, Action<List<BadgeEnum>> handleNewBadges)
     {
         MoodLog.AddFirst(new MoodEntry(date, moodLevel));
         while (MoodLog.Count > MaxMoodEntries) MoodLog.RemoveLast();
+        NumMoodLogEntriesCompleted++;
+        CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewMoodBadges);
     }
 
-    public void LogGratitude(string text, DateTime date)
+    public void LogGratitude(string text, DateTime date, Action<List<BadgeEnum>> handleNewBadges)
     {
         GratitudeLog.AddLast(new GratitudeEntry(date, text));
         while (GratitudeLog.Count > MaxGratitudeEntries) GratitudeLog.RemoveFirst();
+        NumGratitudesCompleted++;
+        CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewGratitudeBadges);
     }
 
-    public void IncreaseCarrots(int carrots) => NumCarrots += carrots;
-
-    public void AddAccessory(Accessory accessory) => AccessoriesOwned.Add(accessory);
-
-    public void UseAccessory(Accessory accessory)
+    public void IncreaseCarrots(int carrots, Action<List<BadgeEnum>> handleNewBadges)
     {
-        switch (accessory.Type)
+        NumCarrots += carrots;
+        if (carrots < 0)
         {
-            case AccessoryType.Hat: CurrHat = accessory; break;
-            case AccessoryType.Neckwear: CurrNeckwear = accessory; break;
-            case AccessoryType.Clothing: CurrClothing = accessory; break;
-            case AccessoryType.Facewear: CurrFacewear = accessory; break;
-            case AccessoryType.Pet: CurrPet = accessory; break;
+            NumCarrotsSpent -= carrots;
+        }
+        CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewCarrotsBadges);
+    }
+
+    public void AddAccessory(Accessory accessory, Action<List<BadgeEnum>> handleNewBadges)
+    {
+        AccessoriesOwned.Add(accessory);
+        CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewAccessoryBadges);
+    }
+
+    public void UseAccessory(Accessory accessory, Action<List<BadgeEnum>> handleNewBadges)
+    {
+        HasUsedAccessory = true;
+        SetCurrentAccessory(accessory.Type, accessory);
+        CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewAccessoryUseBadge);
+    }
+
+    public void CompleteBreathworkSession(int durationInSeconds, Action<List<BadgeEnum>> handleNewBadges)
+    {
+        NumBreathworkSessionsCompleted++;
+        LastBreathworkTime = DateTime.Now;
+        IncreaseSecondsMeditated(durationInSeconds);
+        CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewBreathworkBadges);
+    }
+
+    /// <summary>
+    /// Helper method to conditionally add a badge to the list if it hasn't been earned yet.
+    /// </summary>
+    private void TryAddBadge(List<BadgeEnum> newBadges, BadgeEnum badge, bool condition)
+    {
+        if (!BadgesEarned.Contains(badge) && condition)
+        {
+            newBadges.Add(badge);
+        }
+    }
+
+    /// <summary>
+    /// Helper method to check for new badges, earn them, and invoke the handler callback.
+    /// </summary>
+    private void CheckAndEarnBadges(Action<List<BadgeEnum>> handleNewBadges, Func<List<BadgeEnum>> getBadgesFunc)
+    {
+        List<BadgeEnum> newBadges = getBadgesFunc();
+        foreach (BadgeEnum badge in newBadges)
+        {
+            BadgesEarned.Add(badge);
+        }
+        handleNewBadges(newBadges);
+    }
+
+    /// <summary>
+    /// Sets the current accessory of the given type.
+    /// </summary>
+    private void SetCurrentAccessory(AccessoryType type, Accessory accessory)
+    {
+        switch (type)
+        {
+            case AccessoryType.Hat:
+                CurrHat = accessory;
+                break;
+            case AccessoryType.Neckwear:
+                CurrNeckwear = accessory;
+                break;
+            case AccessoryType.Clothing:
+                CurrClothing = accessory;
+                break;
+            case AccessoryType.Facewear:
+                CurrFacewear = accessory;
+                break;
+            case AccessoryType.Pet:
+                CurrPet = accessory;
+                break;
+            default:
+                throw new Exception("Unknown accessory type");
         }
     }
 
@@ -368,11 +487,23 @@ public class PlayerStats
     {
         switch (type)
         {
-            case AccessoryType.Hat: CurrHat = null; break;
-            case AccessoryType.Neckwear: CurrNeckwear = null; break;
-            case AccessoryType.Clothing: CurrClothing = null; break;
-            case AccessoryType.Facewear: CurrFacewear = null; break;
-            case AccessoryType.Pet: CurrPet = null; break;
+            case AccessoryType.Hat:
+                CurrHat = null;
+                break;
+            case AccessoryType.Neckwear:
+                CurrNeckwear = null;
+                break;
+            case AccessoryType.Clothing:
+                CurrClothing = null;
+                break;
+            case AccessoryType.Facewear:
+                CurrFacewear = null;
+                break;
+            case AccessoryType.Pet:
+                CurrPet = null;
+                break;
+            default:
+                throw new Exception("Unknown accessory type");
         }
     }
 
@@ -381,14 +512,7 @@ public class PlayerStats
         DateTime today = DateTime.Now.Date;
         if (LastLogin.Date == today) return;
 
-        if (LastLogin.Date == today.AddDays(-1))
-            IncreaseCurrStreak();
-        else
-        {
-            CurrStreak = 1;
-            BestStreak = Math.Max(BestStreak, CurrStreak);
-        }
-
+        UpdateStreakBasedOnDate(LastLogin.Date);
         LastLogin = today;
     }
 
@@ -397,12 +521,6 @@ public class PlayerStats
         foreach (Level level in world.Levels)
             if (GetLevelStatus(level) != LevelStatus.Completed) return false;
         return true;
-    }
-
-    public void IncreaseCurrStreak()
-    {
-        CurrStreak++;
-        BestStreak = Math.Max(BestStreak, CurrStreak);
     }
 
     public void LoadMeditationsFromFirestore(Action<LinkedList<MeditationEntry>> callback)
@@ -430,5 +548,104 @@ public class PlayerStats
             MeditationLog = log;
             callback(log);
         });
+    }
+
+    public void CompleteQuincy(Action<List<BadgeEnum>> handleNewBadges)
+    {
+        HasCompletedQuincy = true;
+        CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewQuincyBadges);
+    }
+
+    private void IncreaseCurrStreak()
+    {
+        CurrStreak++;
+        BestStreak = Math.Max(BestStreak, CurrStreak);
+    }
+
+    public List<BadgeEnum> UpdateAndGetNewStreakBadges()
+    {
+        List<BadgeEnum> newBadges = new();
+        TryAddBadge(newBadges, BadgeEnum.GettingCozy, CurrStreak >= 3);
+        TryAddBadge(newBadges, BadgeEnum.SettlingIn, CurrStreak >= 7);
+        TryAddBadge(newBadges, BadgeEnum.ZenMaster, CurrStreak >= 50);
+        return newBadges;
+    }
+
+    public List<BadgeEnum> UpdateAndGetNewBreathworkBadges()
+    {
+        List<BadgeEnum> newBadges = new();
+        TryAddBadge(newBadges, BadgeEnum.JustBreathe, NumBreathworkSessionsCompleted >= 5);
+        TryAddBadge(newBadges, BadgeEnum.DeepBreatheDevotee, NumBreathworkSessionsCompleted >= 25);
+        TryAddBadge(newBadges, BadgeEnum.BreathSage, NumBreathworkSessionsCompleted >= 50);
+        return newBadges;
+    }
+
+    public List<BadgeEnum> UpdateAndGetNewGratitudeBadges()
+    {
+        List<BadgeEnum> newBadges = new();
+        TryAddBadge(newBadges, BadgeEnum.SeedsOfGratitude, NumGratitudesCompleted >= 5);
+        TryAddBadge(newBadges, BadgeEnum.BloomingThanks, NumGratitudesCompleted >= 25);
+        TryAddBadge(newBadges, BadgeEnum.GratitudeGardener, NumGratitudesCompleted >= 50);
+        return newBadges;
+    }
+
+    public List<BadgeEnum> UpdateAndGetNewMoodBadges()
+    {
+        List<BadgeEnum> newBadges = new();
+        TryAddBadge(newBadges, BadgeEnum.FeelingFeeler, NumMoodLogEntriesCompleted >= 5);
+        TryAddBadge(newBadges, BadgeEnum.MoodMapper, NumMoodLogEntriesCompleted >= 25);
+        TryAddBadge(newBadges, BadgeEnum.InnerWeatherWatcher, NumMoodLogEntriesCompleted >= 50);
+        return newBadges;
+    }
+
+    public List<BadgeEnum> UpdateAndGetNewCarrotsBadges()
+    {
+        List<BadgeEnum> newBadges = new();
+        TryAddBadge(newBadges, BadgeEnum.TinyTrader, NumCarrotsSpent >= 100);
+        TryAddBadge(newBadges, BadgeEnum.CapyCollector, NumCarrotsSpent >= 500);
+        TryAddBadge(newBadges, BadgeEnum.CarrotTycoon, NumCarrotsSpent >= 1000);
+        return newBadges;
+    }
+
+    public List<BadgeEnum> UpdateAndGetNewQuincyBadges()
+    {
+        List<BadgeEnum> newBadges = new();
+        TryAddBadge(newBadges, BadgeEnum.MeetingQuincy, HasCompletedQuincy);
+        return newBadges;
+    }
+
+    public List<BadgeEnum> UpdateAndGetNewAccessoryBadges()
+    {
+        List<BadgeEnum> newBadges = new();
+        TryAddBadge(newBadges, BadgeEnum.CapysClosetBegins, AccessoriesOwned.Count >= 1);
+        TryAddBadge(newBadges, BadgeEnum.DressedToImpress, AccessoriesOwned.Count >= 10);
+        return newBadges;
+    }
+
+    // todo - use
+    public List<BadgeEnum> UpdateAndGetNewFurnitureBadges()
+    {
+        List<BadgeEnum> newBadges = new();
+        TryAddBadge(newBadges, BadgeEnum.OneStepToCozy, FurnituresOwned.Count >= 1);
+        TryAddBadge(newBadges, BadgeEnum.CapyLovesHome, FurnituresOwned.Count >= 10);
+        return newBadges;
+    }
+
+    public List<BadgeEnum> UpdateAndGetNewLevelBadges()
+    {
+        List<BadgeEnum> newBadges = new();
+        TryAddBadge(newBadges, BadgeEnum.AdventureAwaits, GetLevelStatus(Level.World1Level1) == LevelStatus.Completed);
+        TryAddBadge(newBadges, BadgeEnum.TrailBlazer, NumLevelsCompleted > World.FirstSteps.Levels.Count);
+        TryAddBadge(newBadges, BadgeEnum.TinyButMighty, NumMiniMeditationsCompleted >= 3);
+        TryAddBadge(newBadges, BadgeEnum.MindfulBeginnings,
+            AreAllLevelsCompletedInWorld(World.FirstSteps) && QuincyStatusOfWorld[World.FirstSteps.EnumName] == LevelStatus.Completed);
+        return newBadges;
+    }
+
+    public List<BadgeEnum> UpdateAndGetNewAccessoryUseBadge()
+    {
+        List<BadgeEnum> newBadges = new();
+        TryAddBadge(newBadges, BadgeEnum.FreshFit, HasUsedAccessory);
+        return newBadges;
     }
 }

@@ -65,7 +65,7 @@ public class Accessory
     {
         if (a1 is null && a2 is null) return true;
         if (a1 is null || a2 is null) return false;
-        return a1.Equals(a2);
+        return a1.Name == a2.Name && a1.Type == a2.Type && a1.Tier == a2.Tier;
     }
 
     public static bool operator !=(Accessory a1, Accessory a2) => !(a1 == a2);
