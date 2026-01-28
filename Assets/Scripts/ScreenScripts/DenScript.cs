@@ -294,7 +294,7 @@ public class DenScript : MonoBehaviour
 
     private void BuyBasket(Tier type)
     {
-        bool bought = GameManager.BuyBasket(type);
+        bool bought = InventoryManager.BuyBasket(type);
         if (bought)
         {
             AudioManager.Instance.PlayUIEffect(Sound.BuyItemFromShop);
@@ -315,7 +315,7 @@ public class DenScript : MonoBehaviour
             return;
         }
         ResetAccessoryTabs();
-        List<Accessory> accessories = GameManager.GetOwnedAccessoriesOfType(type);
+        List<Accessory> accessories = InventoryManager.GetOwnedAccessoriesOfType(type);
         ConfigureAndShowPopup(type, accessories);
         ConfigurePopupGrid(type, accessories);
     }
@@ -333,7 +333,7 @@ public class DenScript : MonoBehaviour
             AccessoryType.Pet => "Pets",
             _ => throw new System.Exception("Unknown AccessoryType")
         };
-        _numAccessoriesOwnedText.text = $"{accessories.Count}/{GameManager.NumTotalAccessoriesOfType(type)} Owned";
+        _numAccessoriesOwnedText.text = $"{accessories.Count}/{InventoryManager.NumTotalAccessoriesOfType(type)} Owned";
         float highestY = -28.5f;
 
         // difference in height between tab buttons
@@ -370,7 +370,7 @@ public class DenScript : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        Accessory accInUse = GameManager.GetCurrentAccessoryOfType(type);
+        Accessory accInUse = InventoryManager.GetCurrentAccessoryOfType(type);
         foreach (Accessory accessory in accessories)
         {
             GameObject accessoryItem = Instantiate(_accessoryItemPrefab, _accessoryGrid.transform);
@@ -387,13 +387,13 @@ public class DenScript : MonoBehaviour
             accessoryBtn.SetOnClickListener(() =>
             {
                 // if the accessory is already in use, reset to no accessory
-                bool reset = GameManager.GetCurrentAccessoryOfType(type) != null
+                bool reset = InventoryManager.GetCurrentAccessoryOfType(type) != null
                     && accessoryBtn.Image.sprite == _selectedSpriteByAccessory[accessory];
-                if (reset) { GameManager.StopUsingAccessory(type); }
+                if (reset) { InventoryManager.StopUsingAccessory(type); }
                 else
                 {
                     AudioManager.Instance.PlayUIEffect(Sound.EquipItem);
-                    GameManager.UseAccessory(accessory);
+                    InventoryManager.UseAccessory(accessory);
                 }
                 foreach (Transform childButtonTransform in _accessoryGrid.transform)
                 {
@@ -430,12 +430,11 @@ public class DenScript : MonoBehaviour
 
     private void DressCapy()
     {
-        Accessory hat = GameManager.GetCurrentAccessoryOfType(AccessoryType.Hat);
-        Accessory neckwear = GameManager.GetCurrentAccessoryOfType(AccessoryType.Neckwear);
-        Accessory clothing = GameManager.GetCurrentAccessoryOfType(AccessoryType.Clothing);
-        Accessory facewear = GameManager.GetCurrentAccessoryOfType(AccessoryType.Facewear);
-        Accessory pet = GameManager.GetCurrentAccessoryOfType(AccessoryType.Pet);
-
+        Accessory hat = InventoryManager.GetCurrentAccessoryOfType(AccessoryType.Hat);
+        Accessory neckwear = InventoryManager.GetCurrentAccessoryOfType(AccessoryType.Neckwear);
+        Accessory clothing = InventoryManager.GetCurrentAccessoryOfType(AccessoryType.Clothing);
+        Accessory facewear = InventoryManager.GetCurrentAccessoryOfType(AccessoryType.Facewear);
+        Accessory pet = InventoryManager.GetCurrentAccessoryOfType(AccessoryType.Pet);
         // order matters here for layering
         Accessory[] accessories = { clothing, facewear, pet, neckwear, hat };
 

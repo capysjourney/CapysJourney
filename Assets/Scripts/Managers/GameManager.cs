@@ -18,13 +18,13 @@ public static class GameManager
     public static bool LaunchAsGuest = false;
 
     private static readonly IDataService DataService = new JsonDataService();
-    private static Tier? _lastBasketTier = null;
+    //private static Tier? _lastBasketTier = null;
 
     /// <summary>
     /// The last accessory obtained from a basket purchase. 
     /// Null if no basket has been purchased in the current session.
     /// </summary>
-    private static Accessory _lastAccessoryObtained = null;
+    //private static Accessory _lastAccessoryObtained = null;
 
     public static readonly int NumWorlds = 1;
 
@@ -354,138 +354,6 @@ public static class GameManager
     }
 
     /// <summary>
-    /// Attempts to buy a basket of the given tier. If successful, deducts the cost from the player's carrots. 
-    /// Returns true if the purchase was successful. Returns false otherwise (e.g. not enough carrots or no accessories left to obtain).
-    /// </summary>
-    public static bool BuyBasket(Tier basketTier)
-    {
-        Dictionary<Tier, int> tierCosts = new()
-        {
-            { Tier.Common, 50 },
-            { Tier.Rare, 100 },
-            { Tier.Epic, 250 },
-            { Tier.Legendary, 500 }
-        };
-        bool bought = false;
-        HashSet<Accessory> lockedAccessories = new();
-
-        WithStats(stats =>
-        {
-            if (stats.NumCarrots < tierCosts[basketTier])
-            {
-                Debug.Log("Not enough carrots to buy basket");
-                return;
-            }
-            foreach (Accessory acc in Accessory.AllAccesories)
-            {
-                if (!stats.AccessoriesOwned.Contains(acc))
-                {
-                    lockedAccessories.Add(acc);
-                }
-            }
-            if (lockedAccessories.Count == 0)
-            {
-                Debug.Log("No locked accessories left to obtain");
-                return;
-            }
-            bool CommonAvailable = lockedAccessories.Any(a => a.Tier == Tier.Common);
-            bool RareAvailable = lockedAccessories.Any(a => a.Tier == Tier.Rare);
-            bool EpicAvailable = lockedAccessories.Any(a => a.Tier == Tier.Epic);
-            bool LegendaryAvailable = lockedAccessories.Any(a => a.Tier == Tier.Legendary);
-            System.Random random = new();
-            double randomNum = random.NextDouble();
-            Tier accessoryTier;
-            double commonWeight;
-            double rareWeight;
-            double epicWeight;
-            double legendaryWeight;
-            switch (basketTier)
-            {
-                case Tier.Common:
-                    commonWeight = CommonAvailable ? 0.9 : 0;
-                    rareWeight = RareAvailable ? 0.095 : 0;
-                    epicWeight = EpicAvailable ? 0.005 : 0;
-                    //legendaryWeight = 0.00001;
-                    legendaryWeight = 0;
-                    break;
-                case Tier.Rare:
-                    commonWeight = CommonAvailable ? 0.00001 : 0;
-                    rareWeight = RareAvailable ? 0.8 : 0;
-                    epicWeight = EpicAvailable ? 0.2 : 0;
-                    //legendaryWeight = LegendaryAvailable ? 0.0000001 : 0;
-                    legendaryWeight = 0;
-                    break;
-                case Tier.Epic:
-                    commonWeight = CommonAvailable ? 0.00001 : 0;
-                    rareWeight = RareAvailable ? 0.4 : 0;
-                    epicWeight = EpicAvailable ? 0.5 : 0;
-                    //legendaryWeight = LegendaryAvailable ? 0.1 : 0;
-                    legendaryWeight = 0;
-                    break;
-                case Tier.Legendary:
-                    commonWeight = CommonAvailable ? 0.00001 : 0;
-                    rareWeight = RareAvailable ? 0.000001 : 0;
-                    epicWeight = EpicAvailable ? 0.3 : 0;
-                    //legendaryWeight = LegendaryAvailable ? 0.7 : 0;
-                    legendaryWeight = 0;
-                    break;
-                default:
-                    throw new Exception("Invalid tier");
-            }
-            double totalWeight = commonWeight + rareWeight + epicWeight + legendaryWeight;
-            if (totalWeight == 0)
-            {
-                // todo - behavior?
-                Debug.Log("No accessories of any tier available to obtain");
-                return;
-            }
-            commonWeight /= totalWeight;
-            rareWeight /= totalWeight;
-            epicWeight /= totalWeight;
-            legendaryWeight /= totalWeight;
-            if (randomNum <= commonWeight)
-            {
-                accessoryTier = Tier.Common;
-            }
-            else if (randomNum <= commonWeight + rareWeight)
-            {
-                accessoryTier = Tier.Rare;
-            }
-            else if (randomNum <= commonWeight + rareWeight + epicWeight)
-            {
-                accessoryTier = Tier.Epic;
-            }
-            else
-            {
-                accessoryTier = Tier.Legendary;
-            }
-            stats.IncreaseCarrots(-tierCosts[basketTier], HandleBadgesEarned);
-            List<Accessory> accessoriesOfTier = lockedAccessories.Where(a => a.Tier == accessoryTier).ToList();
-            Accessory accessory = accessoriesOfTier[random.Next(accessoriesOfTier.Count)];
-            _lastBasketTier = basketTier;
-            _lastAccessoryObtained = accessory;
-            stats.AddAccessory(accessory, HandleBadgesEarned);
-            bought = true;
-        }, true);
-
-        // Track basket purchase with PostHog
-        if (bought)
-        {
-            PostHogManager.Instance.Capture("basket_purchased", new Dictionary<string, object>
-            {
-                { "basket_tier", basketTier.ToString() },
-                { "basket_cost", tierCosts[basketTier] },
-                { "accessory_tier", _lastAccessoryObtained.Tier.ToString() },
-                { "accessory_name", _lastAccessoryObtained.Name },
-                { "accessory_type", _lastAccessoryObtained.Type.ToString() },
-                { "remaining_carrots", GetNumCarrots() }
-            });
-        }
-
-        return bought;
-    }
-
-    /// <summary>
     /// Fetches the player stats, performs <c>action</c> on it, and saves the updated stats if <c>update</c> is true.
     /// </summary>
     /// <exception cref="Exception">Thrown when stats cannot be fetched.</exception>
@@ -499,54 +367,7 @@ public static class GameManager
         }
     }
 
-    public static List<Accessory> GetOwnedAccessoriesOfType(AccessoryType type)
-    {
-        List<Accessory> result = new();
-        WithStats(stats =>
-        {
-            result = stats.AccessoriesOwned.Where(a => a.Type == type).ToList();
-        }, false);
-        return result;
-    }
 
-    public static int NumTotalAccessoriesOfType(AccessoryType type)
-    {
-        return Accessory.AllAccesories.Count(a => a.Type == type);
-    }
-
-    public static void UseAccessory(Accessory accessory)
-    {
-        WithStats(stats => stats.UseAccessory(accessory, HandleBadgesEarned), true);
-    }
-
-    public static void StopUsingAccessory(AccessoryType type)
-    {
-        WithStats(stats => stats.StopUsingAccessory(type), true);
-    }
-
-    /// <summary>
-    /// Gets the currently used accessory of the given type. 
-    /// Returns null if no accessory of that type is currently being used.
-    /// </summary>
-    public static Accessory GetCurrentAccessoryOfType(AccessoryType type)
-    {
-        Accessory result = null;
-        WithStats(stats =>
-        {
-            result = type switch
-            {
-                AccessoryType.Hat => stats.CurrHat,
-                AccessoryType.Neckwear => stats.CurrNeckwear,
-                AccessoryType.Clothing => stats.CurrClothing,
-                AccessoryType.Facewear => stats.CurrFacewear,
-                AccessoryType.Pet => stats.CurrPet,
-                _ => null
-            };
-        }, false);
-        return result;
-    }
-
-    public static (Tier?, Accessory) GetLastBasketInfo() => (_lastBasketTier, _lastAccessoryObtained);
 
     public static HashSet<Badge> GetBadgesOwned()
     {
