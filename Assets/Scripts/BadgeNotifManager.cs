@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BadgeNotifManager : MonoBehaviour
@@ -36,6 +35,11 @@ public class BadgeNotifManager : MonoBehaviour
     /// </summary>
     private static bool WasInterrupted = false;
 
+    /// <summary>
+    /// If WasInterrupted is true, how much time was left in the display duration
+    /// </summary>
+    private static float RemainingDuration = displayDuration;
+
     private void Awake()
     {
         _instance = this;
@@ -46,7 +50,7 @@ public class BadgeNotifManager : MonoBehaviour
         // Resume processing if queue has items after scene load
         if (BadgeQueue.Count > 0 && !IsDisplayingNotification)
         {
-            StartCoroutine(ProcessNotificationQueue(startFromMiddle: WasInterrupted));
+            StartCoroutine(ProcessNotificationQueue(startFromMiddle: WasInterrupted, remainingDuration: RemainingDuration));
         }
     }
 
@@ -72,14 +76,14 @@ public class BadgeNotifManager : MonoBehaviour
         }
     }
 
-    private IEnumerator ProcessNotificationQueue(bool startFromMiddle)
+    private IEnumerator ProcessNotificationQueue(bool startFromMiddle, float remainingDuration = displayDuration)
     {
         IsDisplayingNotification = true;
 
         while (BadgeQueue.Count > 0)
         {
             Badge currentBadge = BadgeQueue.Peek();
-            yield return StartCoroutine(DisplayNotification(currentBadge, startFromMiddle));
+            yield return StartCoroutine(DisplayNotification(currentBadge, startFromMiddle, remainingDuration));
             BadgeQueue.Dequeue();
         }
 
@@ -87,9 +91,10 @@ public class BadgeNotifManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Displays a notification for given badge. If startFromMiddle is true, skips the fade-in animation.
+    /// Displays a notification for given badge. If startFromMiddle is true, skips the fade-in animation and play for duration seconds.
+    /// Otherwise, plays the full animation from fade-in to fade-out.
     /// 
-    private IEnumerator DisplayNotification(Badge badge, bool startFromMiddle)
+    private IEnumerator DisplayNotification(Badge badge, bool startFromMiddle, float duration)
     {
         GameObject notificationPrefab = Resources.Load<GameObject>("Prefabs/AchievementNotif");
 
@@ -127,7 +132,6 @@ public class BadgeNotifManager : MonoBehaviour
             StopAllCoroutines();
             notification.SetActive(false);
         });
-
         if (!startFromMiddle)
         {
             AudioManager.Instance.PlayUIEffect(Sound.AchievementUnlocked);
@@ -135,7 +139,14 @@ public class BadgeNotifManager : MonoBehaviour
             yield return StartCoroutine(FadeCanvasGroup(canvasGroup, 0f, 1f, fadeInDuration));
         }
         // Display
-        yield return new WaitForSeconds(displayDuration);
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            RemainingDuration = duration - elapsed;
+            yield return null;
+        }
+        RemainingDuration = 0f;
 
         // Fade out
         yield return StartCoroutine(FadeCanvasGroup(canvasGroup, 1f, 0f, fadeOutDuration));
