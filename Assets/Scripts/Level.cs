@@ -304,7 +304,7 @@ public class Level
         {
             return ageGroup switch
             {
-                AgeGroup.Preschool => "LessonAudio/FirstSteps/MM1",
+                AgeGroup.Preschool => "LessonAudio/FirstSteps/MM1A0",
                 AgeGroup.Child => "LessonAudio/FirstSteps/MM1",
                 AgeGroup.YoungTeen => "LessonAudio/FirstSteps/MM1",
                 AgeGroup.OldTeen => "LessonAudio/FirstSteps/MM1",
@@ -326,7 +326,7 @@ public class Level
         {
             return ageGroup switch
             {
-                AgeGroup.Preschool => "LessonAudio/FirstSteps/MM2",
+                AgeGroup.Preschool => "LessonAudio/FirstSteps/MM2A0",
                 AgeGroup.Child => "LessonAudio/FirstSteps/MM2",
                 AgeGroup.YoungTeen => "LessonAudio/FirstSteps/MM2",
                 AgeGroup.OldTeen => "LessonAudio/FirstSteps/MM2",
@@ -348,7 +348,7 @@ public class Level
         {
             return ageGroup switch
             {
-                AgeGroup.Preschool => "LessonAudio/FirstSteps/MM3",
+                AgeGroup.Preschool => "LessonAudio/FirstSteps/MM3A0",
                 AgeGroup.Child => "LessonAudio/FirstSteps/MM3",
                 AgeGroup.YoungTeen => "LessonAudio/FirstSteps/MM3",
                 AgeGroup.OldTeen => "LessonAudio/FirstSteps/MM3",
