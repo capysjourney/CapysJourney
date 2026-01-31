@@ -113,7 +113,11 @@ public class LessonScript : MonoBehaviour
 
     private AgeGroup GetAgeGroup(int age)
     {
-        if (age <= 10)
+        if (age <= 4)
+        {
+            return AgeGroup.Preschool;
+        }
+        else if (age <= 10)
         {
             return AgeGroup.Child;
         }

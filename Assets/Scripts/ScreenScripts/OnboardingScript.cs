@@ -103,6 +103,7 @@ public class OnboardingScript : MonoBehaviour
         }
         GameManager.NeedParentConfirmation = false;
         _confirmationSpeechBubbleText.SetText("Parent confirmation received!");
+        _continueButton.gameObject.SetActive(true);
         _continueButton.interactable = true;
     }
 
