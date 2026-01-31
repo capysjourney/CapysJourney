@@ -21,27 +21,22 @@ public class JourneyScript : MonoBehaviour
         bool hasVisitedJourney = GameManager.GetHasVisitedJourney();
         if (hasVisitedJourney)
         {
-            _navBar.SetActive(true);
-            _loginBonus.SetActive(false);
+            ToggleLoginBonusUI(false);
         }
         else if (GameManager.GetIsFirstLogin())
         {
-            _navBar.SetActive(true);
-            _loginBonus.SetActive(false);
+            ToggleLoginBonusUI(false);
             GameManager.Login();
         }
         else
         {
             CarrotManager.IncreaseCarrots(10);
-            _navBar.SetActive(false);
-            _loginBonus.SetActive(true);
+            ToggleLoginBonusUI(true);
             _loginBonusButton.onClick.RemoveAllListeners();
             _loginBonusButton.onClick.AddListener(() =>
             {
-                _navBar.SetActive(true);
-                _loginBonus.SetActive(false);
+                ToggleLoginBonusUI(false);
             });
-
         }
         GameManager.VisitJourney();
         _worldButton = _worldButtonGO.GetComponent<Button>();
@@ -52,6 +47,12 @@ public class JourneyScript : MonoBehaviour
         {
             AudioManager.Instance.PlayMusic(Sound.MainTheme);
         }
+    }
+
+    private void ToggleLoginBonusUI(bool showLoginBonus)
+    {
+        _navBar.SetActive(!showLoginBonus);
+        _loginBonus.SetActive(showLoginBonus);
     }
 
     private void InitializeMap()

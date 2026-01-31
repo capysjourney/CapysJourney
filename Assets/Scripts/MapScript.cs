@@ -162,15 +162,14 @@ abstract public class MapScript : MonoBehaviour
     }
     private void SetLevelClickListener(Level level)
     {
-        Button button = _buttonOfLevel[level];
-        button.onClick.AddListener(() =>
+        _buttonOfLevel[level].onClick.AddListener(() =>
         {
-            if (button.image.sprite != _lockedBtn)
+            if (_levelStatuses[level] == LevelStatus.Locked)
             {
-                OnLevelClicked(level);
+                return;
             }
-            AudioManager.Instance.PlayUIEffect(Sound.InitialLevelClick);
             OnLevelClicked(level);
+            AudioManager.Instance.PlayUIEffect(Sound.InitialLevelClick);
         });
     }
     private void SetCapyClickListener()
