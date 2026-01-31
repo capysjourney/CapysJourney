@@ -59,9 +59,9 @@ public class GratitudeEntry
 
 public class PlayerStats
 {
-    private string guestId = Guid.NewGuid().ToString();
-    private string PlayerPrefsKey => $"GuestPlayerStats_{guestId}";
-    private const bool DebugMode = true;
+    private readonly string _guestId = Guid.NewGuid().ToString();
+    private string PlayerPrefsKey => $"GuestPlayerStats_{_guestId}";
+    private const bool IsDebugMode = true;
 
     public bool IsGuest = false;
 
@@ -141,7 +141,7 @@ public class PlayerStats
 
         StatusOfLevel[Level.World1Level1.EnumName] = LevelStatus.Available;
 
-        if (DebugMode)
+        if (IsDebugMode)
         {
             foreach (Accessory a in Accessory.AllAccesories)
                 if (a.Tier != Tier.Legendary && a.Tier != Tier.Epic)
@@ -154,7 +154,10 @@ public class PlayerStats
     {
         if (!IsGuest)
         {
-            //UnityEngine.Debug.Log("Saving player stats to Firestore");
+            if (IsDebugMode)
+            {
+                UnityEngine.Debug.Log("Saving player stats to Firestore");
+            }
 
             var meditationListDict = MeditationLog.Select(m => new Dictionary<string, object>
             {
@@ -198,7 +201,10 @@ public class PlayerStats
         }
         else
         {
-            //UnityEngine.Debug.Log("Saving guest player stats to PlayerPrefs");
+            if (IsDebugMode)
+            {
+                UnityEngine.Debug.Log("Saving guest player stats to PlayerPrefs");
+            }
 
             var guestData = new
             {
@@ -225,7 +231,7 @@ public class PlayerStats
 
     public void LoadFromFirestore()
     {
-        if (!IsGuest && !DebugMode)
+        if (!IsGuest && !IsDebugMode)
         {
             docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
             {
