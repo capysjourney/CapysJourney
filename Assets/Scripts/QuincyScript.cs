@@ -142,11 +142,6 @@ public class QuincyScript : MonoBehaviour
         {
             _subtitle.SetText("Instructions");
             _body.SetText("For each question, choose how true it is for you in general:\r\n\r\n1 = Never\r\n2 = Rarely\r\n3 = Sometimes\r\n4 = Often\r\n5 = Always");
-            if (_mainButtonText == null)
-            {
-                Debug.Log("[QuincyScript] main button text is null");
-                _mainButtonText = _mainButton.GetComponentInChildren<TMP_Text>();
-            }
             _mainButtonText.SetText("I'm Ready!");
             _selectionButtonArea.SetActive(false);
         }

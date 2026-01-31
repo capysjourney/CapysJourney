@@ -117,6 +117,7 @@ public class PlayerStats
     public HashSet<BadgeEnum> BadgesEarned = new();
     public LinkedList<MeditationEntry> MeditationLog = new();
     public BadgesDisplayed BadgesCurrentlyDisplayed = new();
+    public Dictionary<WorldEnum, bool> HasSeenNewWorldNotif = new();
 
     private const int MaxMoodEntries = 30;
     private const int MaxGratitudeEntries = 10;
@@ -147,6 +148,10 @@ public class PlayerStats
                 if (a.Tier != Tier.Legendary && a.Tier != Tier.Epic)
                     AccessoriesOwned.Add(a);
             NumCarrots = 1000;
+        }
+        foreach (WorldEnum worldEnum in Enum.GetValues(typeof(WorldEnum)))
+        {
+            HasSeenNewWorldNotif[worldEnum] = false;
         }
     }
 
@@ -358,6 +363,12 @@ public class PlayerStats
         }
         NumCarrots += 10;
         CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewQuincyBadges);
+    }
+
+    // World is completed iff Quincy is completed for that world
+    public bool IsWorldCompleted(World world)
+    {
+        return QuincyStatusOfWorld[world.EnumName] == LevelStatus.Completed;
     }
 
     public void IncreaseSecondsMeditated(float seconds) => SecondsMeditated += seconds;

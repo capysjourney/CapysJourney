@@ -147,6 +147,13 @@ public static class GameManager
         return result;
     }
 
+    public static bool IsWorldCompleted(World world)
+    {
+        bool result = false;
+        DataManager.WithStats(stats => result = stats.IsWorldCompleted(world), false);
+        return result;
+    }
+
     public static int GetNumLessonsCompleted()
     {
         int result = 0;
@@ -210,5 +217,12 @@ public static class GameManager
             { "current_streak", GetCurrStreak() },
             { "best_streak", GetBestStreak() }
         });
+    }
+
+    public static bool GetHasSeenNewWorldNotif(World world)
+    {
+        bool result = false;
+        DataManager.WithStats(stats => result = stats.HasSeenNewWorldNotif[world.EnumName], false);
+        return result;
     }
 }
