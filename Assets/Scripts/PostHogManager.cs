@@ -26,12 +26,13 @@ public class PostHogManager : MonoBehaviour
     }
 
     [Header("PostHog Configuration")]
-    [SerializeField] private string apiKey = "phc_m1dZcID4wUPtpdi1AZNBlFTmzLZK2ScPqOjf4HgWIjl";
-    [SerializeField] private string host = "https://us.i.posthog.com";
-    [SerializeField] private bool enableTracking = true;
+    [SerializeField] private string _apiKey = "phc_m1dZcID4wUPtpdi1AZNBlFTmzLZK2ScPqOjf4HgWIjl";
+    [SerializeField] private string _host = "https://us.i.posthog.com";
+    [SerializeField] private bool _enableTracking = true;
+    private static readonly bool IsDebugMode = false;
 
     private string _distinctId;
-    private Queue<PostHogEvent> _eventQueue = new Queue<PostHogEvent>();
+    private readonly Queue<PostHogEvent> _eventQueue = new();
     private bool _isInitialized = false;
 
     private void Awake()
@@ -55,9 +56,12 @@ public class PostHogManager : MonoBehaviour
     /// </summary>
     public void Initialize(string distinctId = null)
     {
-        if (!enableTracking || string.IsNullOrEmpty(apiKey))
+        if (!_enableTracking || string.IsNullOrEmpty(_apiKey))
         {
-            Debug.LogWarning("PostHog: Tracking disabled or API key not set");
+            if (IsDebugMode)
+            {
+                Debug.LogWarning("PostHog: Tracking disabled or API key not set");
+            }
             return;
         }
 
@@ -89,21 +93,30 @@ public class PostHogManager : MonoBehaviour
     /// </summary>
     public void Capture(string eventName, Dictionary<string, object> properties = null)
     {
-        if (!enableTracking)
+        if (!_enableTracking)
         {
-            //Debug.LogWarning($"PostHog: Tracking disabled, ignoring event '{eventName}'");
+            if (IsDebugMode)
+            {
+                Debug.LogWarning($"PostHog: Tracking disabled, ignoring event '{eventName}'");
+            }
             return;
         }
 
         if (!_isInitialized)
         {
-            //Debug.LogWarning($"PostHog: Not initialized yet, queueing event '{eventName}'");
+            if (IsDebugMode)
+            {
+                Debug.LogWarning($"PostHog: Not initialized yet, queueing event '{eventName}'");
+            }
             // Queue the event if not initialized yet
             _eventQueue.Enqueue(new PostHogEvent { EventName = eventName, Properties = properties });
             return;
         }
 
-        //Debug.Log($"PostHog: Capturing event '{eventName}'");
+        if (IsDebugMode)
+        {
+            Debug.Log($"PostHog: Capturing event '{eventName}'");
+        }
         StartCoroutine(SendEvent(eventName, properties));
     }
 
@@ -112,7 +125,7 @@ public class PostHogManager : MonoBehaviour
     /// </summary>
     public void Identify(string distinctId, Dictionary<string, object> properties = null)
     {
-        if (!enableTracking || string.IsNullOrEmpty(apiKey))
+        if (!_enableTracking || string.IsNullOrEmpty(_apiKey))
         {
             return;
         }
@@ -129,7 +142,7 @@ public class PostHogManager : MonoBehaviour
     /// </summary>
     public void SetUserProperties(Dictionary<string, object> properties)
     {
-        if (!enableTracking || !_isInitialized)
+        if (!_enableTracking || !_isInitialized)
         {
             return;
         }
@@ -164,7 +177,7 @@ public class PostHogManager : MonoBehaviour
         // Format: api_key, event, distinct_id, properties (with $token inside properties)
         var payload = new Dictionary<string, object>
         {
-            { "api_key", apiKey },
+            { "api_key", _apiKey },
             { "event", eventName },
             { "distinct_id", _distinctId },
             { "properties", eventProperties }
@@ -173,10 +186,13 @@ public class PostHogManager : MonoBehaviour
         string json = SerializeToJson(payload);
         byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
 
-        //Debug.Log($"PostHog: Sending event '{eventName}' to {host}/e/");
-        //Debug.Log($"PostHog: JSON payload: {json}");
+        if (IsDebugMode)
+        {
+            Debug.Log($"PostHog: Sending event '{eventName}' to {_host}/e/");
+            Debug.Log($"PostHog: JSON payload: {json}");
+        }
 
-        using UnityWebRequest request = new($"{host}/e/", "POST");
+        using UnityWebRequest request = new($"{_host}/e/", "POST");
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
@@ -185,7 +201,10 @@ public class PostHogManager : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            //Debug.Log($"PostHog: Successfully sent event '{eventName}'. Response: {request.downloadHandler.text}");
+            if (IsDebugMode)
+            {
+                Debug.Log($"PostHog: Successfully sent event '{eventName}'. Response: {request.downloadHandler.text}");
+            }
         }
         else
         {
@@ -203,7 +222,7 @@ public class PostHogManager : MonoBehaviour
         // PostHog identify event format
         var eventProperties = new Dictionary<string, object>
         {
-            { "$token", apiKey },
+            { "$token", _apiKey },
             { "$distinct_id", _distinctId }
         };
 
@@ -226,17 +245,20 @@ public class PostHogManager : MonoBehaviour
 
         var payload = new Dictionary<string, object>
         {
-            { "api_key", apiKey },
+            { "api_key", _apiKey },
             { "batch", batch }
         };
 
         string json = SerializeToJson(payload);
         byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
 
-        Debug.Log($"PostHog: Sending identify event to {host}/batch/");
-        Debug.Log($"PostHog: JSON payload: {json}");
+        if (IsDebugMode)
+        {
+            Debug.Log($"PostHog: Sending identify event to {_host}/batch/");
+            Debug.Log($"PostHog: JSON payload: {json}");
+        }
 
-        using (UnityWebRequest request = new UnityWebRequest($"{host}/batch/", "POST"))
+        using (UnityWebRequest request = new UnityWebRequest($"{_host}/batch/", "POST"))
         {
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
@@ -246,7 +268,10 @@ public class PostHogManager : MonoBehaviour
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log($"PostHog: Successfully sent identify event. Response: {request.downloadHandler.text}");
+                if (IsDebugMode)
+                {
+                    Debug.Log($"PostHog: Successfully sent identify event. Response: {request.downloadHandler.text}");
+                }
             }
             else
             {
@@ -264,7 +289,7 @@ public class PostHogManager : MonoBehaviour
     {
         var eventProperties = new Dictionary<string, object>
         {
-            { "$token", apiKey },
+            { "$token", _apiKey },
             { "$set", properties }
         };
 
@@ -282,17 +307,20 @@ public class PostHogManager : MonoBehaviour
 
         var payload = new Dictionary<string, object>
         {
-            { "api_key", apiKey },
+            { "api_key", _apiKey },
             { "batch", batch }
         };
 
         string json = SerializeToJson(payload);
         byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
 
-        Debug.Log($"PostHog: Sending set user properties to {host}/batch/");
-        Debug.Log($"PostHog: JSON payload: {json}");
+        if (IsDebugMode)
+        {
+            Debug.Log($"PostHog: Sending set user properties to {_host}/batch/");
+            Debug.Log($"PostHog: JSON payload: {json}");
+        }
 
-        using (UnityWebRequest request = new UnityWebRequest($"{host}/batch/", "POST"))
+        using (UnityWebRequest request = new UnityWebRequest($"{_host}/batch/", "POST"))
         {
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
@@ -302,7 +330,10 @@ public class PostHogManager : MonoBehaviour
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log($"PostHog: Successfully set user properties. Response: {request.downloadHandler.text}");
+                if (IsDebugMode)
+                {
+                    Debug.Log($"PostHog: Successfully set user properties. Response: {request.downloadHandler.text}");
+                }
             }
             else
             {
@@ -388,7 +419,10 @@ public class PostHogManager : MonoBehaviour
     {
         if (!_isInitialized)
         {
-            Debug.LogWarning("PostHog: Not initialized, cannot send test event");
+            if (IsDebugMode)
+            {
+                Debug.LogWarning("PostHog: Not initialized, cannot send test event");
+            }
             return;
         }
 
@@ -398,7 +432,10 @@ public class PostHogManager : MonoBehaviour
             { "test_timestamp", DateTime.UtcNow.ToString() }
         };
 
-        Debug.Log("PostHog: Sending test event 'unity_test_event'");
+        if (IsDebugMode)
+        {
+            Debug.Log("PostHog: Sending test event 'unity_test_event'");
+        }
         Capture("unity_test_event", testProperties);
     }
 
