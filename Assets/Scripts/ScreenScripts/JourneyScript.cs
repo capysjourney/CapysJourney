@@ -10,12 +10,40 @@ public class JourneyScript : MonoBehaviour
     [SerializeField] private RectTransform _mapContainer;
     [SerializeField] private FirstStepsScript _firstStepsScript;
     [SerializeField] private GameObject _worldButtonGO;
+    [SerializeField] private GameObject _navBar;
+    [SerializeField] private GameObject _loginBonus;
+    [SerializeField] private Button _loginBonusButton;
     private Button _worldButton;
     private Image _map;
 
     void Start()
     {
-        GameManager.Login();
+        bool hasVisitedJourney = GameManager.GetHasVisitedJourney();
+        if (hasVisitedJourney)
+        {
+            _navBar.SetActive(true);
+            _loginBonus.SetActive(false);
+        }
+        else if (GameManager.GetIsFirstLogin())
+        {
+            _navBar.SetActive(true);
+            _loginBonus.SetActive(false);
+            GameManager.Login();
+        }
+        else
+        {
+            CarrotManager.IncreaseCarrots(10);
+            _navBar.SetActive(false);
+            _loginBonus.SetActive(true);
+            _loginBonusButton.onClick.RemoveAllListeners();
+            _loginBonusButton.onClick.AddListener(() =>
+            {
+                _navBar.SetActive(true);
+                _loginBonus.SetActive(false);
+            });
+
+        }
+        GameManager.VisitJourney();
         _worldButton = _worldButtonGO.GetComponent<Button>();
         GameManager.UpdateWorldAndLevel();
         InitializeMap();
