@@ -12,7 +12,7 @@ public static class GameManager
     /// <summary>
     /// The current level that Capy is standing on.
     /// </summary>
-    private static Level CurrLevel = null; 
+    private static Level CurrLevel = null;
 
     /// <summary>
     /// Whether to go to the "Waiting for parent confirmation" screen after registering.
@@ -20,6 +20,18 @@ public static class GameManager
     public static bool NeedParentConfirmation = false;
 
     public static bool LaunchAsGuest = false;
+
+    private static bool HasVisitedJourney = false;
+
+    public static bool GetHasVisitedJourney()
+    {
+        return HasVisitedJourney;
+    }
+
+    public static void VisitJourney()
+    {
+        HasVisitedJourney = true;
+    }
 
     public static void UpdateWorldAndLevel()
     {
@@ -170,6 +182,15 @@ public static class GameManager
         return AgeGroupMethods.FromAge(age);
     }
 
+    public static bool GetIsFirstLogin()
+    {
+        bool isFirstLogin = false;
+        DataManager.WithStats(stats =>
+        {
+            isFirstLogin = stats.LastLogin == DateTime.MinValue;
+        }, false);
+        return isFirstLogin;
+    }
 
     public static void Login()
     {
@@ -180,7 +201,7 @@ public static class GameManager
             stats.UpdateLastLogin();
             // Check if this is the first login (LastLogin was DateTime.MinValue)
             isFirstLogin = lastLogin == DateTime.MinValue;
-        }, false);
+        }, true);
 
         // Track login with PostHog
         PostHogManager.Instance.Capture("user_logged_in", new Dictionary<string, object>
