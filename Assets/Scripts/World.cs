@@ -2,7 +2,9 @@ using System.Collections.Generic;
 
 public enum WorldEnum
 {
-    FirstSteps
+    FirstSteps, PresentMoment, EverydayMindfulness, ExploringAwareness,
+    Compassion, Sleep
+
 }
 
 public class World

@@ -140,6 +140,22 @@ public static class GameManager
         return result;
     }
 
+    public static HashSet<WorldEnum> GetUnlockedWorlds()
+    {
+        HashSet<WorldEnum> result = new();
+        DataManager.WithStats(stats =>
+        {
+            foreach (World world in World.AllWorlds)
+            {
+                if (stats.GetWorldStatus(world)[world.FirstLevel] != LevelStatus.Locked)
+                {
+                    result.Add(world.EnumName);
+                }
+            }
+        }, false);
+        return result;
+    }
+
     public static int GetNumWorldsCompleted()
     {
         int result = 0;
