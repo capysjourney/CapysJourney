@@ -105,11 +105,13 @@ abstract public class MapScript : MonoBehaviour
         // Setup map visuals and interactions
         HideQuincysQuestions();
         HidePopups();
-        RepositionMap(_currentLevel, instant: true);
+        RepositionMap(_currentLevel.GetInfo(), instant: true);
         StyleQuincy();
         StyleRoads();
-        StyleLevelButtons(_currentLevel.World);
-        SetClickListeners(_currentLevel.World);
+        World currentWorld = _currentLevel.GetWorld();
+        WorldInfo currentWorldInfo = currentWorld.GetInfo();
+        StyleLevelButtons(currentWorldInfo);
+        SetClickListeners(currentWorldInfo);
     }
 
     private void InitializeDictionaries()
@@ -123,7 +125,7 @@ abstract public class MapScript : MonoBehaviour
 
     #region Map Positioning
 
-    private void RepositionMap(Level level, bool instant = false)
+    private void RepositionMap(LevelInfo level, bool instant = false)
     {
         Vector2 mapPos = level.MapPosition;
         Vector2 capyPos = level.CapyPosition;
@@ -182,7 +184,7 @@ abstract public class MapScript : MonoBehaviour
         }
     }
 
-    private void StyleLevelButtons(World world)
+    private void StyleLevelButtons(WorldInfo world)
     {
         foreach (Level level in world.Levels)
         {
@@ -202,7 +204,7 @@ abstract public class MapScript : MonoBehaviour
 
     #region Click Listeners
 
-    private void SetClickListeners(World world)
+    private void SetClickListeners(WorldInfo world)
     {
         foreach (Level level in world.Levels)
         {
@@ -256,14 +258,15 @@ abstract public class MapScript : MonoBehaviour
 
     private void OnLevelClicked(Level selectedLevel)
     {
+        LevelInfo levelInfo = selectedLevel.GetInfo();
         // Update current level if changed
         if (_currentLevel != selectedLevel)
         {
             _currentLevel = selectedLevel;
             GameManager.SetCurrLevel(_currentLevel);
-            _navBarScript.ChangeLevel(_currentLevel);
+            _navBarScript.ChangeLevel(levelInfo);
         }
-        RepositionMap(_currentLevel);
+        RepositionMap(levelInfo);
 
         // Determine popup position
         GameObject levelPopup;
@@ -285,9 +288,9 @@ abstract public class MapScript : MonoBehaviour
 
         // Configure popup
         popupScript.UpdatePopup(
-            selectedLevel.ShortName,
-            selectedLevel.Name,
-            selectedLevel.Description,
+            levelInfo.ShortName,
+            levelInfo.Name,
+            levelInfo.Description,
             10
         );
         popupScript.ConfigureStartButton(() =>

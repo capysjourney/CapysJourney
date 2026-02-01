@@ -19,8 +19,6 @@ public static class DataManager
         return statsCache;
     }
 
-
-
     /// <summary>
     /// Fetches the player stats, performs <c>action</c> on it, and saves the updated stats if <c>update</c> is true.
     /// </summary>
@@ -39,5 +37,4 @@ public static class DataManager
     {
         stats.SaveToFirestore();
     }
-
 }

@@ -1947,8 +1947,8 @@ MonoBehaviour:
   _tree: {fileID: 994457773}
   _sleep: {fileID: 1050711081}
   _flag: {fileID: 1980979046}
-  _topClouds: {fileID: 0}
-  _bottomClouds: {fileID: 0}
+  _topClouds: {fileID: 727158306}
+  _bottomClouds: {fileID: 1847437352}
 --- !u!4 &1783502756
 Transform:
   m_ObjectHideFlags: 0

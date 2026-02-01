@@ -7,12 +7,12 @@ public static class GameManager
     /// <summary>
     /// The current world that Capy is standing in.
     /// </summary>
-    private static World CurrWorld = null;
+    private static World CurrWorld = World.FirstSteps;
 
     /// <summary>
     /// The current level that Capy is standing on.
     /// </summary>
-    private static Level CurrLevel = null;
+    private static Level CurrLevel = Level.FirstSteps_L1;
 
     /// <summary>
     /// Whether to go to the "Waiting for parent confirmation" screen after registering.
@@ -37,8 +37,8 @@ public static class GameManager
     {
         DataManager.WithStats(stats =>
         {
-            CurrWorld = World.WorldLookup[stats.CurrWorld];
-            CurrLevel = Level.LevelLookup[stats.CurrLevel];
+            CurrWorld = stats.CurrWorld;
+            CurrLevel = stats.CurrLevel;
         }, false);
     }
 
@@ -59,33 +59,27 @@ public static class GameManager
         }, true);
 
         // Track level completion with PostHog
+        LevelInfo completedLevelInfo = completedLevel.GetInfo();
         PostHogManager.Instance.Capture("level_completed", new Dictionary<string, object>
         {
-            { "level_name", completedLevel.ShortName },
-            { "level_enum", completedLevel.EnumName.ToString() },
-            { "world_name", completedLevel.World.Name },
+            { "level_name", completedLevelInfo.ShortName },
+            { "level_enum", completedLevelInfo.Level.ToString() },
+            { "world_name", completedLevelInfo.World.GetInfo().Name },
             { "lesson_duration_seconds", lessonDuration },
             { "total_exercises_completed", numExercisesCompleted },
             { "total_worlds_completed", numWorldsCompleted }
         });
     }
 
-    public static World GetCurrWorld()
+    // expose world/level info details to UI
+    public static WorldInfo GetCurrWorldInfo()
     {
-        if (CurrWorld == null)
-        {
-            UpdateWorldAndLevel();
-        }
-        return CurrWorld;
+        return CurrWorld.GetInfo();
     }
 
-    public static Level GetCurrLevel()
+    public static LevelInfo GetCurrLevelInfo()
     {
-        if (CurrLevel == null)
-        {
-            UpdateWorldAndLevel();
-        }
-        return CurrLevel;
+        return CurrLevel.GetInfo();
     }
 
     public static bool HasCompletedLevel(Level level)
@@ -103,13 +97,13 @@ public static class GameManager
     public static void SetCurrLevel(Level level)
     {
         CurrLevel = level;
-        CurrWorld = level.World;
+        CurrWorld = CurrLevel.GetWorld();
         DataManager.WithStats(stats => stats.ChangeLevel(level), true);
     }
 
     private static void MakeNextLevelsAvailable(PlayerStats stats)
     {
-        Level[] nextLevels = Level.NextLevelMap[CurrLevel];
+        Level[] nextLevels = CurrLevel.GetNextLevels();
         foreach (Level level in nextLevels)
         {
             stats.MakeLevelAvailable(level);
@@ -140,16 +134,16 @@ public static class GameManager
         return result;
     }
 
-    public static HashSet<WorldEnum> GetUnlockedWorlds()
+    public static HashSet<World> GetUnlockedWorlds()
     {
-        HashSet<WorldEnum> result = new();
+        HashSet<World> result = new();
         DataManager.WithStats(stats =>
         {
-            foreach (World world in World.AllWorlds)
+            foreach (World world in Enum.GetValues(typeof(World)))
             {
-                if (stats.GetWorldStatus(world)[world.FirstLevel] != LevelStatus.Locked)
+                if (stats.GetWorldStatus(world)[world.GetInfo().FirstLevel.Level] != LevelStatus.Locked)
                 {
-                    result.Add(world.EnumName);
+                    result.Add(world);
                 }
             }
         }, false);
@@ -238,7 +232,7 @@ public static class GameManager
     public static bool GetHasSeenNewWorldNotif(World world)
     {
         bool result = false;
-        DataManager.WithStats(stats => result = stats.HasSeenNewWorldNotif[world.EnumName], false);
+        DataManager.WithStats(stats => result = stats.HasSeenNewWorldNotif[world], false);
         return result;
     }
 }

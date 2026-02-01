@@ -9,7 +9,7 @@ public class BadgeNotifScript : MonoBehaviour
     [SerializeField] private TMP_Text _badgeName;
     [SerializeField] private Button _closeButton;
 
-    public void SetBadge(Badge badge)
+    public void SetBadge(BadgeInfo badge)
     {
         _badgeName.text = badge.Name;
         _image.sprite = Resources.Load<Sprite>(badge.SpritePath);

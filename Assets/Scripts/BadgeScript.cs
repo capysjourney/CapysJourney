@@ -20,9 +20,10 @@ public class BadgeScript : MonoBehaviour
 
     public void SetBadge(Badge badge)
     {
-        _badgeNameText.SetText(badge.Name);
-        _badgeDescriptionText.SetText(badge.Description);
-        _badgeImage.sprite = Resources.Load<Sprite>(badge.SpritePath);
+        BadgeInfo badgeInfo = badge.GetInfo();
+        _badgeNameText.SetText(badgeInfo.Name);
+        _badgeDescriptionText.SetText(badgeInfo.Description);
+        _badgeImage.sprite = Resources.Load<Sprite>(badgeInfo.SpritePath);
     }
 
     public void SetOnBadgeClicked(Action action)

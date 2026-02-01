@@ -58,22 +58,22 @@ public class FirstStepsScript : MapScript
     {
         return new()
         {
-            { Level.World1Level1, _level1Btn },
-            { Level.World1Level2, _level2Btn },
-            { Level.World1Level3, _level3Btn },
-            { Level.World1Level4, _level4Btn },
-            { Level.World1Level5, _level5Btn },
-            { Level.World1Level6, _level6Btn },
-            { Level.World1Level7, _level7Btn },
-            { Level.World1Level8, _level8Btn },
-            { Level.World1Level9, _level9Btn },
-            { Level.World1Level10, _level10Btn },
-            { Level.World1SideLevel1, _SL1Btn },
-            { Level.World1SideLevel2, _SL2Btn },
-            { Level.World1SideLevel3, _SL3Btn },
-            { Level.World1MiniLevel1, _miniLevel1Btn },
-            { Level.World1MiniLevel2, _miniLevel2Btn },
-            { Level.World1MiniLevel3, _miniLevel3Btn },
+            { Level.FirstSteps_L1, _level1Btn },
+            { Level.FirstSteps_L2, _level2Btn },
+            { Level.FirstSteps_L3, _level3Btn },
+            { Level.FirstSteps_L4, _level4Btn },
+            { Level.FirstSteps_L5, _level5Btn },
+            { Level.FirstSteps_L6, _level6Btn },
+            { Level.FirstSteps_L7, _level7Btn },
+            { Level.FirstSteps_L8, _level8Btn },
+            { Level.FirstSteps_L9, _level9Btn },
+            { Level.FirstSteps_L10, _level10Btn },
+            { Level.FirstSteps_SL1, _SL1Btn },
+            { Level.FirstSteps_SL2, _SL2Btn },
+            { Level.FirstSteps_SL3, _SL3Btn },
+            { Level.FirstSteps_MM1, _miniLevel1Btn },
+            { Level.FirstSteps_MM2, _miniLevel2Btn },
+            { Level.FirstSteps_MM3, _miniLevel3Btn },
         };
     }
 
@@ -81,22 +81,22 @@ public class FirstStepsScript : MapScript
     {
         return new()
         {
-            { Level.World1Level1, _level1Icon },
-            { Level.World1Level2, _level2Icon },
-            { Level.World1Level3, _level3Icon },
-            { Level.World1Level4, _level4Icon },
-            { Level.World1Level5, _level5Icon },
-            { Level.World1Level6, _level6Icon },
-            { Level.World1Level7, _level7Icon },
-            { Level.World1Level8, _level8Icon },
-            { Level.World1Level9, _level9Icon },
-            { Level.World1Level10, _level10Icon },
-            { Level.World1SideLevel1, _SL1And2Icon },
-            { Level.World1SideLevel2, _SL1And2Icon },
-            { Level.World1SideLevel3, _SL3Icon },
-            { Level.World1MiniLevel1, _miniLevelIcon },
-            { Level.World1MiniLevel2, _miniLevelIcon },
-            { Level.World1MiniLevel3, _miniLevelIcon }
+            { Level.FirstSteps_L1, _level1Icon },
+            { Level.FirstSteps_L2, _level2Icon },
+            { Level.FirstSteps_L3, _level3Icon },
+            { Level.FirstSteps_L4, _level4Icon },
+            { Level.FirstSteps_L5, _level5Icon },
+            { Level.FirstSteps_L6, _level6Icon },
+            { Level.FirstSteps_L7, _level7Icon },
+            { Level.FirstSteps_L8, _level8Icon },
+            { Level.FirstSteps_L9, _level9Icon },
+            { Level.FirstSteps_L10, _level10Icon },
+            { Level.FirstSteps_SL1, _SL1And2Icon },
+            { Level.FirstSteps_SL2, _SL1And2Icon },
+            { Level.FirstSteps_SL3, _SL3Icon },
+            { Level.FirstSteps_MM1, _miniLevelIcon },
+            { Level.FirstSteps_MM2, _miniLevelIcon },
+            { Level.FirstSteps_MM3, _miniLevelIcon }
         };
     }
 
@@ -104,19 +104,19 @@ public class FirstStepsScript : MapScript
     {
         return new()
         {
-            { _roadTo2, Level.World1Level1 },
-            { _roadTo3, Level.World1Level2 },
-            { _roadTo4, Level.World1Level3 },
-            { _roadTo5, Level.World1Level4 },
-            { _roadTo6, Level.World1Level5 },
-            { _roadTo7, Level.World1Level6 },
-            { _roadTo8, Level.World1Level7 },
-            { _roadTo9, Level.World1Level8 },
-            { _roadTo10, Level.World1Level9 },
-            { _roadToSL1, Level.World1Level3 },
-            { _roadToSL2, Level.World1SideLevel1 },
-            { _roadToSL3, Level.World1Level5 },
-            { _roadToMini, Level.World1Level9 }
+            { _roadTo2, Level.FirstSteps_L1 },
+            { _roadTo3, Level.FirstSteps_L2 },
+            { _roadTo4, Level.FirstSteps_L3 },
+            { _roadTo5, Level.FirstSteps_L4 },
+            { _roadTo6, Level.FirstSteps_L5 },
+            { _roadTo7, Level.FirstSteps_L6 },
+            { _roadTo8, Level.FirstSteps_L7 },
+            { _roadTo9, Level.FirstSteps_L8 },
+            { _roadTo10, Level.FirstSteps_L9 },
+            { _roadToSL1, Level.FirstSteps_L3 },
+            { _roadToSL2, Level.FirstSteps_SL1 },
+            { _roadToSL3, Level.FirstSteps_L5 },
+            { _roadToMini, Level.FirstSteps_L9 }
         };
     }
 }

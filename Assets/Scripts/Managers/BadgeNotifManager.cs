@@ -27,7 +27,7 @@ public class BadgeNotifManager : MonoBehaviour
     private const float fadeInDuration = 0.5f;
     private const float fadeOutDuration = 0.5f;
 
-    private static readonly Queue<Badge> BadgeQueue = new();
+    private static readonly Queue<BadgeInfo> BadgeQueue = new();
     private static bool IsDisplayingNotification = false;
 
     /// <summary>
@@ -60,14 +60,14 @@ public class BadgeNotifManager : MonoBehaviour
         IsDisplayingNotification = false;
     }
 
-    public void ShowBadgeNotifications(List<BadgeEnum> badges)
+    public void ShowBadgeNotifications(List<Badge> badges)
     {
-        foreach (var badgeEnum in badges)
+        foreach (var badge in badges)
         {
-            Badge badge = Badge.BadgeOfEnum[badgeEnum];
-            if (badge != null)
+            BadgeInfo badgeInfo = badge.GetInfo();
+            if (badgeInfo != null)
             {
-                BadgeQueue.Enqueue(badge);
+                BadgeQueue.Enqueue(badgeInfo);
             }
         }
         if (!IsDisplayingNotification)
@@ -82,7 +82,7 @@ public class BadgeNotifManager : MonoBehaviour
 
         while (BadgeQueue.Count > 0)
         {
-            Badge currentBadge = BadgeQueue.Peek();
+            BadgeInfo currentBadge = BadgeQueue.Peek();
             yield return StartCoroutine(DisplayNotification(currentBadge, startFromMiddle, remainingDuration));
             BadgeQueue.Dequeue();
         }
@@ -94,7 +94,7 @@ public class BadgeNotifManager : MonoBehaviour
     /// Displays a notification for given badge. If startFromMiddle is true, skips the fade-in animation and play for duration seconds.
     /// Otherwise, plays the full animation from fade-in to fade-out.
     /// 
-    private IEnumerator DisplayNotification(Badge badge, bool startFromMiddle, float duration)
+    private IEnumerator DisplayNotification(BadgeInfo badge, bool startFromMiddle, float duration)
     {
         GameObject notificationPrefab = Resources.Load<GameObject>("Prefabs/AchievementNotif");
 

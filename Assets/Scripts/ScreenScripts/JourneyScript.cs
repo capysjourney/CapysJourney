@@ -78,15 +78,15 @@ public class JourneyScript : MonoBehaviour
 
     private void InitializeMap()
     {
-        World currentWorld = GameManager.GetCurrWorld();
-        Level currentLevel = GameManager.GetCurrLevel();
-        Dictionary<Level, LevelStatus> levelStatuses = GameManager.GetWorldStatus(currentWorld);
+        WorldInfo currentWorld = GameManager.GetCurrWorldInfo();
+        LevelInfo currentLevel = GameManager.GetCurrLevelInfo();
+        Dictionary<Level, LevelStatus> levelStatuses = GameManager.GetWorldStatus(currentWorld.World);
         bool isQuincyUnlocked = QuincyManager.IsQuincyUnlocked(currentWorld);
         
         // Registry of all available maps
-        Dictionary<World, (Image mapImage, MapScript mapScript)> mapRegistry = new()
+        Dictionary<WorldInfo, (Image mapImage, MapScript mapScript)> mapRegistry = new()
         {
-            { World.FirstSteps, (_firstStepsMap, _firstStepsScript) }
+            { WorldInfo.FirstSteps, (_firstStepsMap, _firstStepsScript) }
         };
 
         if (!mapRegistry.ContainsKey(currentWorld))
@@ -109,7 +109,7 @@ public class JourneyScript : MonoBehaviour
         _activeMapScript.Initialize(
             mapContainer: _mapContainer,
             capy: _capy,
-            currentLevel: currentLevel,
+            currentLevel: currentLevel.Level,
             levelStatuses: levelStatuses,
             isQuincyUnlocked: isQuincyUnlocked,
             onQuincyDone: ConfigureNewRegionNotif
@@ -139,9 +139,9 @@ public class JourneyScript : MonoBehaviour
 
     private void ConfigureNewRegionNotif()
     {
-        World currentWorld = GameManager.GetCurrWorld();
-        bool isWorldCompleted = GameManager.IsWorldCompleted(currentWorld);
-        bool hasSeenNewWorldNotif = GameManager.GetHasSeenNewWorldNotif(currentWorld);
+        WorldInfo currentWorld = GameManager.GetCurrWorldInfo();
+        bool isWorldCompleted = GameManager.IsWorldCompleted(currentWorld.World);
+        bool hasSeenNewWorldNotif = GameManager.GetHasSeenNewWorldNotif(currentWorld.World);
         
         _newRegionNotif.SetActive(isWorldCompleted && !hasSeenNewWorldNotif);
         
