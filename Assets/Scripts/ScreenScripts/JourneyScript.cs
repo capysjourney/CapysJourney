@@ -14,7 +14,7 @@ public class JourneyScript : MonoBehaviour
     [SerializeField] private RectTransform _capy;
     [SerializeField] private Image _firstStepsMap;
     [SerializeField] private FirstStepsScript _firstStepsScript;
-    
+
     [Header("Scene UI")]
     [SerializeField] private GameObject _navBar;
     [SerializeField] private GameObject _loginBonus;
@@ -22,7 +22,7 @@ public class JourneyScript : MonoBehaviour
     [SerializeField] private Button _worldButton;
     [SerializeField] private GameObject _newRegionNotif;
     [SerializeField] private Button _newRegionNotifWorldButton;
-    
+
     private MapScript _activeMapScript;
 
     void Start()
@@ -34,7 +34,7 @@ public class JourneyScript : MonoBehaviour
     }
 
     #region Session Management
-    
+
     private void InitializeSession()
     {
         bool hasVisitedJourney = GameManager.GetHasVisitedJourney();
@@ -82,7 +82,7 @@ public class JourneyScript : MonoBehaviour
         LevelInfo currentLevel = GameManager.GetCurrLevelInfo();
         Dictionary<Level, LevelStatus> levelStatuses = GameManager.GetWorldStatus(currentWorld.World);
         bool isQuincyUnlocked = QuincyManager.IsQuincyUnlocked(currentWorld);
-        
+
         // Registry of all available maps
         Dictionary<WorldInfo, (Image mapImage, MapScript mapScript)> mapRegistry = new()
         {
@@ -98,13 +98,13 @@ public class JourneyScript : MonoBehaviour
         // Activate the appropriate map
         var (activeMapImage, activeMapScript) = mapRegistry[currentWorld];
         _activeMapScript = activeMapScript;
-        
+
         // Show only the active map
         foreach (var (_, (mapImage, _)) in mapRegistry)
         {
             mapImage.gameObject.SetActive(mapImage == activeMapImage);
         }
-        
+
         // Initialize the map with game state and shared references
         _activeMapScript.Initialize(
             mapContainer: _mapContainer,
@@ -131,8 +131,7 @@ public class JourneyScript : MonoBehaviour
         _worldButton.onClick.RemoveAllListeners();
         _worldButton.onClick.AddListener(() =>
         {
-            //SceneManager.LoadSceneAsync("WorldMap");
-            // todo - make worldmap scene
+            SceneManager.LoadSceneAsync("WorldMap");
         });
         _worldButton.gameObject.SetActive(true);
     }
@@ -142,14 +141,21 @@ public class JourneyScript : MonoBehaviour
         WorldInfo currentWorld = GameManager.GetCurrWorldInfo();
         bool isWorldCompleted = GameManager.IsWorldCompleted(currentWorld.World);
         bool hasSeenNewWorldNotif = GameManager.GetHasSeenNewWorldNotif(currentWorld.World);
-        
-        _newRegionNotif.SetActive(isWorldCompleted && !hasSeenNewWorldNotif);
-        
+
+        if (isWorldCompleted && !hasSeenNewWorldNotif)
+        {
+            // Mark the new world notification as seen
+            GameManager.OnSeenNewWorldNotif(currentWorld.World);
+            _newRegionNotif.SetActive(true);
+        }
+        else
+        {
+            _newRegionNotif.SetActive(false);
+        }
         _newRegionNotifWorldButton.onClick.RemoveAllListeners();
         _newRegionNotifWorldButton.onClick.AddListener(() =>
         {
-            //SceneManager.LoadSceneAsync("WorldMap");
-            // todo - make worldmap scene
+            SceneManager.LoadSceneAsync("WorldMap");
         });
     }
 

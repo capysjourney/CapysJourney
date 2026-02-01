@@ -364,7 +364,7 @@ public class PlayerStats
         NumWorldsCompleted++;
         foreach (World nextWorld in world.GetInfo().NextWorlds)
         {
-            StatusOfLevel[nextWorld.GetInfo().FirstLevel.Level] = LevelStatus.Available;
+            StatusOfLevel[nextWorld.GetInfo().FirstLevel] = LevelStatus.Available;
         }
         NumCarrots += 10;
         CheckAndEarnBadges(handleNewBadges, UpdateAndGetNewQuincyBadges);

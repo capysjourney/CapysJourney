@@ -89,11 +89,6 @@ public static class GameManager
         return result;
     }
 
-    public static void SetCurrWorld(World world)
-    {
-        CurrWorld = world;
-    }
-
     public static void SetCurrLevel(Level level)
     {
         CurrLevel = level;
@@ -141,7 +136,7 @@ public static class GameManager
         {
             foreach (World world in Enum.GetValues(typeof(World)))
             {
-                if (stats.GetWorldStatus(world)[world.GetInfo().FirstLevel.Level] != LevelStatus.Locked)
+                if (stats.GetWorldStatus(world)[world.GetInfo().FirstLevel] != LevelStatus.Locked)
                 {
                     result.Add(world);
                 }
@@ -161,6 +156,39 @@ public static class GameManager
     {
         bool result = false;
         DataManager.WithStats(stats => result = stats.IsWorldCompleted(world), false);
+        return result;
+    }
+
+    public static HashSet<World> GetCompletedWorlds()
+    {
+        HashSet<World> result = new();
+        DataManager.WithStats(stats =>
+        {
+            foreach (World world in Enum.GetValues(typeof(World)))
+            {
+                if (stats.IsWorldCompleted(world))
+                {
+                    result.Add(world);
+                }
+            }
+        }, false);
+        return result;
+    }
+
+    public static HashSet<World> GetNewlyAvailableWorlds()
+    {
+        HashSet<World> result = new();
+        DataManager.WithStats(stats =>
+        {
+            foreach (World world in Enum.GetValues(typeof(World)))
+            {
+                WorldInfo worldInfo = world.GetInfo();
+                if (stats.GetLevelStatus(worldInfo.FirstLevel) == LevelStatus.Available)
+                {
+                    result.Add(world);
+                }
+            }
+        }, false);
         return result;
     }
 
@@ -234,5 +262,10 @@ public static class GameManager
         bool result = false;
         DataManager.WithStats(stats => result = stats.HasSeenNewWorldNotif[world], false);
         return result;
+    }
+
+    public static void OnSeenNewWorldNotif(World world)
+    {
+        DataManager.WithStats(stats => stats.HasSeenNewWorldNotif[world] = true, true);
     }
 }

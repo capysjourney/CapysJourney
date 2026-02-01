@@ -7,8 +7,8 @@ using System.Collections.Generic;
 public enum World
 {
     FirstSteps,
-    //PresentMoment,
-    //EverydayMindfulness,
+    PresentMoment,
+    EverydayMindfulness,
     //ExploringAwareness,
     //Compassion,
     //Sleep
@@ -39,26 +39,38 @@ public class WorldInfo
             Level.FirstSteps_MM3
         },
         world: World.FirstSteps,
-        firstLevel: LevelInfo.FirstStepsLevel1,
-        nextWorlds: new HashSet<World>() // todo - add next worlds when available
+        firstLevel: Level.FirstSteps_L1,
+        nextWorlds: new HashSet<World> { World.PresentMoment, World.EverydayMindfulness }
+        );
+
+    public static readonly WorldInfo PresentMoment = new(
+        name: "Present Moment",
+        levels: new HashSet<Level> { 
+            Level.PresentMoment_L1,
+            Level.PresentMoment_L2,
+            Level.PresentMoment_L3,
+            Level.PresentMoment_L4,
+            Level.PresentMoment_SL1,
+        },
+        world: World.PresentMoment,
+        firstLevel: Level.PresentMoment_L1,
+        nextWorlds: new HashSet<World>() // todo - add next worlds
     );
 
-    // todo - finish
-    //public static readonly WorldInfo PresentMoment = new(
-    //    name: "Present Moment",
-    //    levels: new HashSet<Level>(),
-    //    world: World.PresentMoment,
-    //    firstLevel: null,
-    //    nextWorlds: new HashSet<World>()
-    //);
-
-    //public static readonly WorldInfo EverydayMindfulness = new(
-    //    name: "Everyday Mindfulness",
-    //    levels: new HashSet<Level>(),
-    //    world: World.EverydayMindfulness,
-    //    firstLevel: null,
-    //    nextWorlds: new HashSet<World>()
-    //);
+    public static readonly WorldInfo EverydayMindfulness = new(
+        name: "Everyday Mindfulness",
+        levels: new HashSet<Level> { 
+            Level.EverydayMindfulness_L1,
+            Level.EverydayMindfulness_L2,
+            Level.EverydayMindfulness_L3,
+            Level.EverydayMindfulness_L4,
+            Level.EverydayMindfulness_SL1,
+            Level.EverydayMindfulness_SL2
+        },
+        world: World.EverydayMindfulness,
+        firstLevel: Level.EverydayMindfulness_L1,
+        nextWorlds: new HashSet<World>() // todo - add next worlds
+    );
 
     //public static readonly WorldInfo ExploringAwareness = new(
     //    name: "Exploring Awareness",
@@ -87,11 +99,11 @@ public class WorldInfo
     public string Name { get; }
     public HashSet<Level> Levels { get; }
     public World World { get; }
-    public LevelInfo FirstLevel { get; }
+    public Level FirstLevel { get; }
     public static HashSet<WorldInfo> AllWorlds = new() { FirstSteps };
     public HashSet<World> NextWorlds { get; }
 
-    private WorldInfo(string name, HashSet<Level> levels, World world, LevelInfo firstLevel, HashSet<World> nextWorlds)
+    private WorldInfo(string name, HashSet<Level> levels, World world, Level firstLevel, HashSet<World> nextWorlds)
     {
         Name = name;
         Levels = levels;
@@ -106,8 +118,8 @@ public static class WorldExtensions
     private readonly static Dictionary<World, WorldInfo> InfoOfWorld = new()
     {
         { World.FirstSteps, WorldInfo.FirstSteps },
-        //{ World.PresentMoment, null },
-        //{ World.EverydayMindfulness, null },
+        { World.PresentMoment, WorldInfo.PresentMoment },
+        { World.EverydayMindfulness, WorldInfo.EverydayMindfulness },
         //{ World.ExploringAwareness, null },
         //{ World.Compassion, null },
         //{ World.Sleep, null }
