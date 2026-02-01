@@ -53,6 +53,7 @@ public class FirstStepsScript : MapScript
     [SerializeField] private Sprite _SL1And2Icon;
     [SerializeField] private Sprite _SL3Icon;
     [SerializeField] private Sprite _miniLevelIcon;
+    protected override Vector2 QuincyPosition => new(750, -91);
 
     protected override Dictionary<Level, Button> CreateButtonDictionary()
     {

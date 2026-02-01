@@ -247,16 +247,7 @@ public class OnboardingScript : MonoBehaviour
 
     private void CreatePlayerStats()
     {
-        IDataService DataService = new JsonDataService();
-
-        PlayerStats stats = new(GameManager.LaunchAsGuest);
-
-        bool worked = DataService.SaveData("player-stats.json", stats);
-        if (!worked)
-        {
-            Debug.LogError("Could not save file!");
-            return;
-        }
+        PlayerStats stats = new(PlayerPrefs.GetInt("isGuest", 1) == 1);
 
         DataManager.SetStats(stats);
 

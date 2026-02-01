@@ -9,12 +9,14 @@ using UnityEngine.UI;
 
 public class NavBarScript : MonoBehaviour
 {
+    [Header("Buttons")]
     [SerializeField] private Button _journeyTab;
     [SerializeField] private Button _dailyTab;
     [SerializeField] private Button _denTab;
     [SerializeField] private Button _profileTab;
     [SerializeField] private Button _dojoButton;
-    [SerializeField] private Image _carrot;
+
+    [Header("Text")]
     [SerializeField] private TMP_Text _carrotCount;
     [SerializeField] private TMP_Text _worldLabel;
     [SerializeField] private TMP_Text _level;

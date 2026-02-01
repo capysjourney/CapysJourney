@@ -11,17 +11,23 @@ public class JourneyScript : MonoBehaviour
 {
     [Header("Map Configuration")]
     [SerializeField] private RectTransform _mapContainer;
-    [SerializeField] private RectTransform _capy;
     [SerializeField] private Image _firstStepsMap;
+    [SerializeField] private Image _presentMomentMap;
     [SerializeField] private FirstStepsScript _firstStepsScript;
+    [SerializeField] private PresentMomentScript _presentMomentScript;
 
     [Header("Scene UI")]
-    [SerializeField] private GameObject _navBar;
+    [SerializeField] private Image _gradientBackground;
+    [SerializeField] private NavBarScript _navBarScript;
     [SerializeField] private GameObject _loginBonus;
     [SerializeField] private Button _loginBonusButton;
     [SerializeField] private Button _worldButton;
     [SerializeField] private GameObject _newRegionNotif;
     [SerializeField] private Button _newRegionNotifWorldButton;
+
+    [Header("Quincy")]
+    [SerializeField] private Button _quincyMask;
+    [SerializeField] private QuincyScript _quincyScript;
 
     private MapScript _activeMapScript;
 
@@ -68,7 +74,7 @@ public class JourneyScript : MonoBehaviour
 
     private void ToggleLoginBonusUI(bool showLoginBonus)
     {
-        _navBar.SetActive(!showLoginBonus);
+        _navBarScript.gameObject.SetActive(!showLoginBonus);
         _loginBonus.SetActive(showLoginBonus);
     }
 
@@ -86,7 +92,8 @@ public class JourneyScript : MonoBehaviour
         // Registry of all available maps
         Dictionary<WorldInfo, (Image mapImage, MapScript mapScript)> mapRegistry = new()
         {
-            { WorldInfo.FirstSteps, (_firstStepsMap, _firstStepsScript) }
+            { WorldInfo.FirstSteps, (_firstStepsMap, _firstStepsScript) },
+            { WorldInfo.PresentMoment, (_presentMomentMap, _presentMomentScript) }
         };
 
         if (!mapRegistry.ContainsKey(currentWorld))
@@ -108,11 +115,14 @@ public class JourneyScript : MonoBehaviour
         // Initialize the map with game state and shared references
         _activeMapScript.Initialize(
             mapContainer: _mapContainer,
-            capy: _capy,
             currentLevel: currentLevel.Level,
             levelStatuses: levelStatuses,
             isQuincyUnlocked: isQuincyUnlocked,
-            onQuincyDone: ConfigureNewRegionNotif
+            onQuincyDone: ConfigureNewRegionNotif,
+            gradientBackground: _gradientBackground,
+            navBarScript: _navBarScript,
+            quincyMask: _quincyMask,
+            quincyScript: _quincyScript
         );
     }
 

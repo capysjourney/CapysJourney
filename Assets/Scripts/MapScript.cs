@@ -11,25 +11,24 @@ using UnityEngine.UI;
 /// </summary>
 abstract public class MapScript : MonoBehaviour
 {
-    [Header("UI Elements")]
-    [SerializeField] private Button _background;
-    [SerializeField] private Sprite _lockedBtn;
-    [SerializeField] private Sprite _completedBtn;
-    [SerializeField] private NavBarScript _navBarScript;
-
-    [Header("Level Popups")]
-    [SerializeField] private GameObject _levelPopupBelow;
-    [SerializeField] private GameObject _levelPopupAbove;
-
-    [Header("Quincy")]
-    [SerializeField] private Button _quincy;
-    [SerializeField] private Button _mask;
-    [SerializeField] private QuincyScript _quincyScript;
+    [SerializeField] private Sprite _backgroundGradient;
 
     // Shared references (injected by JourneyScript)
-    private RectTransform _capy;
     private RectTransform _mapContainer;
     private Action _onQuincyDone;
+    private Image _gradientBackground;
+    private NavBarScript _navBarScript;
+    private Button _mask;
+    private QuincyScript _quincyScript;
+
+    // UI Elements
+    private Button _backgroundButton; // to hide popups
+    private RectTransform _capy;
+    private Button _quincy;
+    private GameObject _levelPopupBelow;
+    private GameObject _levelPopupAbove;
+    private Sprite _lockedBtn;
+    private Sprite _completedBtn;
 
     // State
     private Level _currentLevel;
@@ -52,8 +51,8 @@ abstract public class MapScript : MonoBehaviour
     private Coroutine _repositionCoroutine;
     private const float AnimationDuration = 0.5f;
 
-
-    #region Abstract Methods
+    #region Abstract Methods and Properties
+    abstract protected Vector2 QuincyPosition { get; }
 
     /// <summary>
     /// Initialize and return a dictionary that maps levels to their corresponding buttons
@@ -80,20 +79,36 @@ abstract public class MapScript : MonoBehaviour
     /// </summary>
     public void Initialize(
         RectTransform mapContainer,
-        RectTransform capy,
         Level currentLevel,
         Dictionary<Level, LevelStatus> levelStatuses,
         bool isQuincyUnlocked,
-        Action onQuincyDone)
+        Action onQuincyDone,
+        Image gradientBackground,
+        NavBarScript navBarScript,
+        Button quincyMask,
+        QuincyScript quincyScript)
     {
         // Inject dependencies
         _mapContainer = mapContainer;
-        _capy = capy;
         _onQuincyDone = onQuincyDone;
+        _navBarScript = navBarScript;
+        _mask = quincyMask;
+        _quincyScript = quincyScript;
+
+        // Create UI elements
+        _backgroundButton = MakeBackgroundButton();
+        _capy = MakePrefab("Capy").GetComponent<RectTransform>();
+        _quincy = MakeQuincy();
+        _levelPopupBelow = MakePrefab("LevelPopupBelow");
+        _levelPopupAbove = MakePrefab("LevelPopupAbove");
+        _lockedBtn = Resources.Load<Sprite>("LevelButtons/levelLocked");
+        _completedBtn = Resources.Load<Sprite>("LevelButtons/levelCompleted");
+
         // Set state
         _currentLevel = currentLevel;
         _levelStatuses = levelStatuses;
         _isQuincyUnlocked = isQuincyUnlocked;
+        _gradientBackground = gradientBackground;
 
         // Cache popup scripts
         _scriptBelow = _levelPopupBelow.GetComponent<LevelPopupScript>();
@@ -106,12 +121,45 @@ abstract public class MapScript : MonoBehaviour
         HideQuincysQuestions();
         HidePopups();
         RepositionMap(_currentLevel.GetInfo(), instant: true);
+        StyleBackgroundGradient();
         StyleQuincy();
         StyleRoads();
         World currentWorld = _currentLevel.GetWorld();
         WorldInfo currentWorldInfo = currentWorld.GetInfo();
         StyleLevelButtons(currentWorldInfo);
         SetClickListeners(currentWorldInfo);
+        _navBarScript.ChangeLevel(_currentLevel.GetInfo());
+    }
+
+    private Button MakeBackgroundButton()
+    {
+        GameObject backgroundObj = new("MapBackgroundButton");
+        backgroundObj.transform.SetParent(transform);
+        RectTransform rectTransform = backgroundObj.AddComponent<RectTransform>();
+        rectTransform.anchorMin = Vector2.zero;
+        rectTransform.anchorMax = Vector2.one;
+        rectTransform.offsetMin = Vector2.zero;
+        rectTransform.offsetMax = Vector2.zero;
+        Image image = backgroundObj.AddComponent<Image>();
+        image.color = new(0, 0, 0, 0);
+        Button button = backgroundObj.AddComponent<Button>();
+        backgroundObj.transform.SetAsFirstSibling(); // put behind other UI elements
+        return button;
+    }
+
+    private Button MakeQuincy()
+    {
+        GameObject quincyObj = MakePrefab("Quincy");
+        RectTransform rectTransform = quincyObj.GetComponent<RectTransform>();
+        rectTransform.anchoredPosition = QuincyPosition;
+        return quincyObj.GetComponent<Button>();
+    }
+
+    private GameObject MakePrefab(string prefabName)
+    {
+        GameObject prefab = Resources.Load<GameObject>($"Prefabs/{prefabName}");
+        GameObject instance = Instantiate(prefab, transform);
+        return instance;
     }
 
     private void InitializeDictionaries()
@@ -165,6 +213,10 @@ abstract public class MapScript : MonoBehaviour
     #endregion
 
     #region Visual Styling
+    private void StyleBackgroundGradient()
+    {
+        _gradientBackground.sprite = _backgroundGradient;
+    }
 
     private void StyleQuincy()
     {
@@ -210,7 +262,7 @@ abstract public class MapScript : MonoBehaviour
         {
             SetLevelClickListener(level);
         }
-        _background.onClick.AddListener(HidePopups);
+        _backgroundButton.onClick.AddListener(HidePopups);
         SetCapyClickListener();
         SetQuincyClickListener();
         SetMaskClickListener();

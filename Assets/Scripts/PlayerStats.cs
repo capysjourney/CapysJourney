@@ -60,14 +60,13 @@ public class GratitudeEntry
 public class PlayerStats
 {
     private readonly string _guestId = Guid.NewGuid().ToString();
-    private string PlayerPrefsKey => $"GuestPlayerStats_{_guestId}";
     private const bool IsDebugMode = true;
 
-    public bool IsGuest = false;
+    public bool IsGuest = true;
 
-    private readonly FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-    private readonly string uid;
-    private readonly DocumentReference docRef;
+    private static FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+    private static string uid;
+    private static DocumentReference docRef;
 
     public Dictionary<Level, LevelStatus> StatusOfLevel = new();
     public Dictionary<World, LevelStatus> QuincyStatusOfWorld = new();
@@ -157,14 +156,13 @@ public class PlayerStats
 
     public void SaveToFirestore()
     {
-        if (!IsGuest)
+        if (IsGuest) return;
+        if (IsDebugMode)
         {
-            if (IsDebugMode)
-            {
-                Debug.Log("Saving player stats to Firestore");
-            }
+            Debug.Log("Saving player stats to Firestore");
+        }
 
-            var meditationListDict = MeditationLog.Select(m => new Dictionary<string, object>
+        var meditationListDict = MeditationLog.Select(m => new Dictionary<string, object>
             {
                 { "Duration", m.duration },
                 { "Interval", m.interval },
@@ -172,7 +170,7 @@ public class PlayerStats
                 { "Effect", m.effect }
             }).ToList();
 
-            var data = new Dictionary<string, object>
+        var data = new Dictionary<string, object>
             {
                 { "NumCarrots", NumCarrots },
                 { "BestStreak", BestStreak },
@@ -202,103 +200,46 @@ public class PlayerStats
                 { "MeditationLog", meditationListDict }
             };
 
-            docRef.SetAsync(data);
-        }
-        else
-        {
-            if (IsDebugMode)
-            {
-                Debug.Log("Saving guest player stats to PlayerPrefs");
-            }
+        docRef.SetAsync(data);
+    }
 
-            var guestData = new
+    public static PlayerStats LoadFromFirestore()
+    {
+        PlayerStats playerStats = null;
+        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (!task.Result.Exists) return;
+            var d = task.Result;
+            playerStats = new(false)
             {
-                NumCarrots,
-                BestStreak,
-                CurrStreak,
-                SecondsMeditated,
-                NumLevelsCompleted,
-                NumWorldsCompleted,
-                LastBreathworkTime = LastBreathworkTime.Ticks,
-                LastLogin = LastLogin.Ticks,
-                CurrWorld = CurrWorld.ToString(),
-                CurrLevel = CurrLevel.ToString(),
-                BadgesEarned = BadgesEarned.Select(b => b.ToString()).ToList(),
-                BookmarkedLevels = BookmarkedLevels.Select(l => l.ToString()).ToList(),
-                LevelStatuses = StatusOfLevel.ToDictionary(k => k.Key.ToString(), v => (int)v.Value)
+                NumCarrots = d.GetValue<int>("NumCarrots"),
+                BestStreak = d.GetValue<int>("BestStreak"),
+                CurrStreak = d.GetValue<int>("CurrStreak"),
+                SecondsMeditated = d.GetValue<float>("SecondsMeditated"),
+                NumLevelsCompleted = d.GetValue<int>("NumLevelsCompleted"),
+                NumWorldsCompleted = d.GetValue<int>("NumWorldsCompleted"),
+                LastBreathworkTime = new DateTime(d.GetValue<long>("LastBreathworkTime")),
+                LastLogin = new DateTime(d.GetValue<long>("LastLogin"))
             };
 
-            string json = JsonUtility.ToJson(guestData);
-            PlayerPrefs.SetString(PlayerPrefsKey, json);
-            PlayerPrefs.Save();
-        }
-    }
-
-    public void LoadFromFirestore()
-    {
-        if (!IsGuest && !IsDebugMode)
-        {
-            docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+            if (d.ContainsField("MeditationLog"))
             {
-                if (!task.Result.Exists) return;
-                var d = task.Result;
-
-                NumCarrots = d.GetValue<int>("NumCarrots");
-                BestStreak = d.GetValue<int>("BestStreak");
-                CurrStreak = d.GetValue<int>("CurrStreak");
-                SecondsMeditated = d.GetValue<float>("SecondsMeditated");
-                NumLevelsCompleted = d.GetValue<int>("NumLevelsCompleted");
-                NumWorldsCompleted = d.GetValue<int>("NumWorldsCompleted");
-
-                LastBreathworkTime = new DateTime(d.GetValue<long>("LastBreathworkTime"));
-                LastLogin = new DateTime(d.GetValue<long>("LastLogin"));
-
-                if (d.ContainsField("MeditationLog"))
+                var list = d.GetValue<List<MeditationEntryDTO>>("MeditationLog");
+                playerStats.MeditationLog = new LinkedList<MeditationEntry>();
+                foreach (var dto in list)
                 {
-                    var list = d.GetValue<List<MeditationEntryDTO>>("MeditationLog");
-                    MeditationLog = new LinkedList<MeditationEntry>();
-                    foreach (var dto in list)
+                    playerStats.MeditationLog.AddLast(new MeditationEntry
                     {
-                        MeditationLog.AddLast(new MeditationEntry
-                        {
-                            duration = dto.Duration,
-                            interval = dto.Interval,
-                            chime = dto.Chime,
-                            effect = dto.Effect
-                        });
-                    }
+                        duration = dto.Duration,
+                        interval = dto.Interval,
+                        chime = dto.Chime,
+                        effect = dto.Effect
+                    });
                 }
-            });
-        }
-        else
-        {
-            if (IsDebugMode)
-            {
-                Debug.Log("Loading guest player stats from PlayerPrefs");
             }
-            if (!PlayerPrefs.HasKey(PlayerPrefsKey)) return;
-
-            string json = PlayerPrefs.GetString(PlayerPrefsKey);
-            var guestData = JsonUtility.FromJson<GuestPlayerData>(json);
-
-            NumCarrots = guestData.NumCarrots;
-            BestStreak = guestData.BestStreak;
-            CurrStreak = guestData.CurrStreak;
-            SecondsMeditated = guestData.SecondsMeditated;
-            NumLevelsCompleted = guestData.NumLevelsCompleted;
-            NumWorldsCompleted = guestData.NumWorldsCompleted;
-            LastBreathworkTime = new DateTime(guestData.LastBreathworkTime);
-            LastLogin = new DateTime(guestData.LastLogin);
-            CurrWorld = Enum.Parse<World>(guestData.CurrWorld);
-            CurrLevel = Enum.Parse<Level>(guestData.CurrLevel);
-
-            BadgesEarned = new HashSet<Badge>(guestData.BadgesEarned.Select(Enum.Parse<Badge>));
-            BookmarkedLevels = new HashSet<Level>(guestData.BookmarkedLevels.Select(Enum.Parse<Level>));
-            StatusOfLevel = guestData.LevelStatuses.ToDictionary()
-                .ToDictionary(kv => Enum.Parse<Level>(kv.Key), kv => (LevelStatus)kv.Value);
-        }
+        });
+        return playerStats;
     }
-
 
     public void UpdateLastLogin()
     {
@@ -378,7 +319,14 @@ public class PlayerStats
 
     public void IncreaseSecondsMeditated(float seconds) => SecondsMeditated += seconds;
 
-    public LevelStatus GetLevelStatus(Level level) => StatusOfLevel[level];
+    public LevelStatus GetLevelStatus(Level level)
+    {
+        if (!StatusOfLevel.ContainsKey(level))
+        {
+            StatusOfLevel[level] = LevelStatus.Locked;
+        }
+        return StatusOfLevel[level];
+    }
 
     public void ChangeLevel(Level level)
     {

@@ -18,9 +18,6 @@ public static class GameManager
     /// Whether to go to the "Waiting for parent confirmation" screen after registering.
     /// </summary>
     public static bool NeedParentConfirmation = false;
-
-    public static bool LaunchAsGuest = false;
-
     private static bool HasVisitedJourney = false;
 
     public static bool GetHasVisitedJourney()
@@ -247,6 +244,7 @@ public static class GameManager
             // Check if this is the first login (LastLogin was DateTime.MinValue)
             isFirstLogin = lastLogin == DateTime.MinValue;
         }, true);
+
 
         // Track login with PostHog
         PostHogManager.Instance.Capture("user_logged_in", new Dictionary<string, object>
