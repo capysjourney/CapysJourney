@@ -1,0 +1,285 @@
+fileFormatVersion: 2
+guid: 6a782b6ca4d86774a945b326ef8d1de9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1390510568417770331
+    second: everydayMindfulnessMap_0
+  - first:
+      213: -2437144463873122625
+    second: everydayMindfulnessMap_1
+  - first:
+      213: 855907216098433442
+    second: everydayMindfulnessMap_2
+  - first:
+      213: 2616082961817944061
+    second: everydayMindfulnessMap_3
+  - first:
+      213: -4242065383219388355
+    second: everydayMindfulnessMap_4
+  - first:
+      213: 2403314518758103425
+    second: everydayMindfulnessMap_5
+  - first:
+      213: -1407546175476100739
+    second: everydayMindfulnessMap_6
+  - first:
+      213: -449334227367984161
+    second: everydayMindfulnessMap_7
+  - first:
+      213: 3203261917062955811
+    second: everydayMindfulnessMap_8
+  - first:
+      213: 4196441913900358659
+    second: everydayMindfulnessMap_9
+  - first:
+      213: 5690342862847732628
+    second: everydayMindfulnessMap_10
+  - first:
+      213: -7147013021195486142
+    second: everydayMindfulnessMap_11
+  - first:
+      213: 278429209367538132
+    second: everydayMindfulnessMap_12
+  - first:
+      213: -4142611284392129864
+    second: everydayMindfulnessMap_13
+  - first:
+      213: -2173700930408923164
+    second: everydayMindfulnessMap_14
+  - first:
+      213: 185422455667183916
+    second: everydayMindfulnessMap_15
+  - first:
+      213: 7375234278794700358
+    second: everydayMindfulnessMap_16
+  - first:
+      213: 5154688456794333508
+    second: everydayMindfulnessMap_17
+  - first:
+      213: -6240338258748153634
+    second: everydayMindfulnessMap_18
+  - first:
+      213: -628426214596945413
+    second: everydayMindfulnessMap_19
+  - first:
+      213: -5989791044720626579
+    second: everydayMindfulnessMap_20
+  - first:
+      213: 6154181387154161849
+    second: everydayMindfulnessMap_21
+  - first:
+      213: 3589405601584213706
+    second: everydayMindfulnessMap_22
+  - first:
+      213: -8789230355838740825
+    second: everydayMindfulnessMap_23
+  - first:
+      213: 4963614712255453549
+    second: everydayMindfulnessMap_24
+  - first:
+      213: -3659538006283857386
+    second: everydayMindfulnessMap_25
+  - first:
+      213: -4641124027368119817
+    second: everydayMindfulnessMap_26
+  - first:
+      213: 8774971818270218889
+    second: everydayMindfulnessMap_27
+  - first:
+      213: 2883657217464633096
+    second: everydayMindfulnessMap_28
+  - first:
+      213: -6463799417889169298
+    second: everydayMindfulnessMap_29
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: everydayMindfulnessMap_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 2311
+        height: 2238
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a44809510ae3bce0800000000000000
+      internalID: -1390510568417770331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: fb708d52972e89b41b8f88c9bf826afe
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      everydayMindfulnessMap_0: -1390510568417770331
+      everydayMindfulnessMap_1: -2437144463873122625
+      everydayMindfulnessMap_10: 5690342862847732628
+      everydayMindfulnessMap_11: -7147013021195486142
+      everydayMindfulnessMap_12: 278429209367538132
+      everydayMindfulnessMap_13: -4142611284392129864
+      everydayMindfulnessMap_14: -2173700930408923164
+      everydayMindfulnessMap_15: 185422455667183916
+      everydayMindfulnessMap_16: 7375234278794700358
+      everydayMindfulnessMap_17: 5154688456794333508
+      everydayMindfulnessMap_18: -6240338258748153634
+      everydayMindfulnessMap_19: -628426214596945413
+      everydayMindfulnessMap_2: 855907216098433442
+      everydayMindfulnessMap_20: -5989791044720626579
+      everydayMindfulnessMap_21: 6154181387154161849
+      everydayMindfulnessMap_22: 3589405601584213706
+      everydayMindfulnessMap_23: -8789230355838740825
+      everydayMindfulnessMap_24: 4963614712255453549
+      everydayMindfulnessMap_25: -3659538006283857386
+      everydayMindfulnessMap_26: -4641124027368119817
+      everydayMindfulnessMap_27: 8774971818270218889
+      everydayMindfulnessMap_28: 2883657217464633096
+      everydayMindfulnessMap_29: -6463799417889169298
+      everydayMindfulnessMap_3: 2616082961817944061
+      everydayMindfulnessMap_4: -4242065383219388355
+      everydayMindfulnessMap_5: 2403314518758103425
+      everydayMindfulnessMap_6: -1407546175476100739
+      everydayMindfulnessMap_7: -449334227367984161
+      everydayMindfulnessMap_8: 3203261917062955811
+      everydayMindfulnessMap_9: 4196441913900358659
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

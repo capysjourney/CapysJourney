@@ -316,8 +316,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/PresentMoment/L1A4" }
         },
         bannerFile: "BannerFiles/PresentMoment/L1L",
-        mapPosition: new Vector2(0, 0),
-        capyPosition: new Vector2(0, 0),
+        mapPosition: new Vector2(-59,130),
+        capyPosition: new Vector2(77.9f,-312.5f),
         level: Level.PresentMoment_L1,
         world: World.PresentMoment);
 
@@ -334,8 +334,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/PresentMoment/L2A4" }
        },
        bannerFile: "BannerFiles/PresentMoment/L2L",
-       mapPosition: new Vector2(0, 0),
-       capyPosition: new Vector2(0, 0),
+        mapPosition: new Vector2(-59, 130),
+        capyPosition: new Vector2(77.9f, -32),
        level: Level.PresentMoment_L2,
        world: World.PresentMoment);
 
@@ -352,8 +352,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/PresentMoment/L3A4" }
        },
        bannerFile: "BannerFiles/PresentMoment/L3L",
-       mapPosition: new Vector2(0, 0),
-       capyPosition: new Vector2(0, 0),
+        mapPosition: new Vector2(-59, -172),
+        capyPosition: new Vector2(77.9f, 233),
        level: Level.PresentMoment_L3,
        world: World.PresentMoment);
 
@@ -372,8 +372,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/PresentMoment/L4A4" }
        },
        bannerFile: "BannerFiles/PresentMoment/L4L",
-       mapPosition: new Vector2(0, 0),
-       capyPosition: new Vector2(0, 0),
+       mapPosition: new Vector2(130,-172),
+       capyPosition: new Vector2(-153,594),
        level: Level.PresentMoment_L4,
        world: World.PresentMoment);
 
@@ -390,8 +390,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/PresentMoment/SL1A4" }
        },
        bannerFile: "BannerFiles/PresentMoment/SL1L",
-       mapPosition: new Vector2(0, 0),
-       capyPosition: new Vector2(0, 0),
+        mapPosition: new Vector2(-282.75f, 130),
+        capyPosition: new Vector2(289, -32),
        level: Level.PresentMoment_SL1,
        world: World.PresentMoment);
 
@@ -409,8 +409,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/PresentMoment/SL2A4" }
        },
        bannerFile: "BannerFiles/PresentMoment/SL2L",
-       mapPosition: new Vector2(0, 0),
-       capyPosition: new Vector2(0, 0),
+       mapPosition: new Vector2(282.75f,-172),
+       capyPosition: new Vector2(-372.5f,301.2f),
        level: Level.PresentMoment_SL2,
        world: World.PresentMoment);
 
@@ -427,8 +427,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/EverydayMindfulness/L1A4" }
        },
        bannerFile: "BannerFiles/EverydayMindfulness/L1L",
-       mapPosition: new Vector2(0, 0),
-       capyPosition: new Vector2(0, 0),
+       mapPosition: new Vector2(-17,90),
+       capyPosition: new Vector2(21.2f, -268),
        level: Level.EverydayMindfulness_L1,
        world: World.EverydayMindfulness);
 
@@ -446,8 +446,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/EverydayMindfulness/L2A4" }
        },
        bannerFile: "BannerFiles/EverydayMindfulness/L2L",
-       mapPosition: new Vector2(0, 0),
-       capyPosition: new Vector2(0, 0),
+       mapPosition: new Vector2(-17, 90),
+       capyPosition: new Vector2(21.2f,-70),
        level: Level.EverydayMindfulness_L2,
        world: World.EverydayMindfulness);
 
@@ -464,8 +464,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/EverydayMindfulness/L3A4" }
        },
        bannerFile: "BannerFiles/EverydayMindfulness/L3L",
-       mapPosition: new Vector2(0, 0),
-       capyPosition: new Vector2(0, 0),
+       mapPosition: new Vector2(-17,-90),
+       capyPosition: new Vector2(21.2f, 187),
        level: Level.EverydayMindfulness_L3,
        world: World.EverydayMindfulness);
 
@@ -483,8 +483,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/EverydayMindfulness/L4A4" }
        },
        bannerFile: "BannerFiles/EverydayMindfulness/L4L",
-       mapPosition: new Vector2(0, 0),
-       capyPosition: new Vector2(0, 0),
+       mapPosition: new Vector2(-17, -90),
+       capyPosition: new Vector2(21.2f,492),
        level: Level.EverydayMindfulness_L4,
        world: World.EverydayMindfulness);
 
@@ -501,8 +501,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/EverydayMindfulness/SL1A4" }
        },
        bannerFile: "BannerFiles/EverydayMindfulness/SL1L",
-       mapPosition: new Vector2(0, 0),
-       capyPosition: new Vector2(0, 0),
+       mapPosition: new Vector2(200,90),
+       capyPosition: new Vector2(-189, -70),
        level: Level.EverydayMindfulness_SL1,
        world: World.EverydayMindfulness);
 
@@ -519,8 +519,8 @@ public class LevelInfo
             { AgeGroup.Adult, "LessonAudio/EverydayMindfulness/SL2A4" }
        },
        bannerFile: "BannerFiles/EverydayMindfulness/SL2L",
-       mapPosition: new Vector2(0, 0),
-       capyPosition: new Vector2(0, 0),
+       mapPosition: new Vector2(-230,-90),
+       capyPosition: new Vector2(243,274),
        level: Level.EverydayMindfulness_SL2,
        world: World.EverydayMindfulness);
 
@@ -615,6 +615,7 @@ public static class LevelExtensions
         {Level.PresentMoment_L3, new Level[]{Level.PresentMoment_L4, Level.PresentMoment_SL2} },
         {Level.PresentMoment_L4, new Level[]{ } },
         {Level.PresentMoment_SL1, new Level[]{ } },
+        {Level.PresentMoment_SL2, new Level[]{ } },
         {Level.EverydayMindfulness_L1, new Level[]{Level.EverydayMindfulness_L2} },
         {Level.EverydayMindfulness_L2, new Level[]{Level.EverydayMindfulness_L3, Level.EverydayMindfulness_SL1} },
         {Level.EverydayMindfulness_L3, new Level[]{Level.EverydayMindfulness_L4, Level.EverydayMindfulness_SL2} },

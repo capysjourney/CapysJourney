@@ -13,7 +13,6 @@ public static class DataManager
     public static PlayerStats GetStats()
     {
         bool isGuest = PlayerPrefs.GetInt("isGuest", 1) == 1;
-        Debug.Log("Loading stats from Firestore, isGuest: " + isGuest);
         if (!isGuest)
         {
             return PlayerStats.LoadFromFirestore();

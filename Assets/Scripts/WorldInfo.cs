@@ -51,6 +51,7 @@ public class WorldInfo
             Level.PresentMoment_L3,
             Level.PresentMoment_L4,
             Level.PresentMoment_SL1,
+            Level.PresentMoment_SL2
         },
         world: World.PresentMoment,
         firstLevel: Level.PresentMoment_L1,

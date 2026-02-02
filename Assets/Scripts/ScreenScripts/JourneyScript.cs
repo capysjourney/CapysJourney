@@ -13,8 +13,10 @@ public class JourneyScript : MonoBehaviour
     [SerializeField] private RectTransform _mapContainer;
     [SerializeField] private Image _firstStepsMap;
     [SerializeField] private Image _presentMomentMap;
+    [SerializeField] private Image _everydayMindfulnessMap;
     [SerializeField] private FirstStepsScript _firstStepsScript;
     [SerializeField] private PresentMomentScript _presentMomentScript;
+    [SerializeField] private EverydayMindfulnessScript _everydayMindfulnessScript;
 
     [Header("Scene UI")]
     [SerializeField] private Image _gradientBackground;
@@ -93,7 +95,8 @@ public class JourneyScript : MonoBehaviour
         Dictionary<WorldInfo, (Image mapImage, MapScript mapScript)> mapRegistry = new()
         {
             { WorldInfo.FirstSteps, (_firstStepsMap, _firstStepsScript) },
-            { WorldInfo.PresentMoment, (_presentMomentMap, _presentMomentScript) }
+            { WorldInfo.PresentMoment, (_presentMomentMap, _presentMomentScript) },
+            { WorldInfo.EverydayMindfulness, (_everydayMindfulnessMap, _everydayMindfulnessScript) }
         };
 
         if (!mapRegistry.ContainsKey(currentWorld))
