@@ -19,8 +19,11 @@ public class WorldMapScript : MonoBehaviour
     [SerializeField] private Button _sleepButton;
 
     [Header("Clouds")]
-    [SerializeField] private GameObject _topClouds;
-    [SerializeField] private GameObject _bottomClouds;
+    [SerializeField] private GameObject _sleepCloud;
+    [SerializeField] private GameObject _exploringAwarenessCloud;
+    [SerializeField] private GameObject _compassionCloud;
+    [SerializeField] private GameObject _everydayMindfulnessCloud;
+    [SerializeField] private GameObject _presentMomentCloud;
 
     [Header("Prefabs")]
     [SerializeField] private GameObject _flagPrefab;
@@ -81,11 +84,17 @@ public class WorldMapScript : MonoBehaviour
 
     private void SetClouds()
     {
-        _topClouds.SetActive(true);
-        _bottomClouds.SetActive(!_unlockedWorlds.Contains(World.PresentMoment));
+        GameObject[] clouds = new[] { _sleepCloud, _compassionCloud, _exploringAwarenessCloud, _everydayMindfulnessCloud, _presentMomentCloud };
+        _sleepCloud.SetActive(true);
+        _compassionCloud.SetActive(true);
+        _exploringAwarenessCloud.SetActive(true);
+        _everydayMindfulnessCloud.SetActive(!_unlockedWorlds.Contains(World.EverydayMindfulness));
+        _presentMomentCloud.SetActive(! _unlockedWorlds.Contains(World.PresentMoment));
         // in case flags go on top of clouds
-        _topClouds.transform.SetAsLastSibling();
-        _bottomClouds.transform.SetAsLastSibling();
+        foreach(GameObject cloud in clouds)
+        {
+            cloud.transform.SetAsLastSibling();
+        }
     }
 
     private void PlaceCapy()
