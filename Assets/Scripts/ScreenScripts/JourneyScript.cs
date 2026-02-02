@@ -3,20 +3,47 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// Scene controller for the Journey screen.
+/// Manages scene-level UI, session state, and map selection.
+/// </summary>
 public class JourneyScript : MonoBehaviour
 {
-    [SerializeField] private Image _firstStepsMap;
-    [SerializeField] private RectTransform _capy;
+    [Header("Map Configuration")]
     [SerializeField] private RectTransform _mapContainer;
+    [SerializeField] private Image _firstStepsMap;
+    [SerializeField] private Image _presentMomentMap;
+    [SerializeField] private Image _everydayMindfulnessMap;
     [SerializeField] private FirstStepsScript _firstStepsScript;
-    [SerializeField] private GameObject _worldButtonGO;
-    [SerializeField] private GameObject _navBar;
+    [SerializeField] private PresentMomentScript _presentMomentScript;
+    [SerializeField] private EverydayMindfulnessScript _everydayMindfulnessScript;
+
+    [Header("Scene UI")]
+    [SerializeField] private Image _gradientBackground;
+    [SerializeField] private NavBarScript _navBarScript;
     [SerializeField] private GameObject _loginBonus;
     [SerializeField] private Button _loginBonusButton;
-    private Button _worldButton;
-    private Image _map;
+    [SerializeField] private Button _worldButton;
+    [SerializeField] private GameObject _newRegionNotif;
+    [SerializeField] private Button _newRegionNotifWorldButton;
+
+    [Header("Quincy")]
+    [SerializeField] private Button _quincyMask;
+    [SerializeField] private QuincyScript _quincyScript;
+
+    private MapScript _activeMapScript;
 
     void Start()
+    {
+        InitializeSession();
+        InitializeMap();
+        InitializeSceneUI();
+        InitializeAudio();
+    }
+
+    #region Session Management
+
+    private void InitializeSession()
     {
         bool hasVisitedJourney = GameManager.GetHasVisitedJourney();
         if (hasVisitedJourney)
@@ -30,49 +57,86 @@ public class JourneyScript : MonoBehaviour
         }
         else
         {
-            CarrotManager.IncreaseCarrots(10);
-            ToggleLoginBonusUI(true);
-            _loginBonusButton.onClick.RemoveAllListeners();
-            _loginBonusButton.onClick.AddListener(() =>
-            {
-                ToggleLoginBonusUI(false);
-            });
+            ShowLoginBonus();
         }
         GameManager.VisitJourney();
-        _worldButton = _worldButtonGO.GetComponent<Button>();
         GameManager.UpdateWorldAndLevel();
-        InitializeMap();
-        ConfigureWorldButton();
-        if (!AudioManager.Instance.IsMusicPlaying)
+    }
+
+    private void ShowLoginBonus()
+    {
+        CarrotManager.IncreaseCarrots(10);
+        ToggleLoginBonusUI(true);
+        _loginBonusButton.onClick.RemoveAllListeners();
+        _loginBonusButton.onClick.AddListener(() =>
         {
-            AudioManager.Instance.PlayMusic(Sound.MainTheme);
-        }
+            ToggleLoginBonusUI(false);
+        });
     }
 
     private void ToggleLoginBonusUI(bool showLoginBonus)
     {
-        _navBar.SetActive(!showLoginBonus);
+        _navBarScript.gameObject.SetActive(!showLoginBonus);
         _loginBonus.SetActive(showLoginBonus);
     }
 
+    #endregion
+
+    #region Map Management
+
     private void InitializeMap()
     {
-        World world = GameManager.GetCurrWorld();
-        Level level = GameManager.GetCurrLevel();
-        Dictionary<Level, LevelStatus> statuses = GameManager.GetWorldStatus(world);
-        bool isQuincyUnlocked = QuincyManager.IsQuincyUnlocked(world);
-        Dictionary<World, Image> maps = new()
+        WorldInfo currentWorld = GameManager.GetCurrWorldInfo();
+        LevelInfo currentLevel = GameManager.GetCurrLevelInfo();
+        Dictionary<Level, LevelStatus> levelStatuses = GameManager.GetWorldStatus(currentWorld.World);
+        bool isQuincyUnlocked = QuincyManager.IsQuincyUnlocked(currentWorld);
+
+        // Registry of all available maps
+        Dictionary<WorldInfo, (Image mapImage, MapScript mapScript)> mapRegistry = new()
         {
-            { World.FirstSteps, _firstStepsMap }
+            { WorldInfo.FirstSteps, (_firstStepsMap, _firstStepsScript) },
+            { WorldInfo.PresentMoment, (_presentMomentMap, _presentMomentScript) },
+            { WorldInfo.EverydayMindfulness, (_everydayMindfulnessMap, _everydayMindfulnessScript) }
         };
-        _map = maps[world];
-        foreach (Image image in maps.Values)
+
+        if (!mapRegistry.ContainsKey(currentWorld))
         {
-            image.gameObject.SetActive(image == _map);
+            Debug.LogError($"No map configured for world: {currentWorld}");
+            return;
         }
-        Dictionary<World, MapScript> scripts = new() { { World.FirstSteps, _firstStepsScript } };
-        scripts[world].Initialize(level, statuses, isQuincyUnlocked);
-        _worldButtonGO.SetActive(false);
+
+        // Activate the appropriate map
+        var (activeMapImage, activeMapScript) = mapRegistry[currentWorld];
+        _activeMapScript = activeMapScript;
+
+        // Show only the active map
+        foreach (var (_, (mapImage, _)) in mapRegistry)
+        {
+            mapImage.gameObject.SetActive(mapImage == activeMapImage);
+        }
+
+        // Initialize the map with game state and shared references
+        _activeMapScript.Initialize(
+            mapContainer: _mapContainer,
+            currentLevel: currentLevel.Level,
+            levelStatuses: levelStatuses,
+            isQuincyUnlocked: isQuincyUnlocked,
+            onQuincyDone: ConfigureNewRegionNotif,
+            gradientBackground: _gradientBackground,
+            navBarScript: _navBarScript,
+            quincyMask: _quincyMask,
+            quincyScript: _quincyScript
+        );
+    }
+
+    #endregion
+
+    #region Scene UI Configuration
+
+    private void InitializeSceneUI()
+    {
+        ConfigureWorldButton();
+        ConfigureNewRegionNotif();
     }
 
     private void ConfigureWorldButton()
@@ -81,7 +145,44 @@ public class JourneyScript : MonoBehaviour
         _worldButton.onClick.AddListener(() =>
         {
             SceneManager.LoadSceneAsync("WorldMap");
-            // todo - make map
+        });
+        _worldButton.gameObject.SetActive(true);
+    }
+
+    private void ConfigureNewRegionNotif()
+    {
+        WorldInfo currentWorld = GameManager.GetCurrWorldInfo();
+        bool isWorldCompleted = GameManager.IsWorldCompleted(currentWorld.World);
+        bool hasSeenNewWorldNotif = GameManager.GetHasSeenNewWorldNotif(currentWorld.World);
+
+        if (isWorldCompleted && !hasSeenNewWorldNotif)
+        {
+            // Mark the new world notification as seen
+            GameManager.OnSeenNewWorldNotif(currentWorld.World);
+            _newRegionNotif.SetActive(true);
+        }
+        else
+        {
+            _newRegionNotif.SetActive(false);
+        }
+        _newRegionNotifWorldButton.onClick.RemoveAllListeners();
+        _newRegionNotifWorldButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadSceneAsync("WorldMap");
         });
     }
+
+    #endregion
+
+    #region Audio
+
+    private void InitializeAudio()
+    {
+        if (!AudioManager.Instance.IsMusicPlaying)
+        {
+            AudioManager.Instance.PlayMusic(Sound.MainTheme);
+        }
+    }
+
+    #endregion
 }

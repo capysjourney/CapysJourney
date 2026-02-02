@@ -7,10 +7,10 @@ public static class BadgeManager
         HashSet<Badge> result = new();
         DataManager.WithStats(stats =>
         {
-            HashSet<BadgeEnum> badgeEnums = stats.BadgesEarned;
-            foreach (BadgeEnum badgeEnum in badgeEnums)
+            HashSet<Badge> badgeEnums = stats.BadgesEarned;
+            foreach (Badge badge in badgeEnums)
             {
-                result.Add(Badge.BadgeOfEnum[badgeEnum]);
+                result.Add(badge);
             }
         }, false);
         return result;
@@ -34,7 +34,7 @@ public static class BadgeManager
         }, true);
     }
 
-    public static void HandleBadgesEarned(List<BadgeEnum> badges)
+    public static void HandleBadgesEarned(List<Badge> badges)
     {
         BadgeNotifManager.Instance.ShowBadgeNotifications(badges);
     }

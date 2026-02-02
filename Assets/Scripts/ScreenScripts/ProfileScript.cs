@@ -59,7 +59,7 @@ public class ProfileScript : MonoBehaviour
         _badgesDisplayed = BadgeManager.GetBadgesDisplayed();
         try
         {
-            _themesText.SetText($"{GameManager.GetNumWorldsCompleted()}/{World.AllWorlds.Count}");
+            _themesText.SetText($"{GameManager.GetNumWorldsCompleted()}/{WorldInfo.AllWorlds.Count}");
             _exercisesText.SetText($"{GameManager.GetNumLessonsCompleted()}");
             _minMeditationText.SetText(GameManager.GetTotalMinutesMeditated().ToString());
             LocalizedString localizedStreakText = new("String Table", "streak") {
@@ -103,7 +103,7 @@ public class ProfileScript : MonoBehaviour
             RectTransform rectTransform = badgeObj.GetComponent<RectTransform>();
             rectTransform.sizeDelta = new Vector2(73, 73);
             DisplayedBadgeScript displayedBadgeScript = badgeObj.GetComponent<DisplayedBadgeScript>();
-            Sprite badgeSprite = Resources.Load<Sprite>(badge.SpritePath);
+            Sprite badgeSprite = Resources.Load<Sprite>(badge.GetInfo().SpritePath);
             displayedBadgeScript.SetSprite(badgeSprite);
             displayedBadgeScript.SetOnClose(() =>
             {
@@ -130,7 +130,7 @@ public class ProfileScript : MonoBehaviour
             Destroy(child.gameObject);
         }
         HashSet<Badge> badgesOwned = BadgeManager.GetBadgesOwned();
-        foreach (Badge badge in Badge.BadgesInOrder)
+        foreach (Badge badge in BadgeInfo.BadgesInOrder)
         {
             if (!badgesOwned.Contains(badge)) continue;
             GameObject badgeObj = Instantiate(_badgePrefab, _achievementsBox.transform);
@@ -148,7 +148,7 @@ public class ProfileScript : MonoBehaviour
         }
         HashSet<Badge> badgesOwned = BadgeManager.GetBadgesOwned();
         bool noSelectableBadges = true;
-        foreach (Badge badge in Badge.BadgesInOrder)
+        foreach (Badge badge in BadgeInfo.BadgesInOrder)
         {
             if (badgesOwned.Contains(badge) && !_badgesDisplayed.GetBadges().Contains(badge))
             {
@@ -173,7 +173,7 @@ public class ProfileScript : MonoBehaviour
                     else
                     {
                         _newBadgeSelectedScript = null;
-                        _newBadgeSelected = null;
+                        _newBadgeSelected = Badge.None;
                         badgeScript.SetIsSelected(false);
                         _selectBadgeButton.interactable = false;
                     }
@@ -258,11 +258,11 @@ public class ProfileScript : MonoBehaviour
 
     private void OnSelectBadgeButtonClicked()
     {
-        if (_newBadgeSelected != null)
+        if (_newBadgeSelected != Badge.None)
         {
             _badgesDisplayed.AddBadge(_newBadgeSelected);
             BadgeManager.SetBadgesDisplayed(_badgesDisplayed);
-            _newBadgeSelected = null;
+            _newBadgeSelected = Badge.None;
             _newBadgeSelectedScript = null;
             _selectBadgeButton.interactable = false;
         }

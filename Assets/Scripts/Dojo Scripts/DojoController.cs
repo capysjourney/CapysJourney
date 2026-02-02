@@ -31,8 +31,8 @@ public class DojoController : MonoBehaviour
     [SerializeField] private AudioClip bell2;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private Button startButton;
-    [SerializeField] private UnityEngine.UI.Image durationSelect;
-    [SerializeField] private UnityEngine.UI.Image intervalSelect;
+    [SerializeField] private Image durationSelect;
+    [SerializeField] private Image intervalSelect;
     [SerializeField] private RectTransform durationContent;
     [SerializeField] private RectTransform intervalContent;
     [SerializeField] private RectTransform savedMeditationsContainer;
@@ -42,7 +42,7 @@ public class DojoController : MonoBehaviour
     [SerializeField] private RectTransform savedLessonsTemplate;
     [SerializeField] private TMP_Dropdown region;
 
-    private World selectedWorld = null;
+    private WorldInfo selectedWorld = null;
 
     void Start()
     {
@@ -63,7 +63,7 @@ public class DojoController : MonoBehaviour
     private void OnWorldFilterChanged(int index)
     {
         Debug.Log($"OnWorldFilterChanged called with index: {index}, option text: {region.options[index].text}");
-        index = index - 1;
+        index--;
         string selectedOption = region.options[index].text;
 
         if (selectedOption == "All Worlds" || selectedOption == "Everything")
@@ -72,7 +72,7 @@ public class DojoController : MonoBehaviour
         }
         else
         {
-            selectedWorld = World.AllWorlds.FirstOrDefault(w => w.Name == selectedOption);
+            selectedWorld = WorldInfo.AllWorlds.FirstOrDefault(w => w.Name == selectedOption);
 
             if (selectedWorld == null)
             {
@@ -95,29 +95,28 @@ public class DojoController : MonoBehaviour
 
         DataManager.WithStats(stats =>
         {
-            List<Level> filteredLevels = new List<Level>();
+            List<LevelInfo> filteredLevels = new();
 
-            foreach (LevelEnum levelEnum in stats.BookmarkedLevels)
+            foreach (Level level in stats.BookmarkedLevels)
             {
-                Level level = Level.LevelLookup[levelEnum];
-
-                if (selectedWorld == null || level.World == selectedWorld)
+                LevelInfo levelInfo = level.GetInfo();
+                if (selectedWorld == null || levelInfo.World == selectedWorld.World)
                 {
-                    filteredLevels.Add(level);
+                    filteredLevels.Add(levelInfo);
                 }
             }
 
             Debug.Log($"Displaying {filteredLevels.Count} bookmarked levels" +
                      (selectedWorld != null ? $" from {selectedWorld.Name}" : ""));
 
-            foreach (Level level in filteredLevels)
+            foreach (LevelInfo level in filteredLevels)
             {
                 CreateBookmarkedLessonUI(level);
             }
         }, false);
     }
 
-    private void CreateBookmarkedLessonUI(Level level)
+    private void CreateBookmarkedLessonUI(LevelInfo level)
     {
         RectTransform newLessonUI = Instantiate(savedLessonsTemplate, savedLessonsList.content);
 
@@ -128,19 +127,6 @@ public class DojoController : MonoBehaviour
         }
 
         newLessonUI.gameObject.SetActive(true);
-    }
-
-    public static void PrintBookmarkedLevels()
-    {
-        DataManager.WithStats(stats =>
-        {
-            Debug.Log($"Found {stats.BookmarkedLevels.Count} bookmarked levels:");
-
-            foreach (LevelEnum levelEnum in stats.BookmarkedLevels)
-            {
-                Level level = Level.LevelLookup[levelEnum];
-            }
-        }, false);
     }
 
     private void LoadAndDisplayMeditations()
@@ -155,14 +141,16 @@ public class DojoController : MonoBehaviour
 
         DataManager.WithStats(stats =>
         {
-            meditationList = new MeditationList();
-            meditationList.entries = stats.MeditationLog.Select(m => new MeditationEntry
+            meditationList = new()
             {
-                duration = m.duration,
-                interval = m.interval,
-                chime = m.chime,
-                effect = m.effect
-            }).ToList();
+                entries = stats.MeditationLog.Select(m => new MeditationEntry
+                {
+                    duration = m.duration,
+                    interval = m.interval,
+                    chime = m.chime,
+                    effect = m.effect
+                }).ToList()
+            };
 
             DisplaySavedMeditations();
         }, false);
@@ -258,7 +246,7 @@ public class DojoController : MonoBehaviour
         SharedData.chime = chime.options[index].text;
     }
 
-    private int GetScrollValue(RectTransform content, UnityEngine.UI.Image select)
+    private int GetScrollValue(RectTransform content, Image select)
     {
         Vector3 selectPos = select.transform.position;
         Button[] children = content.GetComponentsInChildren<Button>();
@@ -308,13 +296,7 @@ public class DojoController : MonoBehaviour
         }
     }
 
-    public void RefreshMeditations()
-    {
-        LoadAndDisplayMeditations();
-    }
+    public void RefreshMeditations() => LoadAndDisplayMeditations();
 
-    public void RefreshBookmarkedLessons()
-    {
-        LoadAndDisplayBookmarkedLessons();
-    }
+    public void RefreshBookmarkedLessons() => LoadAndDisplayBookmarkedLessons();
 }

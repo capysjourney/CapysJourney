@@ -9,12 +9,14 @@ using UnityEngine.UI;
 
 public class NavBarScript : MonoBehaviour
 {
+    [Header("Buttons")]
     [SerializeField] private Button _journeyTab;
     [SerializeField] private Button _dailyTab;
     [SerializeField] private Button _denTab;
     [SerializeField] private Button _profileTab;
     [SerializeField] private Button _dojoButton;
-    [SerializeField] private Image _carrot;
+
+    [Header("Text")]
     [SerializeField] private TMP_Text _carrotCount;
     [SerializeField] private TMP_Text _worldLabel;
     [SerializeField] private TMP_Text _level;
@@ -47,10 +49,10 @@ public class NavBarScript : MonoBehaviour
         InitializeContent();
     }
 
-    public void ChangeLevel(Level level)
+    public void ChangeLevel(LevelInfo level)
     {
         _level.SetText(level.ShortName);
-        _worldLabel.SetText(level.World.Name);
+        _worldLabel.SetText(level.World.GetInfo().Name);
     }
 
     public void SetIsForTutorial(bool isForTutorial)
@@ -131,9 +133,9 @@ public class NavBarScript : MonoBehaviour
     private void JourneyContent()
     {
         ToggleLabels(true);
-        Level currLevel = GameManager.GetCurrLevel();
+        LevelInfo currLevel = GameManager.GetCurrLevelInfo();
         _level.SetText(currLevel.ShortName);
-        _worldLabel.SetText(currLevel.World.Name);
+        _worldLabel.SetText(currLevel.World.GetInfo().Name);
     }
 
     private void ToggleLabels(bool isJourney)

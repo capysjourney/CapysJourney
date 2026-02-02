@@ -7,20 +7,17 @@ public static class GameManager
     /// <summary>
     /// The current world that Capy is standing in.
     /// </summary>
-    private static World CurrWorld = null;
+    private static World CurrWorld = World.FirstSteps;
 
     /// <summary>
     /// The current level that Capy is standing on.
     /// </summary>
-    private static Level CurrLevel = null;
+    private static Level CurrLevel = Level.FirstSteps_L1;
 
     /// <summary>
     /// Whether to go to the "Waiting for parent confirmation" screen after registering.
     /// </summary>
     public static bool NeedParentConfirmation = false;
-
-    public static bool LaunchAsGuest = false;
-
     private static bool HasVisitedJourney = false;
 
     public static bool GetHasVisitedJourney()
@@ -37,8 +34,8 @@ public static class GameManager
     {
         DataManager.WithStats(stats =>
         {
-            CurrWorld = World.WorldLookup[stats.CurrWorld];
-            CurrLevel = Level.LevelLookup[stats.CurrLevel];
+            CurrWorld = stats.CurrWorld;
+            CurrLevel = stats.CurrLevel;
         }, false);
     }
 
@@ -59,33 +56,27 @@ public static class GameManager
         }, true);
 
         // Track level completion with PostHog
+        LevelInfo completedLevelInfo = completedLevel.GetInfo();
         PostHogManager.Instance.Capture("level_completed", new Dictionary<string, object>
         {
-            { "level_name", completedLevel.ShortName },
-            { "level_enum", completedLevel.EnumName.ToString() },
-            { "world_name", completedLevel.World.Name },
+            { "level_name", completedLevelInfo.ShortName },
+            { "level_enum", completedLevelInfo.Level.ToString() },
+            { "world_name", completedLevelInfo.World.GetInfo().Name },
             { "lesson_duration_seconds", lessonDuration },
             { "total_exercises_completed", numExercisesCompleted },
             { "total_worlds_completed", numWorldsCompleted }
         });
     }
 
-    public static World GetCurrWorld()
+    // expose world/level info details to UI
+    public static WorldInfo GetCurrWorldInfo()
     {
-        if (CurrWorld == null)
-        {
-            UpdateWorldAndLevel();
-        }
-        return CurrWorld;
+        return CurrWorld.GetInfo();
     }
 
-    public static Level GetCurrLevel()
+    public static LevelInfo GetCurrLevelInfo()
     {
-        if (CurrLevel == null)
-        {
-            UpdateWorldAndLevel();
-        }
-        return CurrLevel;
+        return CurrLevel.GetInfo();
     }
 
     public static bool HasCompletedLevel(Level level)
@@ -95,21 +86,16 @@ public static class GameManager
         return result;
     }
 
-    public static void SetCurrWorld(World world)
-    {
-        CurrWorld = world;
-    }
-
     public static void SetCurrLevel(Level level)
     {
         CurrLevel = level;
-        CurrWorld = level.World;
+        CurrWorld = CurrLevel.GetWorld();
         DataManager.WithStats(stats => stats.ChangeLevel(level), true);
     }
 
     private static void MakeNextLevelsAvailable(PlayerStats stats)
     {
-        Level[] nextLevels = Level.NextLevelMap[CurrLevel];
+        Level[] nextLevels = CurrLevel.GetNextLevels();
         foreach (Level level in nextLevels)
         {
             stats.MakeLevelAvailable(level);
@@ -140,10 +126,66 @@ public static class GameManager
         return result;
     }
 
+    public static HashSet<World> GetUnlockedWorlds()
+    {
+        HashSet<World> result = new();
+        DataManager.WithStats(stats =>
+        {
+            foreach (World world in Enum.GetValues(typeof(World)))
+            {
+                if (stats.GetWorldStatus(world)[world.GetInfo().FirstLevel] != LevelStatus.Locked)
+                {
+                    result.Add(world);
+                }
+            }
+        }, false);
+        return result;
+    }
+
     public static int GetNumWorldsCompleted()
     {
         int result = 0;
         DataManager.WithStats(stats => result = stats.NumWorldsCompleted, false);
+        return result;
+    }
+
+    public static bool IsWorldCompleted(World world)
+    {
+        bool result = false;
+        DataManager.WithStats(stats => result = stats.IsWorldCompleted(world), false);
+        return result;
+    }
+
+    public static HashSet<World> GetCompletedWorlds()
+    {
+        HashSet<World> result = new();
+        DataManager.WithStats(stats =>
+        {
+            foreach (World world in Enum.GetValues(typeof(World)))
+            {
+                if (stats.IsWorldCompleted(world))
+                {
+                    result.Add(world);
+                }
+            }
+        }, false);
+        return result;
+    }
+
+    public static HashSet<World> GetNewlyAvailableWorlds()
+    {
+        HashSet<World> result = new();
+        DataManager.WithStats(stats =>
+        {
+            foreach (World world in Enum.GetValues(typeof(World)))
+            {
+                WorldInfo worldInfo = world.GetInfo();
+                if (stats.GetLevelStatus(worldInfo.FirstLevel) == LevelStatus.Available)
+                {
+                    result.Add(world);
+                }
+            }
+        }, false);
         return result;
     }
 
@@ -203,6 +245,7 @@ public static class GameManager
             isFirstLogin = lastLogin == DateTime.MinValue;
         }, true);
 
+
         // Track login with PostHog
         PostHogManager.Instance.Capture("user_logged_in", new Dictionary<string, object>
         {
@@ -210,5 +253,17 @@ public static class GameManager
             { "current_streak", GetCurrStreak() },
             { "best_streak", GetBestStreak() }
         });
+    }
+
+    public static bool GetHasSeenNewWorldNotif(World world)
+    {
+        bool result = false;
+        DataManager.WithStats(stats => result = stats.HasSeenNewWorldNotif[world], false);
+        return result;
+    }
+
+    public static void OnSeenNewWorldNotif(World world)
+    {
+        DataManager.WithStats(stats => stats.HasSeenNewWorldNotif[world] = true, true);
     }
 }

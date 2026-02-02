@@ -1,18 +1,18 @@
 public static class QuincyManager
 {
-    public static void CompleteQuincy(World world)
+    public static void CompleteQuincy(WorldInfo world)
     {
-        World completedWorld = world;
+        WorldInfo completedWorld = world;
         DataManager.WithStats(stats =>
         {
-            stats.CompleteQuincy(world, BadgeManager.HandleBadgesEarned);
+            stats.CompleteQuincy(world.World, BadgeManager.HandleBadgesEarned);
         }, true);
     }
 
-    public static bool IsQuincyUnlocked(World world)
+    public static bool IsQuincyUnlocked(WorldInfo world)
     {
         bool result = false;
-        DataManager.WithStats(stats => result = stats.QuincyStatusOfWorld[world.EnumName] == LevelStatus.Available, false);
+        DataManager.WithStats(stats => result = stats.QuincyStatusOfWorld[world.World] == LevelStatus.Available, false);
         return result;
     }
 }

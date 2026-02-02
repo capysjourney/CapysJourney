@@ -45,9 +45,9 @@ public class LessonScript : MonoBehaviour
         _pauseButtonImage = _pauseButton.GetComponent<Image>();
         _bookmarkButtonImage = _bookmarkButton.GetComponent<Image>();
         _forwardButtonImage = _forwardButton.GetComponent<Image>();
-        Level currLevel = GameManager.GetCurrLevel();
+        LevelInfo currLevel = GameManager.GetCurrLevelInfo();
         _title.text = currLevel.Name;
-        _hasCompleted = GameManager.HasCompletedLevel(currLevel);
+        _hasCompleted = GameManager.HasCompletedLevel(currLevel.Level);
 
         LoadImage();
         LoadAudio();
@@ -85,7 +85,7 @@ public class LessonScript : MonoBehaviour
 
     private void LoadImage()
     {
-        string bannerName = GameManager.GetCurrLevel().BannerFile;
+        string bannerName = GameManager.GetCurrLevelInfo().BannerFile;
         Sprite sprite = Resources.Load<Sprite>(bannerName);
         if (sprite == null)
         {
@@ -98,7 +98,7 @@ public class LessonScript : MonoBehaviour
     {
         _audioSource.Stop();
         int age = PlayerPrefs.GetInt("age", 10);
-        string audioName = AudioManager.GetAudioName(GameManager.GetCurrLevel(), GetAgeGroup(age));
+        string audioName = AudioManager.GetAudioName(GameManager.GetCurrLevelInfo(), GetAgeGroup(age));
         AudioClip audioClip = Resources.Load<AudioClip>(audioName);
         if (audioClip == null)
         {
@@ -268,7 +268,7 @@ public class LessonScript : MonoBehaviour
         PauseAudio();
         Darken();
         AudioManager.Instance.PlayUIEffect(Sound.CompleteLevel);
-        _levelNumText.text = GameManager.GetCurrLevel().ShortName;
+        _levelNumText.text = GameManager.GetCurrLevelInfo().ShortName;
         GameManager.CompleteLevel(_durationInSeconds);
         _hasCompleted = true;
         if (GameManager.IsLevelBookmarked())

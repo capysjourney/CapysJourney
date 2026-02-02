@@ -51,14 +51,14 @@ EditorBuildSettings:
     path: Assets/Scenes/Lesson.unity
     guid: 48afaceb2916ddf489e544c8f7a8040f
   - enabled: 1
-    path: Assets/Scenes/Achievements.unity
-    guid: 315eacce37d28c041896b5c9e2011c3a
-  - enabled: 1
     path: Assets/Scenes/Tutorial.unity
     guid: e2e8fca0e18f98a4ead007c6ac96c79e
   - enabled: 1
     path: Assets/Scenes/Login.unity
     guid: e9b74e77fb5af5c4c9a7466b360f55d3
+  - enabled: 1
+    path: Assets/Scenes/WorldMap.unity
+    guid: a1e3d681dba887e43874a6108d8ee995
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 2a2ea9fb1856b0346ab1d1a028f4075f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

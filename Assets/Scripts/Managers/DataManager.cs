@@ -1,25 +1,24 @@
 using System;
+using UnityEngine;
 
 public static class DataManager
 {
-    private static PlayerStats statsCache = null;
+    public static JsonDataService DataService = new();
 
     public static void SetStats(PlayerStats stats)
     {
-        statsCache = stats;
+        DataService.SaveData("player-stats.json", stats);
     }
 
     public static PlayerStats GetStats()
     {
-        if (statsCache != null) return statsCache;
-
-        statsCache = new PlayerStats(GameManager.LaunchAsGuest);
-        statsCache.LoadFromFirestore();
-
-        return statsCache;
+        bool isGuest = PlayerPrefs.GetInt("isGuest", 1) == 1;
+        if (!isGuest)
+        {
+            return PlayerStats.LoadFromFirestore();
+        }
+        return DataService.LoadData<PlayerStats>("player-stats.json");
     }
-
-
 
     /// <summary>
     /// Fetches the player stats, performs <c>action</c> on it, and saves the updated stats if <c>update</c> is true.
@@ -37,7 +36,11 @@ public static class DataManager
 
     private static void SaveData(PlayerStats stats)
     {
-        stats.SaveToFirestore();
+        bool isGuest = PlayerPrefs.GetInt("isGuest", 1) == 1;
+        if (!isGuest)
+        {
+            stats.SaveToFirestore();
+        }
+        DataService.SaveData("player-stats.json", stats);
     }
-
 }

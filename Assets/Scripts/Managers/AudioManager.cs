@@ -23,7 +23,7 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
     private AudioSource _musicSource;
     public bool IsMusicPlaying => _musicSource != null && _musicSource.isPlaying;
-    public static string GetAudioName(Level level, AgeGroup ageGroup) => level.GetAudioFilePathOfAgeGroup(ageGroup);
+    public static string GetAudioName(LevelInfo level, AgeGroup ageGroup) => level.AudioFilePathOfAgeGroup[ageGroup];
     private void Awake()
     {
         if (Instance != null && Instance != this)
