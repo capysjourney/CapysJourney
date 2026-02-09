@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class SaveMeditation : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class SaveMeditation : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Image intervalSelect;
     [SerializeField] private RectTransform durationContent;
     [SerializeField] private RectTransform intervalContent;
+
     private Button saveButton;
     private MeditationList meditationList;
 
@@ -19,11 +21,11 @@ public class SaveMeditation : MonoBehaviour
         saveButton = GetComponent<Button>();
         if (saveButton != null)
         {
-            saveButton.onClick.AddListener(OnSaveButtonClick);
+            saveButton.onClick.AddListener(() => OnSaveButtonClick());
         }
     }
 
-    private void OnSaveButtonClick()
+    private async void OnSaveButtonClick()
     {
         MeditationEntry newEntry = new MeditationEntry
         {
@@ -33,7 +35,13 @@ public class SaveMeditation : MonoBehaviour
             effect = SharedData.effectData
         };
 
-        PlayerStats stats = DataManager.GetStats();
+        PlayerStats stats = await DataManager.GetStats();
+        if (stats == null)
+        {
+            UnityEngine.Debug.LogError("Failed to load player stats");
+            return;
+        }
+
         stats.MeditationLog.AddFirst(newEntry);
         stats.SaveToFirestore();
 
@@ -43,9 +51,14 @@ public class SaveMeditation : MonoBehaviour
         }
     }
 
-    private void LoadMeditations()
+    private async Task LoadMeditations()
     {
-        PlayerStats stats = DataManager.GetStats();
+        PlayerStats stats = await DataManager.GetStats();
+        if (stats == null)
+        {
+            UnityEngine.Debug.LogError("Failed to load player stats");
+            return;
+        }
 
         stats.LoadMeditationsFromFirestore(loadedList =>
         {
@@ -65,7 +78,6 @@ public class SaveMeditation : MonoBehaviour
     {
         Vector3 selectPos = select.transform.position;
         Button[] children = content.GetComponentsInChildren<Button>();
-
         float minDistance = float.MaxValue;
         Button closestButton = null;
 
@@ -87,5 +99,4 @@ public class SaveMeditation : MonoBehaviour
 
         return 1;
     }
-
 }

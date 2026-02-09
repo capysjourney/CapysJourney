@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
+using Debug = UnityEngine.Debug;
 /// <summary>
 /// Scene controller for the Journey screen.
 /// Manages scene-level UI, session state, and map selection.
@@ -84,11 +85,11 @@ public class JourneyScript : MonoBehaviour
 
     #region Map Management
 
-    private void InitializeMap()
+    private async void InitializeMap()
     {
         WorldInfo currentWorld = GameManager.GetCurrWorldInfo();
         LevelInfo currentLevel = GameManager.GetCurrLevelInfo();
-        Dictionary<Level, LevelStatus> levelStatuses = GameManager.GetWorldStatus(currentWorld.World);
+        Dictionary<Level, LevelStatus> levelStatuses = await GameManager.GetWorldStatus(currentWorld.World);
         bool isQuincyUnlocked = QuincyManager.IsQuincyUnlocked(currentWorld);
 
         // Registry of all available maps
@@ -108,7 +109,7 @@ public class JourneyScript : MonoBehaviour
         // Activate the appropriate map
         var (activeMapImage, activeMapScript) = mapRegistry[currentWorld];
         _activeMapScript = activeMapScript;
-
+        Debug.Log(_activeMapScript);
         // Show only the active map
         foreach (var (_, (mapImage, _)) in mapRegistry)
         {

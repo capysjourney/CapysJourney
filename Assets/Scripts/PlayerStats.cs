@@ -3,8 +3,11 @@ using Firebase.Extensions;
 using Firebase.Firestore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public enum LevelStatus { Locked = 0, Available, Completed }
 public enum Mood { Super, Good, Meh, Bad, Awful }
@@ -124,6 +127,7 @@ public class PlayerStats
     public PlayerStats(bool isGuest)
     {
         IsGuest = isGuest;
+        Debug.Log(isGuest);
         if (!IsGuest)
         {
             uid = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
@@ -202,42 +206,130 @@ public class PlayerStats
 
         docRef.SetAsync(data);
     }
-
-    public static PlayerStats LoadFromFirestore()
+    public static async Task<PlayerStats> LoadFromFirestore()
     {
-        PlayerStats playerStats = null;
-        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        if (db == null)
         {
-            if (!task.Result.Exists) return;
-            var d = task.Result;
-            playerStats = new(false)
-            {
-                NumCarrots = d.GetValue<int>("NumCarrots"),
-                BestStreak = d.GetValue<int>("BestStreak"),
-                CurrStreak = d.GetValue<int>("CurrStreak"),
-                SecondsMeditated = d.GetValue<float>("SecondsMeditated"),
-                NumLevelsCompleted = d.GetValue<int>("NumLevelsCompleted"),
-                NumWorldsCompleted = d.GetValue<int>("NumWorldsCompleted"),
-                LastBreathworkTime = new DateTime(d.GetValue<long>("LastBreathworkTime")),
-                LastLogin = new DateTime(d.GetValue<long>("LastLogin"))
-            };
+            db = FirebaseFirestore.DefaultInstance;
+        }
 
-            if (d.ContainsField("MeditationLog"))
+        if (string.IsNullOrEmpty(uid))
+        {
+            uid = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+        }
+
+        if (docRef == null)
+        {
+            docRef = db.Collection("users").Document(uid);
+        }
+
+        var snapshot = await docRef.GetSnapshotAsync();
+
+        if (!snapshot.Exists) return null;
+        var playerStats = new PlayerStats(false)
+        {
+            NumCarrots = snapshot.GetValue<int>("NumCarrots"),
+            BestStreak = snapshot.GetValue<int>("BestStreak"),
+            CurrStreak = snapshot.GetValue<int>("CurrStreak"),
+            SecondsMeditated = snapshot.GetValue<float>("SecondsMeditated"),
+            NumLevelsCompleted = snapshot.GetValue<int>("NumLevelsCompleted"),
+            NumWorldsCompleted = snapshot.GetValue<int>("NumWorldsCompleted"),
+            LastBreathworkTime = new DateTime(snapshot.GetValue<long>("LastBreathworkTime")),
+            LastLogin = new DateTime(snapshot.GetValue<long>("LastLogin"))
+        };
+
+        if (snapshot.ContainsField("CurrWorld"))
+        {
+            Enum.TryParse(snapshot.GetValue<string>("CurrWorld"), out World currWorld);
+            playerStats.CurrWorld = currWorld;
+        }
+
+        if (snapshot.ContainsField("CurrLevel"))
+        {
+            Enum.TryParse(snapshot.GetValue<string>("CurrLevel"), out Level currLevel);
+            playerStats.CurrLevel = currLevel;
+        }
+        if (snapshot.ContainsField("NumCarrots"))
+        {
+            Debug.Log(((Level)snapshot.GetValue<int>("NumCarrots")).ToString());
+        }
+        if (snapshot.ContainsField("BadgesEarned"))
+        {
+            var badgesList = snapshot.GetValue<List<string>>("BadgesEarned");
+            playerStats.BadgesEarned = new HashSet<Badge>();
+            foreach (var badgeStr in badgesList)
             {
-                var list = d.GetValue<List<MeditationEntryDTO>>("MeditationLog");
-                playerStats.MeditationLog = new LinkedList<MeditationEntry>();
-                foreach (var dto in list)
+                if (Enum.TryParse(badgeStr, out Badge badge))
+                    playerStats.BadgesEarned.Add(badge);
+            }
+        }
+
+        if (snapshot.ContainsField("BookmarkedLevels"))
+        {
+            var levelsList = snapshot.GetValue<List<string>>("BookmarkedLevels");
+            playerStats.BookmarkedLevels = new HashSet<Level>();
+            foreach (var levelStr in levelsList)
+            {
+                if (Enum.TryParse(levelStr, out Level level))
+                    playerStats.BookmarkedLevels.Add(level);
+            }
+        }
+
+        if (snapshot.ContainsField("LevelStatuses"))
+        {
+            var statusDict = snapshot.GetValue<Dictionary<string, object>>("LevelStatuses");
+            foreach (var kvp in statusDict)
+            {
+                if (Enum.TryParse(kvp.Key, out Level level))
                 {
-                    playerStats.MeditationLog.AddLast(new MeditationEntry
-                    {
-                        duration = dto.Duration,
-                        interval = dto.Interval,
-                        chime = dto.Chime,
-                        effect = dto.Effect
-                    });
+                    int statusValue = Convert.ToInt32(kvp.Value);
+                    playerStats.StatusOfLevel[level] = (LevelStatus)statusValue;
                 }
             }
-        });
+        }
+
+        if (snapshot.ContainsField("MoodLog"))
+        {
+            var moodList = snapshot.GetValue<List<MoodEntryDTO>>("MoodLog");
+            playerStats.MoodLog = new LinkedList<MoodEntry>();
+            foreach (var dto in moodList)
+            {
+                playerStats.MoodLog.AddLast(new MoodEntry(
+                    new DateTime(dto.Timestamp),
+                    (Mood)dto.MoodLevel
+                ));
+            }
+        }
+
+        if (snapshot.ContainsField("GratitudeLog"))
+        {
+            var gratitudeList = snapshot.GetValue<List<GratitudeEntryDTO>>("GratitudeLog");
+            playerStats.GratitudeLog = new LinkedList<GratitudeEntry>();
+            foreach (var dto in gratitudeList)
+            {
+                playerStats.GratitudeLog.AddLast(new GratitudeEntry(
+                    new DateTime(dto.Timestamp),
+                    dto.Text
+                ));
+            }
+        }
+
+        if (snapshot.ContainsField("MeditationLog"))
+        {
+            var list = snapshot.GetValue<List<MeditationEntryDTO>>("MeditationLog");
+            playerStats.MeditationLog = new LinkedList<MeditationEntry>();
+            foreach (var dto in list)
+            {
+                playerStats.MeditationLog.AddLast(new MeditationEntry
+                {
+                    duration = dto.Duration,
+                    interval = dto.Interval,
+                    chime = dto.Chime,
+                    effect = dto.Effect
+                });
+            }
+        }
+
         return playerStats;
     }
 
@@ -349,6 +441,8 @@ public class PlayerStats
 
     public Dictionary<Level, LevelStatus> GetWorldStatus(World world)
     {
+        Debug.Log("LALA");
+        Debug.Log("LALA" + world);
         Dictionary<Level, LevelStatus> result = new();
         foreach (Level level in world.GetLevels())
             result[level] = GetLevelStatus(level);
