@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class NavBarScript : MonoBehaviour
 {
+    public static NavBarScript Instance { get; private set; }
+
     [Header("Buttons")]
     [SerializeField] private Button _journeyTab;
     [SerializeField] private Button _dailyTab;
@@ -34,6 +36,17 @@ public class NavBarScript : MonoBehaviour
         Profile,
         Dojo
     }
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
@@ -47,6 +60,10 @@ public class NavBarScript : MonoBehaviour
         }
         ConfigureButtons();
         InitializeContent();
+    }
+    public async void RefreshCarrotCount()
+    {
+        _carrotCount.SetText($"{await CarrotManager.GetNumCarrots()}");
     }
 
     public void ChangeLevel(LevelInfo level)
@@ -100,7 +117,7 @@ public class NavBarScript : MonoBehaviour
         }
     }
 
-    private void InitializeContent()
+    private async void InitializeContent()
     {
         if (_currScene == Scene.Journey)
         {
@@ -127,7 +144,7 @@ public class NavBarScript : MonoBehaviour
             _centerText.SetText(new LocalizedString("String Table", label).GetLocalizedString());
             ToggleLabels(false);
         }
-        _carrotCount.SetText($"{CarrotManager.GetNumCarrots()}");
+        _carrotCount.SetText($"{await CarrotManager.GetNumCarrots()}");
     }
 
     private void JourneyContent()

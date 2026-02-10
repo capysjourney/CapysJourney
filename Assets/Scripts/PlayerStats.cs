@@ -222,7 +222,7 @@ public class PlayerStats
         {
             docRef = db.Collection("users").Document(uid);
         }
-
+        
         var snapshot = await docRef.GetSnapshotAsync();
 
         if (!snapshot.Exists) return null;

@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
+using TMPro;
+using UnityEngine.Localization;
+using UnityEngine.Localization.SmartFormat.PersistentVariables;
 /// <summary>
 /// Scene controller for the Journey screen.
 /// Manages scene-level UI, session state, and map selection.
@@ -25,6 +28,7 @@ public class JourneyScript : MonoBehaviour
     [SerializeField] private GameObject _loginBonus;
     [SerializeField] private Button _loginBonusButton;
     [SerializeField] private Button _worldButton;
+    [SerializeField] private TMP_Text _loginBonusName;
     [SerializeField] private GameObject _newRegionNotif;
     [SerializeField] private Button _newRegionNotifWorldButton;
 
@@ -64,10 +68,13 @@ public class JourneyScript : MonoBehaviour
         GameManager.UpdateWorldAndLevel();
     }
 
-    private void ShowLoginBonus()
+    private async void ShowLoginBonus()
     {
-        CarrotManager.IncreaseCarrots(10);
+        await CarrotManager.IncreaseCarrots(10);
         ToggleLoginBonusUI(true);
+        string username = PlayerPrefs.GetString("username", "Friend");
+
+        _loginBonusName.text = "Welcome back, " + username + "!";
         _loginBonusButton.onClick.RemoveAllListeners();
         _loginBonusButton.onClick.AddListener(() =>
         {
