@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public static class BadgeManager
 {
-    public static HashSet<Badge> GetBadgesOwned()
+    public static async Task<HashSet<Badge>> GetBadgesOwned()
     {
         HashSet<Badge> result = new();
-        DataManager.WithStats(stats =>
+        await DataManager.WithStats(stats =>
         {
             HashSet<Badge> badgeEnums = stats.BadgesEarned;
             foreach (Badge badge in badgeEnums)
@@ -16,19 +17,19 @@ public static class BadgeManager
         return result;
     }
 
-    public static BadgesDisplayed GetBadgesDisplayed()
+    public static async Task<BadgesDisplayed> GetBadgesDisplayed()
     {
         BadgesDisplayed result = null;
-        DataManager.WithStats(stats =>
+        await DataManager.WithStats(stats =>
         {
             result = stats.BadgesCurrentlyDisplayed;
         }, false);
         return result;
     }
 
-    public static void SetBadgesDisplayed(BadgesDisplayed badgesDisplayed)
+    public static async Task SetBadgesDisplayed(BadgesDisplayed badgesDisplayed)
     {
-        DataManager.WithStats(stats =>
+        await DataManager.WithStats(stats =>
         {
             stats.BadgesCurrentlyDisplayed = badgesDisplayed;
         }, true);

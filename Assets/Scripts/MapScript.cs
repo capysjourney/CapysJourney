@@ -1,10 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
+using static System.Net.Mime.MediaTypeNames;
+using Debug = UnityEngine.Debug;
+using Image = UnityEngine.UI.Image;
 /// <summary>
 /// Abstract base class for world map visualization and interaction.
 /// Handles level buttons, roads, positioning, popups, and Quincy.
@@ -77,25 +80,22 @@ abstract public class MapScript : MonoBehaviour
     /// <summary>
     /// Initialize the map with game state and shared UI references
     /// </summary>
-    public void Initialize(
-        RectTransform mapContainer,
-        Level currentLevel,
-        Dictionary<Level, LevelStatus> levelStatuses,
-        bool isQuincyUnlocked,
-        Action onQuincyDone,
-        Image gradientBackground,
-        NavBarScript navBarScript,
-        Button quincyMask,
-        QuincyScript quincyScript)
+public void Initialize(
+    RectTransform mapContainer,
+    Level currentLevel,
+    Dictionary<Level, LevelStatus> levelStatuses,
+    bool isQuincyUnlocked,
+    Action onQuincyDone,
+    Image gradientBackground,
+    NavBarScript navBarScript,
+    Button quincyMask,
+    QuincyScript quincyScript)
     {
-        // Inject dependencies
         _mapContainer = mapContainer;
         _onQuincyDone = onQuincyDone;
         _navBarScript = navBarScript;
         _mask = quincyMask;
         _quincyScript = quincyScript;
-
-        // Create UI elements
         _backgroundButton = MakeBackgroundButton();
         _capy = MakePrefab("Capy").GetComponent<RectTransform>();
         _quincy = MakeQuincy();
@@ -103,24 +103,17 @@ abstract public class MapScript : MonoBehaviour
         _levelPopupAbove = MakePrefab("LevelPopupAbove");
         _lockedBtn = Resources.Load<Sprite>("LevelButtons/levelLocked");
         _completedBtn = Resources.Load<Sprite>("LevelButtons/levelCompleted");
-
-        // Set state
         _currentLevel = currentLevel;
         _levelStatuses = levelStatuses;
         _isQuincyUnlocked = isQuincyUnlocked;
         _gradientBackground = gradientBackground;
-
-        // Cache popup scripts
         _scriptBelow = _levelPopupBelow.GetComponent<LevelPopupScript>();
         _scriptAbove = _levelPopupAbove.GetComponent<LevelPopupScript>();
-
-        // Initialize map dictionaries
         InitializeDictionaries();
-
-        // Setup map visuals and interactions
         HideQuincysQuestions();
         HidePopups();
-        RepositionMap(_currentLevel.GetInfo(), instant: true);
+        LevelInfo currentLevelInfo = _currentLevel.GetInfo();
+        RepositionMap(currentLevelInfo, instant: true);
         StyleBackgroundGradient();
         StyleQuincy();
         StyleRoads();
@@ -129,6 +122,7 @@ abstract public class MapScript : MonoBehaviour
         StyleLevelButtons(currentWorldInfo);
         SetClickListeners(currentWorldInfo);
         _navBarScript.ChangeLevel(_currentLevel.GetInfo());
+
     }
 
     private Button MakeBackgroundButton()
@@ -228,7 +222,6 @@ abstract public class MapScript : MonoBehaviour
     {
         Color32 grayRoadColor = new(182, 202, 203, 255);
         Color32 greenRoadColor = new(29, 121, 64, 255);
-
         foreach (Image road in _levelBeforeRoad.Keys)
         {
             LevelStatus prevLevelStatus = _levelStatuses[_levelBeforeRoad[road]];

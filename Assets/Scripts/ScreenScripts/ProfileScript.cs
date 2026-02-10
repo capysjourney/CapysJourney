@@ -51,12 +51,12 @@ public class ProfileScript : MonoBehaviour
         First, Second, Third, None
     }
 
-    void Start()
+    async void Start()
     {
         _editProfileButtonText = _editProfileButton.GetComponentInChildren<TMP_Text>();
         _selectBadgeButtonText = _selectBadgeButton.GetComponentInChildren<TMP_Text>();
         _nameText.SetText(PlayerPrefs.GetString("username"));
-        _badgesDisplayed = BadgeManager.GetBadgesDisplayed();
+        _badgesDisplayed = await BadgeManager.GetBadgesDisplayed();
         try
         {
             _themesText.SetText($"{GameManager.GetNumWorldsCompleted()}/{WorldInfo.AllWorlds.Count}");
@@ -90,14 +90,17 @@ public class ProfileScript : MonoBehaviour
     }
 
 
-    private void PopulateDisplayedBadgesArea(bool isEditMode)
+    private async void PopulateDisplayedBadgesArea(bool isEditMode)
     {
         foreach (Transform child in _displayedBadgesBox.transform)
         {
             Destroy(child.gameObject);
         }
-        List<Badge> displayedBadges = BadgeManager.GetBadgesDisplayed().GetBadges();
-        foreach (Badge badge in displayedBadges)
+
+        var badgesDisplayed = await BadgeManager.GetBadgesDisplayed();
+        var badgesList = badgesDisplayed.GetBadges();
+
+        foreach (Badge badge in badgesList) 
         {
             GameObject badgeObj = Instantiate(_displayedBadgePrefab, _displayedBadgesBox.transform);
             RectTransform rectTransform = badgeObj.GetComponent<RectTransform>();
@@ -105,13 +108,14 @@ public class ProfileScript : MonoBehaviour
             DisplayedBadgeScript displayedBadgeScript = badgeObj.GetComponent<DisplayedBadgeScript>();
             Sprite badgeSprite = Resources.Load<Sprite>(badge.GetInfo().SpritePath);
             displayedBadgeScript.SetSprite(badgeSprite);
-            displayedBadgeScript.SetOnClose(() =>
+            displayedBadgeScript.SetOnClose(async () =>
             {
                 _badgesDisplayed.RemoveBadge(badge);
-                BadgeManager.SetBadgesDisplayed(_badgesDisplayed);
+                await BadgeManager.SetBadgesDisplayed(_badgesDisplayed);
                 AddPlusButton();
                 Destroy(displayedBadgeScript.gameObject);
             });
+
             if (isEditMode)
             {
                 displayedBadgeScript.ShowCloseButton();
@@ -122,14 +126,13 @@ public class ProfileScript : MonoBehaviour
             }
         }
     }
-
-    private void PopulateAchievementsBox()
+    private async void PopulateAchievementsBox()
     {
         foreach (Transform child in _achievementsBox.transform)
         {
             Destroy(child.gameObject);
         }
-        HashSet<Badge> badgesOwned = BadgeManager.GetBadgesOwned();
+        HashSet<Badge> badgesOwned = await BadgeManager.GetBadgesOwned();
         foreach (Badge badge in BadgeInfo.BadgesInOrder)
         {
             if (!badgesOwned.Contains(badge)) continue;
@@ -140,13 +143,13 @@ public class ProfileScript : MonoBehaviour
         }
     }
 
-    private void PopulateSelectableBadges()
+    private async void PopulateSelectableBadges()
     {
         foreach (Transform child in _selectableBadges.transform)
         {
             Destroy(child.gameObject);
         }
-        HashSet<Badge> badgesOwned = BadgeManager.GetBadgesOwned();
+        HashSet<Badge> badgesOwned = await BadgeManager.GetBadgesOwned();
         bool noSelectableBadges = true;
         foreach (Badge badge in BadgeInfo.BadgesInOrder)
         {

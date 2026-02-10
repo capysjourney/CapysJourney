@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class DeleteMeditation : MonoBehaviour
 {
@@ -11,13 +12,13 @@ public class DeleteMeditation : MonoBehaviour
         deleteButton = GetComponent<Button>();
         if (deleteButton != null)
         {
-            deleteButton.onClick.AddListener(OnDeleteButtonClick);
+            deleteButton.onClick.AddListener(() => OnDeleteButtonClick());
         }
     }
 
-    public void OnDeleteButtonClick()
+    public async void OnDeleteButtonClick()
     {
-        PlayerStats stats = DataManager.GetStats();
+        PlayerStats stats = await DataManager.GetStats();
         if (stats == null || stats.MeditationLog.Count == 0) return;
 
         int siblingIndex = transform.parent.parent.GetSiblingIndex();
@@ -27,7 +28,6 @@ public class DeleteMeditation : MonoBehaviour
         {
             var entryToRemove = stats.MeditationLog.ElementAt(index);
             stats.MeditationLog.Remove(entryToRemove);
-
             stats.SaveToFirestore();
 
             Destroy(transform.parent.parent.gameObject);

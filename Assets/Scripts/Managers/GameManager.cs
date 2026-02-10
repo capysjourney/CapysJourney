@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public static class GameManager
 {
@@ -119,13 +122,19 @@ public static class GameManager
         DataManager.WithStats(stats => stats.Bookmark(CurrLevel, bookmark), true);
     }
 
-    public static Dictionary<Level, LevelStatus> GetWorldStatus(World world)
+    public static async Task<Dictionary<Level, LevelStatus>> GetWorldStatus(World world)
     {
-        Dictionary<Level, LevelStatus> result = null;
-        DataManager.WithStats(stats => result = stats.GetWorldStatus(world), false);
+        Debug.Log("GetWorldStatus called for: " + world);
+        Dictionary<Level, LevelStatus> result = new();
+
+        await DataManager.WithStats(stats =>
+        {
+            result = stats.GetWorldStatus(world);
+            Debug.Log($"Got {result.Count} level statuses for {world}");
+        }, false);
+
         return result;
     }
-
     public static HashSet<World> GetUnlockedWorlds()
     {
         HashSet<World> result = new();
